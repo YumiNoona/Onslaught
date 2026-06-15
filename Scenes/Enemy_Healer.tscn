@@ -1,0 +1,6 @@
+[gd_scene load_steps=1 format=3]
+
+[ext_resource type="PackedScene" uid="uid://c3tjpenyueqfi" path="res://Scenes/Enemy_Zombie.tscn" id="1"]
+
+[node name="EnemyHealer" instance=ExtResource("1")]
+is_healer = true

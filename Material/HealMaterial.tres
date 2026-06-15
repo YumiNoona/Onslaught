@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://d2u8l3vn7ctk8"]
+
+[ext_resource type="Shader" uid="uid://fyri8bd4v88i" path="res://Material/HealUp.gdshader" id="1"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/glow_color = Color(0, 1, 0, 0.5)
+shader_parameter/intensity = 0.5

@@ -1,0 +1,22 @@
+# Godot import folders (cache)
+**/.import/
+*.import
+
+# Godot export/preset configs
+export_presets.cfg
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE / editor configs
+.vscode/
+.idea/
+
+# Godot temp/build
+*.tmp
+*.temp
+
+# Local cache (optional; only ignore if you can regenerate)
+.godot/cache/
+.godot/mono/

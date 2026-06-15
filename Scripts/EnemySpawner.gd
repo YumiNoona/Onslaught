@@ -1,0 +1,120 @@
+extends Node
+class_name EnemySpawner
+
+signal on_wave_completed
+
+const SPAWN_ANIM = preload("res://Scenes/SpawnAnim.tscn")
+const BOSS_ENEMY = preload("res://Scenes/Enemy_Boss.tscn")
+
+enum SpawnType {
+	RandomTimer,
+	FixedTimer
+}
+
+@export var spawn_type: SpawnType
+@export var min_random: float
+@export var max_random: float
+@export var fixed_time: float
+@export var enemies_per_wave: int = 5
+
+@export var hp_per_wave: float = 2.0
+@export var enemy_list: Array[PackedScene] = []
+@export var early_wave_enemies: Array[PackedScene] = []
+@export var mid_wave_enemies: Array[PackedScene] = []
+@onready var spawn_timer: Timer = $SpawnTimer
+
+var enemies_remainig: int
+var spawned_enemies: int
+var wave_number: int = 0
+var wave_active: bool = false
+
+func _ready() -> void:
+	GameManager.on_enemy_died.connect(_on_enemy_died)
+	enemies_remainig = enemies_per_wave
+	wave_active = true
+
+func scale_difficulty() -> void:
+	wave_number += 1
+	GameManager.current_wave = wave_number
+	if wave_number % 5 == 0:
+		enemies_per_wave = 1
+	else:
+		enemies_per_wave += 1
+	min_random = max(min_random - 0.1, 0.2)
+	max_random = max(max_random - 0.2, 0.5)
+
+#Spawn Enemy Fuction
+
+func get_spawn_position() -> Vector2:
+	var angle = randf_range(0, TAU)
+	var distance = randf_range(1800, 2200)
+	var pos = GameManager.player.global_position + Vector2(cos(angle), sin(angle)) * distance
+	pos.x = clamp(pos.x, -3000, 3000)
+	pos.y = clamp(pos.y, -3000, 3000)
+	return pos
+
+func spawn_enemy() -> void:
+	var spawn_anim: SpawnAnim = SPAWN_ANIM.instantiate()
+	var spawn_pos = get_spawn_position()
+	spawn_anim.global_position = spawn_pos
+	add_child(spawn_anim)
+	
+	
+	await spawn_anim.on_spawn_enemy
+	spawn_anim.queue_free()
+	
+	var random_enemy: PackedScene = BOSS_ENEMY if wave_number > 0 and wave_number % 5 == 0 else get_tiered_enemy()
+	var enemy = random_enemy.instantiate() as Enemy
+	enemy.global_position = spawn_pos
+	get_parent().add_child(enemy)
+	enemy.health_component.current_health += wave_number * hp_per_wave
+	enemy.health_component.max_health = enemy.health_component.current_health
+	
+	spawned_enemies +=1
+	start_enemy_timer()
+	
+func get_tiered_enemy() -> PackedScene:
+	if wave_number <= 3 and not early_wave_enemies.is_empty():
+		return early_wave_enemies.pick_random()
+	elif wave_number <= 7 and not mid_wave_enemies.is_empty():
+		return mid_wave_enemies.pick_random()
+	return enemy_list.pick_random()
+
+func start_enemy_timer() -> void:
+	wave_active = true
+	spawn_timer.wait_time = get_new_time()
+	spawn_timer.start()
+	
+	
+func has_wave_enemies_left() -> bool:
+	return wave_active or enemies_remainig > 0
+	
+	
+func get_new_time() -> float:
+	var time: float
+	if spawn_type == SpawnType.RandomTimer:
+		time = randf_range(min_random, max_random)
+	else:
+		time = fixed_time
+		
+	return time
+
+
+func _on_spawn_timer_timeout() -> void:
+	if spawned_enemies >= enemies_per_wave:
+		return
+		
+	spawn_enemy()
+
+func _on_enemy_died() -> void:
+	if not wave_active:
+		return
+	enemies_remainig -= 1
+	if enemies_remainig <= 0:
+		wave_active = false
+		spawn_timer.stop()
+		await get_tree().create_timer(1.0).timeout
+		on_wave_completed.emit()
+		scale_difficulty()
+		enemies_remainig = enemies_per_wave
+		spawned_enemies = 0
