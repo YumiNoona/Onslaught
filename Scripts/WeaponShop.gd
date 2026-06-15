@@ -1,16 +1,21 @@
 extends Control
 
-const FONT = preload("res://Assets/Fonts/kenpixel_mini_square.ttf")
+signal skipped
 
+const FONT = preload("res://Assets/Fonts/kenpixel_mini_square.ttf")
 var all_weapons: Array[WeaponData] = []
+var selected_weapons: Array[WeaponData] = []
+
+@onready var cards := [%Card0, %Card1, %Card2]
+@onready var coins_label: Label = %CoinsLabel
+@onready var skip_btn: Button = %SkipBtn
+
+func _ready() -> void:
+	skip_btn.pressed.connect(_on_skip)
 
 func show_shop() -> void:
 	show()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-
-	for child in get_children():
-		child.queue_free()
-	await get_tree().process_frame
 
 	all_weapons.clear()
 	var dir = DirAccess.open("res://Data")
@@ -21,94 +26,31 @@ func show_shop() -> void:
 				if w:
 					all_weapons.append(w)
 
-	var bg = ColorRect.new()
-	bg.color = Color(0, 0, 0, 0.6)
-	bg.anchors_preset = Control.PRESET_FULL_RECT
-	bg.mouse_filter = Control.MOUSE_FILTER_PASS
-	add_child(bg)
+	var pool = all_weapons.duplicate()
+	pool.shuffle()
+	selected_weapons = pool.slice(0, 3)
 
-	var margin = MarginContainer.new()
-	margin.anchors_preset = Control.PRESET_FULL_RECT
-	add_child(margin)
+	populate_cards()
 
-	var vbox = VBoxContainer.new()
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.anchors_preset = Control.PRESET_CENTER
-	vbox.add_theme_constant_override("separation", 20)
-	margin.add_child(vbox)
-
-	var header = Label.new()
-	header.text = "WEAPON SHOP"
-	header.add_theme_font_override("font", FONT)
-	header.add_theme_font_size_override("font_size", 60)
-	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(header)
-
-	var coins_label = Label.new()
-	coins_label.text = "Coins: %s" % GameManager.coins
-	coins_label.add_theme_font_override("font", FONT)
-	coins_label.add_theme_font_size_override("font_size", 30)
-	coins_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(coins_label)
-
-	var hbox = HBoxContainer.new()
-	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	hbox.add_theme_constant_override("separation", 30)
-	vbox.add_child(hbox)
-
-	var selected = all_weapons.duplicate()
-	selected.shuffle()
-	selected = selected.slice(0, 3)
-
-	for w in selected:
-		var card = VBoxContainer.new()
-		card.alignment = BoxContainer.ALIGNMENT_CENTER
-		card.add_theme_constant_override("separation", 8)
-		card.custom_minimum_size = Vector2(220, 240)
-		hbox.add_child(card)
-
-		var name_label = Label.new()
-		name_label.text = w.gun_name
-		name_label.add_theme_font_override("font", FONT)
-		name_label.add_theme_font_size_override("font_size", 22)
-		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		card.add_child(name_label)
-
-		var sprite = TextureRect.new()
-		sprite.texture = w.gun_sprite
-		sprite.modulate = w.gun_colour
-		sprite.custom_minimum_size = Vector2(150, 50)
-		sprite.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-		sprite.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
-		card.add_child(sprite)
-
-		var stats_label = Label.new()
-		stats_label.text = "DMG: %s  Rate: %s/s\nPierce: %s" % [w.damage, str(1.0 / w.delay_between_shots).pad_decimals(1), w.pierce]
-		stats_label.add_theme_font_override("font", FONT)
-		stats_label.add_theme_font_size_override("font_size", 16)
-		stats_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		card.add_child(stats_label)
-
-		var price_label = Label.new()
-		price_label.text = "%s coins" % w.buy_price
-		price_label.add_theme_font_override("font", FONT)
-		price_label.add_theme_font_size_override("font_size", 20)
-		price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		card.add_child(price_label)
-
-		var btn = Button.new()
+func populate_cards() -> void:
+	for i in 3:
+		var w = selected_weapons[i]
+		var card = cards[i]
+		card.get_node("NameLabel").text = w.gun_name
+		card.get_node("Sprite").texture = w.gun_sprite
+		card.get_node("Sprite").modulate = w.gun_colour
+		card.get_node("StatsLabel").text = "DMG: %s  Rate: %s/s\nPierce: %s" % [w.damage, str(1.0 / w.delay_between_shots).pad_decimals(1), w.pierce]
+		card.get_node("PriceLabel").text = "%s coins" % w.buy_price
+		var btn = card.get_node("BuyBtn") as Button
 		btn.text = "Buy"
-		btn.custom_minimum_size = Vector2(200, 45)
-		btn.pressed.connect(_on_buy.bind(w, btn, coins_label))
-		card.add_child(btn)
+		btn.disabled = false
+		for c in btn.pressed.get_connections():
+			btn.pressed.disconnect(c["callable"])
+		btn.pressed.connect(_on_buy.bind(w, btn))
 
-	var skip_btn = Button.new()
-	skip_btn.text = "Skip (Next Wave)"
-	skip_btn.custom_minimum_size = Vector2(300, 50)
-	skip_btn.pressed.connect(_on_skip)
-	vbox.add_child(skip_btn)
+	coins_label.text = "Coins: %s" % GameManager.coins
 
-func _on_buy(w: WeaponData, btn: Button, coins_label: Label) -> void:
+func _on_buy(w: WeaponData, btn: Button) -> void:
 	if GameManager.coins < w.buy_price:
 		return
 	GameManager.remove_coin(w.buy_price)
@@ -120,3 +62,4 @@ func _on_buy(w: WeaponData, btn: Button, coins_label: Label) -> void:
 func _on_skip() -> void:
 	hide()
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	skipped.emit()

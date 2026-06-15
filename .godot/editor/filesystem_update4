@@ -33,3 +33,5 @@ res://Scripts/MainMenu.gd
 res://Scenes/MainMenu.tscn
 res://Scripts/CharacterSelect.gd
 res://Scenes/CharacterSelect.tscn
+res://Scenes/WeaponShop.tscn
+res://Scenes/LevelUpUI.tscn

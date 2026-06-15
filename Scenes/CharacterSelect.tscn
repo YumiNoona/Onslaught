@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://dhir8j3ttin8c" path="res://Scripts/CharacterSelect.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://c4x0jidjvbcs3" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="2"]
 [ext_resource type="Texture2D" uid="uid://0rv5ntr0wyjr" path="res://Assets/Sprites/Entities/Char 2/idle_0.png" id="3"]
+[ext_resource type="Texture2D" path="res://Assets/Sprites/Entities/Char 1/idle_0.png" id="4"]
+[ext_resource type="Texture2D" path="res://Assets/Sprites/Entities/Char 3/idle_0.png" id="5"]
 
 [node name="CharacterSelect" type="Control" unique_id=1364068169]
 layout_mode = 3
@@ -101,6 +103,104 @@ horizontal_alignment = 1
 
 [node name="SelectBtn" type="Button" parent="VBox/Cards/Card0" unique_id=170066938]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 24
+text = "SELECT"
+
+[node name="Card1" type="VBoxContainer" parent="VBox/Cards"]
+unique_name_in_owner = true
+alignment = 1
+custom_minimum_size = Vector2(380, 420)
+theme_override_constants/separation = 8
+
+[node name="CharSprite" type="TextureRect" parent="VBox/Cards/Card1"]
+custom_minimum_size = Vector2(120, 120)
+texture = ExtResource("4")
+modulate = Color(0.8, 0.6, 0.6, 1)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="VBox/Cards/Card1"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="VBox/Cards/Card1"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="AbilityLabel" type="Label" parent="VBox/Cards/Card1"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ProsLabel" type="Label" parent="VBox/Cards/Card1"]
+modulate = Color(0.4, 1, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ConsLabel" type="Label" parent="VBox/Cards/Card1"]
+modulate = Color(1, 0.4, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="SelectBtn" type="Button" parent="VBox/Cards/Card1"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 24
+text = "SELECT"
+
+[node name="Card2" type="VBoxContainer" parent="VBox/Cards"]
+unique_name_in_owner = true
+alignment = 1
+custom_minimum_size = Vector2(380, 420)
+theme_override_constants/separation = 8
+
+[node name="CharSprite" type="TextureRect" parent="VBox/Cards/Card2"]
+custom_minimum_size = Vector2(120, 120)
+texture = ExtResource("5")
+modulate = Color(0.6, 0.8, 0.8, 1)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="VBox/Cards/Card2"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="VBox/Cards/Card2"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="AbilityLabel" type="Label" parent="VBox/Cards/Card2"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ProsLabel" type="Label" parent="VBox/Cards/Card2"]
+modulate = Color(0.4, 1, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ConsLabel" type="Label" parent="VBox/Cards/Card2"]
+modulate = Color(1, 0.4, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="SelectBtn" type="Button" parent="VBox/Cards/Card2"]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")

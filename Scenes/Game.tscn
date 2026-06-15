@@ -20,8 +20,10 @@
 [ext_resource type="Resource" uid="uid://diyqdwbxs8m0b" path="res://Data/W_HandGun.tres" id="15_raj38"]
 [ext_resource type="Resource" uid="uid://ba75x0sd5yst6" path="res://Data/W_UZI.tres" id="16_8e0uq"]
 [ext_resource type="Texture2D" uid="uid://d0ioacy2yuqsg" path="res://Assets/Sprites/tile_coin.png" id="16_alh3a"]
-[ext_resource type="Script" uid="uid://bya3r76wrly86" path="res://Scripts/Minimap.gd" id="17_ny8n0"]
+[ext_resource type="Script" path="res://Scripts/Minimap.gd" id="17_ny8n0"]
 [ext_resource type="Shader" uid="uid://c6lstk4g36acj" path="res://Material/Vignette.gdshader" id="18_x3xnh"]
+[ext_resource type="PackedScene" path="res://Scenes/WeaponShop.tscn" id="19_ws"]
+[ext_resource type="PackedScene" path="res://Scenes/LevelUpUI.tscn" id="20_lvui"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kldst"]
 size = Vector2(6144, 20)
@@ -410,42 +412,9 @@ layout_mode = 2
 action_mode = 0
 text = "Quit"
 
-[node name="WeaponShop" type="Control" parent="CanvasLayer" unique_id=1021341510]
-process_mode = 3
-visible = false
-z_index = 2
-custom_minimum_size = Vector2(1400, 800)
-layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -700.0
-offset_top = -400.0
-offset_right = 700.0
-offset_bottom = 400.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="WeaponShop" parent="CanvasLayer" instance=ExtResource("19_ws")]
 
-[node name="LevelUpUI" type="Control" parent="CanvasLayer" unique_id=1722643968]
-process_mode = 3
-visible = false
-custom_minimum_size = Vector2(1400, 800)
-layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -700.0
-offset_top = -400.0
-offset_right = 700.0
-offset_bottom = 400.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="LevelUpUI" parent="CanvasLayer" instance=ExtResource("20_lvui")]
 
 [node name="PauseMenu" type="Control" parent="CanvasLayer" unique_id=747070953]
 process_mode = 3

@@ -68,6 +68,9 @@ func _ready() -> void:
 	# Wire level up
 	GameManager.on_level_up.connect(_on_level_up)
 
+	# Wire shop skip
+	weapon_shop.skipped.connect(_on_shop_skipped)
+
 	# Wire weapon fired for crosshair recoil
 	GameManager.on_weapon_fired.connect(_on_weapon_fired)
 
@@ -163,6 +166,9 @@ func _on_main_menu() -> void:
 
 
 func _on_wave_timer_timeout() -> void:
+	if weapon_shop.visible or level_up_ui.visible:
+		wave_timer.start()
+		return
 	weapons.hide()
 	wave_label.hide()
 	enemy_count_label.show()
@@ -171,6 +177,10 @@ func _on_wave_timer_timeout() -> void:
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	show_wave_announcement()
+
+func _on_shop_skipped() -> void:
+	wave_timer.stop()
+	_on_wave_timer_timeout()
 
 func show_wave_announcement() -> void:
 	wave_announce.text = "WAVE %s" % GameManager.current_wave
@@ -203,9 +213,6 @@ func _on_weapon_fired(direction: Vector2) -> void:
 	crosshair_recoil = -direction * 60
 
 func _on_level_up() -> void:
-	if not level_up_ui.has_meta("setup"):
-		level_up_ui.set_meta("setup", true)
-		level_up_ui.set_script(load("res://Scripts/LevelUpUI.gd"))
 	level_up_ui.show_perks()
 
 func _on_player_hit() -> void:
@@ -222,7 +229,4 @@ func _on_enemy_spawner_on_wave_completed() -> void:
 	show_weapon_shop()
 
 func show_weapon_shop() -> void:
-	if not weapon_shop.has_meta("setup"):
-		weapon_shop.set_meta("setup", true)
-		weapon_shop.set_script(load("res://Scripts/WeaponShop.gd"))
 	weapon_shop.show_shop()
