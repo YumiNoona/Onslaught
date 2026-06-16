@@ -39,7 +39,7 @@ func populate_cards() -> void:
 		btn.disabled = false
 		for c in btn.pressed.get_connections():
 			btn.pressed.disconnect(c["callable"])
-		btn.pressed.connect(_on_perk_chosen.bind(perk))
+		btn.pressed.connect(_on_perk_chosen.bind(perk), CONNECT_ONE_SHOT)
 
 func _on_perk_chosen(perk: Dictionary) -> void:
 	perk["apply"].call(GameManager.player)

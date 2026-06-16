@@ -63,10 +63,15 @@ func spawn_enemy() -> void:
 	await spawn_anim.on_spawn_enemy
 	spawn_anim.queue_free()
 	
-	var random_enemy: PackedScene = BOSS_ENEMY if wave_number > 0 and wave_number % 5 == 0 else get_tiered_enemy()
+	var is_boss_wave = wave_number > 0 and wave_number % 5 == 0
+	var random_enemy: PackedScene = BOSS_ENEMY if is_boss_wave else get_tiered_enemy()
 	var enemy = random_enemy.instantiate() as Enemy
 	enemy.global_position = spawn_pos
 	get_parent().add_child(enemy)
+	if is_boss_wave:
+		GameManager.on_shake_request.emit(5.0)
+	else:
+		GameManager.on_shake_request.emit(0.3)
 	enemy.health_component.current_health += wave_number * hp_per_wave
 	enemy.health_component.max_health = enemy.health_component.current_health
 	
@@ -74,11 +79,19 @@ func spawn_enemy() -> void:
 	start_enemy_timer()
 	
 func get_tiered_enemy() -> PackedScene:
+	var pool: Array[PackedScene] = []
+	if not enemy_list.is_empty():
+		pool.append_array(enemy_list)
+		if wave_number > 3:
+			for i in range(min(wave_number, 5)):
+				pool.append(enemy_list.pick_random())
+	if wave_number <= 7 and not mid_wave_enemies.is_empty():
+		for i in range(3):
+			pool.append(mid_wave_enemies.pick_random())
 	if wave_number <= 3 and not early_wave_enemies.is_empty():
-		return early_wave_enemies.pick_random()
-	elif wave_number <= 7 and not mid_wave_enemies.is_empty():
-		return mid_wave_enemies.pick_random()
-	return enemy_list.pick_random()
+		for i in range(4):
+			pool.append(early_wave_enemies.pick_random())
+	return pool.pick_random()
 
 func start_enemy_timer() -> void:
 	wave_active = true

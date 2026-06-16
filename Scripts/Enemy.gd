@@ -46,16 +46,12 @@ func _ready() -> void:
 
 func _physics_process(_delta: float) -> void:
 	var player_direction = GameManager.player.global_position - global_position
+	
+	if player_direction.length() <= 120 or not can_move:
+		return
+	
 	var direction = player_direction.normalized()
-	var movement = direction * move_speed
-	velocity = movement
-	
-	
-	if player_direction.length() <= 120:
-		return
-	
-	if not can_move:
-		return
+	velocity = direction * move_speed
 	
 	move_and_slide()
 	anim_sprite.flip_h = true if velocity.x < 0 else false
@@ -83,7 +79,10 @@ func _on_health_component_on_defeated() -> void:
 	GameManager.add_score(100 * max(GameManager.current_wave, 1))
 	GameManager.add_xp(10 * max(GameManager.current_wave, 1))
 	GameManager.increment_combo()
+	GameManager.total_enemies_killed += 1
+	spawn_death_particles()
 	GameManager.play_explosion_anim(global_position)
+	GameManager.on_shake_request.emit(1.5 if is_boss else 0.5)
 	health_bar.hide()
 	
 	# Clean up all damage timers
@@ -96,6 +95,26 @@ func _on_health_component_on_defeated() -> void:
 	await anim_sprite.animation_finished
 	GameManager.on_enemy_died.emit()
 	queue_free()
+
+func spawn_death_particles() -> void:
+	var particles = CPUParticles2D.new()
+	particles.emitting = false
+	particles.one_shot = true
+	particles.explosiveness = 1.0
+	particles.amount = 12
+	particles.lifetime = 0.4
+	particles.direction = Vector2(0, -1)
+	particles.spread = 180.0
+	particles.initial_velocity_min = 80.0
+	particles.initial_velocity_max = 200.0
+	particles.scale_amount_min = 2.0
+	particles.scale_amount_max = 4.0
+	particles.color = Color(0.8, 0.1, 0.1, 0.8) if not is_boss else Color(1, 0.5, 0, 0.9)
+	particles.color_ramp = null
+	particles.gravity = Vector2(0, 200)
+	particles.z_index = 15
+	add_child(particles)
+	particles.emitting = true
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
@@ -133,16 +152,11 @@ func start_damage_timer(player: Player) -> void:
 	timer.start()
 	damage_timers[player] = timer
 
-var last_damage_time: float = 0.0
-
 func deal_contact_damage(player: Player) -> void:
 	if not is_instance_valid(player) or player not in players_in_contact:
 		return
 	
-	var current_time = Time.get_ticks_msec() / 1000.0
-	if current_time - last_damage_time >= damage_cooldown:
-		player.health_component.take_damage(contact_damage)
-		last_damage_time = current_time
+	player.health_component.take_damage(contact_damage)
 	GameManager.play_damage_text(player.global_position, int(contact_damage))
 
 func spawn_powerup() -> void:

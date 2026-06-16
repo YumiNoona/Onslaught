@@ -10,3 +10,7 @@ class_name WeaponData
 @export var fire_pos: Vector2
 @export var bullet_scene: PackedScene
 @export var pierce: int = 0
+@export var max_ammo: int = -1
+@export var reload_time: float = 1.0
+@export var bullet_count: int = 1
+@export var spread_angle: float = 0.0

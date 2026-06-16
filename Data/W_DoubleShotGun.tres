@@ -14,5 +14,7 @@ delay_between_shots = 0.6
 fire_pos = Vector2(740, -60)
 bullet_scene = ExtResource("1_tm26y")
 pierce = 0
+bullet_count = 8
+spread_angle = 20.0
 gun_name = "Double Shotgun"
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"

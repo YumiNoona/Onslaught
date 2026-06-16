@@ -1,5 +1,8 @@
 extends Control
 
+var game_scene: PackedScene
+var game_loaded := false
+
 var characters := [
 	{
 		"name": "SHOOTER",
@@ -28,6 +31,11 @@ var characters := [
 ]
 
 func _ready() -> void:
+	ResourceLoader.load_threaded_request("res://Scenes/Game.tscn")
+	var title = $VBox/Title
+	var t = create_tween().set_loops()
+	t.tween_property(title, "modulate", Color(0.9, 0.9, 1, 0.7), 1.5)
+	t.tween_property(title, "modulate", Color(0.9, 0.9, 1, 1), 1.5)
 	for i in 3:
 		var c = characters[i]
 		var card = get_node("%Card" + str(i))
@@ -38,6 +46,14 @@ func _ready() -> void:
 		card.get_node("ConsLabel").text = c["cons"]
 		card.get_node("SelectBtn").pressed.connect(_on_select.bind(c))
 
+func _process(_delta: float) -> void:
+	if not game_loaded and ResourceLoader.load_threaded_get_status("res://Scenes/Game.tscn") == ResourceLoader.THREAD_LOAD_LOADED:
+		game_scene = ResourceLoader.load_threaded_get("res://Scenes/Game.tscn") as PackedScene
+		game_loaded = true
+
 func _on_select(c: Dictionary) -> void:
 	GameManager.selected_character_scene = c["scene"]
-	get_tree().change_scene_to_file("res://Scenes/Game.tscn")
+	if game_scene:
+		get_tree().change_scene_to_packed(game_scene)
+	else:
+		get_tree().change_scene_to_file("res://Scenes/Game.tscn")

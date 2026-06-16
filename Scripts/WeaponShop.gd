@@ -5,6 +5,8 @@ signal skipped
 const FONT = preload("res://Assets/Fonts/kenpixel_mini_square.ttf")
 var all_weapons: Array[WeaponData] = []
 var selected_weapons: Array[WeaponData] = []
+var bought_any: bool = false
+var shop_wave: int = 0
 
 @onready var cards := [%Card0, %Card1, %Card2]
 @onready var coins_label: Label = %CoinsLabel
@@ -12,11 +14,9 @@ var selected_weapons: Array[WeaponData] = []
 
 func _ready() -> void:
 	skip_btn.pressed.connect(_on_skip)
+	load_all_weapons()
 
-func show_shop() -> void:
-	show()
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-
+func load_all_weapons() -> void:
 	all_weapons.clear()
 	var dir = DirAccess.open("res://Data")
 	if dir:
@@ -25,6 +25,13 @@ func show_shop() -> void:
 				var w = load("res://Data/" + file) as WeaponData
 				if w:
 					all_weapons.append(w)
+
+func show_shop() -> void:
+	show()
+	get_tree().paused = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	bought_any = false
+	shop_wave = GameManager.current_wave
 
 	var pool = all_weapons.duplicate()
 	pool.shuffle()
@@ -52,14 +59,33 @@ func populate_cards() -> void:
 
 func _on_buy(w: WeaponData, btn: Button) -> void:
 	if GameManager.coins < w.buy_price:
+		var original = btn.modulate
+		btn.modulate = Color(1, 0.3, 0.3)
+		await get_tree().create_timer(0.15).timeout
+		if is_instance_valid(btn):
+			btn.modulate = original
 		return
 	GameManager.remove_coin(w.buy_price)
 	GameManager.player.setup_weapon(w)
-	btn.disabled = true
-	btn.text = "Owned"
-	coins_label.text = "Coins: %s" % GameManager.coins
+	bought_any = true
+	close_shop()
 
-func _on_skip() -> void:
+func close_shop() -> void:
 	hide()
+	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	skipped.emit()
+
+func _on_skip() -> void:
+	if not bought_any and shop_wave == 1:
+		var cheapest = get_cheapest_weapon()
+		if cheapest:
+			GameManager.player.setup_weapon(cheapest)
+	close_shop()
+
+func get_cheapest_weapon() -> WeaponData:
+	var best: WeaponData = null
+	for w in all_weapons:
+		if best == null or w.buy_price < best.buy_price:
+			best = w
+	return best

@@ -35,6 +35,9 @@ var ability_cooldown: float = 0.0
 var is_dashing: bool = false
 var can_dash: bool = true
 
+# Footstep
+var footstep_timer: float = 0.0
+
 func _ready():
 	health_component.max_health = max_health
 	health_component.current_health = max_health
@@ -60,6 +63,12 @@ func _physics_process(_delta: float) -> void:
 	velocity = input.normalized() * move_speed
 	move_and_slide()
 
+	if velocity.length() > 10:
+		footstep_timer -= _delta
+		if footstep_timer <= 0:
+			footstep_timer = 0.3
+			play_footstep()
+
 func start_dash() -> void:
 	var dir = Input.get_vector("Move_Left", "Move_Right", "Move_Up", "Move_Down")
 	if dir == Vector2.ZERO:
@@ -70,12 +79,29 @@ func start_dash() -> void:
 	velocity = dir.normalized() * dash_speed
 	anim_sprite.material = GameManager.HIT_MATERIAL
 
-	await get_tree().create_timer(dash_duration).timeout
+	var trail = Line2D.new()
+	trail.default_color = Color(1, 1, 1, 0.5)
+	trail.width = 6
+	trail.z_index = -1
+	get_tree().root.add_child(trail)
+	var elapsed = 0.0
+	while elapsed < dash_duration:
+		trail.add_point(global_position)
+		if trail.get_point_count() > 15:
+			trail.remove_point(0)
+		await get_tree().process_frame
+		elapsed += get_process_delta_time()
 
 	is_dashing = false
 	health_component.invulnerable = false
 	if is_instance_valid(anim_sprite):
 		anim_sprite.material = null
+
+	if is_instance_valid(trail):
+		var fade = create_tween()
+		fade.tween_property(trail, "default_color:a", 0, 0.15)
+		await fade.finished
+		trail.queue_free()
 
 	await get_tree().create_timer(dash_cooldown).timeout
 	can_dash = true
@@ -93,6 +119,27 @@ func _process(_delta: float) -> void:
 	update_animations()
 	update_rotation()
 	update_weapon_rotation()
+
+func play_footstep() -> void:
+	var player = AudioStreamPlayer2D.new()
+	var gen = AudioStreamGenerator.new()
+	gen.mix_rate = 22050
+	player.stream = gen
+	player.max_distance = 400
+	player.volume_db = -12 + randf_range(-3, 3)
+	get_tree().root.add_child(player)
+	player.play()
+	var playback = player.get_stream_playback()
+	var frames = 400
+	var buf = PackedVector2Array()
+	for i in frames:
+		var t = float(i) / frames
+		var amp = max(0, 1.0 - t * 5.0) * 0.15
+		buf.append(Vector2(randf_range(-amp, amp), randf_range(-amp, amp)))
+	playback.push_buffer(buf)
+	await get_tree().create_timer(0.05).timeout
+	if is_instance_valid(player):
+		player.queue_free()
 
 func use_ability() -> void:
 	match character_type:
@@ -115,6 +162,20 @@ func adrenaline_rush() -> void:
 func ground_slam() -> void:
 	ability_cooldown = 6.0
 	anim_sprite.material = GameManager.HIT_MATERIAL
+	GameManager.on_shake_request.emit(3.0)
+
+	var ring = Sprite2D.new()
+	ring.texture = preload("res://Assets/Sprites/light.png")
+	ring.position = global_position
+	ring.modulate = Color(1, 0.6, 0.2, 0.8)
+	ring.scale = Vector2(0.1, 0.1)
+	ring.z_index = 10
+	get_tree().root.add_child(ring)
+	var ring_tween = create_tween()
+	ring_tween.tween_property(ring, "scale", Vector2(6, 6), 0.3)
+	ring_tween.parallel().tween_property(ring, "modulate:a", 0, 0.3)
+	ring_tween.tween_callback(ring.queue_free)
+
 	var enemies = get_tree().get_nodes_in_group("enemies")
 	for e in enemies:
 		var enemy = e as Enemy
@@ -138,11 +199,29 @@ func quick_dash() -> void:
 	health_component.invulnerable = true
 	velocity = dir.normalized() * dash_speed * 1.5
 	anim_sprite.material = GameManager.HIT_MATERIAL
-	await get_tree().create_timer(0.15).timeout
+
+	var trail = Line2D.new()
+	trail.default_color = Color(0.6, 0.8, 1, 0.6)
+	trail.width = 6
+	trail.z_index = -1
+	get_tree().root.add_child(trail)
+	var elapsed = 0.0
+	while elapsed < 0.15:
+		trail.add_point(global_position)
+		if trail.get_point_count() > 10:
+			trail.remove_point(0)
+		await get_tree().process_frame
+		elapsed += get_process_delta_time()
+
 	if is_instance_valid(self):
 		health_component.invulnerable = false
 	if is_instance_valid(anim_sprite):
 		anim_sprite.material = null
+	if is_instance_valid(trail):
+		var fade = create_tween()
+		fade.tween_property(trail, "default_color:a", 0, 0.1)
+		await fade.finished
+		trail.queue_free()
 
 func get_mouse_pos() -> void:
 	mouse_pos = get_global_mouse_position()

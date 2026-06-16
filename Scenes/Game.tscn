@@ -20,10 +20,10 @@
 [ext_resource type="Resource" uid="uid://diyqdwbxs8m0b" path="res://Data/W_HandGun.tres" id="15_raj38"]
 [ext_resource type="Resource" uid="uid://ba75x0sd5yst6" path="res://Data/W_UZI.tres" id="16_8e0uq"]
 [ext_resource type="Texture2D" uid="uid://d0ioacy2yuqsg" path="res://Assets/Sprites/tile_coin.png" id="16_alh3a"]
-[ext_resource type="Script" path="res://Scripts/Minimap.gd" id="17_ny8n0"]
+[ext_resource type="Script" uid="uid://bya3r76wrly86" path="res://Scripts/Minimap.gd" id="17_ny8n0"]
 [ext_resource type="Shader" uid="uid://c6lstk4g36acj" path="res://Material/Vignette.gdshader" id="18_x3xnh"]
-[ext_resource type="PackedScene" path="res://Scenes/WeaponShop.tscn" id="19_ws"]
-[ext_resource type="PackedScene" path="res://Scenes/LevelUpUI.tscn" id="20_lvui"]
+[ext_resource type="PackedScene" uid="uid://jf4pjism4f6w" path="res://Scenes/WeaponShop.tscn" id="19_ws"]
+[ext_resource type="PackedScene" uid="uid://cdrcvt121oe7i" path="res://Scenes/LevelUpUI.tscn" id="20_lvui"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kldst"]
 size = Vector2(6144, 20)
@@ -43,6 +43,7 @@ outline_color = Color(0, 0, 0, 1)
 shader = ExtResource("18_x3xnh")
 shader_parameter/outerRadius = 1.7
 shader_parameter/MainAlpha = 0.8
+shader_parameter/tint_color = Color(0, 0, 0, 1)
 
 [node name="Game" type="Node2D" unique_id=1983110018]
 script = ExtResource("1_j5yw3")
@@ -191,7 +192,7 @@ autoplay = true
 bus = &"Music"
 
 [node name="WaveTimer" type="Timer" parent="." unique_id=132644286]
-wait_time = 2.0
+wait_time = 3.0
 one_shot = true
 
 [node name="EnemySpawner" parent="." unique_id=215857585 instance=ExtResource("14_wxwew")]
@@ -304,6 +305,69 @@ offset_bottom = 240.0
 mouse_filter = 2
 script = ExtResource("17_ny8n0")
 
+[node name="XpBar" type="ProgressBar" parent="CanvasLayer/GameUI" unique_id=340015634]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 20.0
+offset_top = 90.0
+offset_right = 212.0
+offset_bottom = 115.0
+show_percentage = false
+
+[node name="PowerUpIndicator" type="VBoxContainer" parent="CanvasLayer/GameUI" unique_id=340015635]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 20.0
+offset_top = 125.0
+mouse_filter = 2
+
+[node name="AbilityBar" type="ProgressBar" parent="CanvasLayer/GameUI" unique_id=340015636]
+unique_name_in_owner = true
+modulate = Color(0.4, 0.6, 1, 0.8)
+layout_mode = 0
+offset_left = 850.0
+offset_top = 960.0
+offset_right = 1050.0
+offset_bottom = 980.0
+show_percentage = false
+
+[node name="ReloadBar" type="ProgressBar" parent="CanvasLayer/GameUI" unique_id=340015637]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 0.3, 0.8)
+layout_mode = 0
+offset_left = 750.0
+offset_top = 920.0
+offset_right = 1150.0
+offset_bottom = 945.0
+show_percentage = false
+
+[node name="BossHealthBar" type="ProgressBar" parent="CanvasLayer/GameUI" unique_id=340015638]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 0.2, 0.2, 0.9)
+layout_mode = 0
+offset_left = 460.0
+offset_top = 40.0
+offset_right = 1460.0
+offset_bottom = 75.0
+value = 100.0
+show_percentage = false
+
+[node name="BossHealthLabel" type="Label" parent="CanvasLayer/GameUI" unique_id=340015639]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 460.0
+offset_top = 10.0
+offset_right = 1460.0
+offset_bottom = 40.0
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 24
+text = "BOSS"
+horizontal_alignment = 1
+
 [node name="ComboLabel" type="Label" parent="CanvasLayer/GameUI" unique_id=340015633]
 unique_name_in_owner = true
 layout_mode = 1
@@ -398,6 +462,44 @@ text = "Final Score: 0"
 label_settings = SubResource("LabelSettings_alh3a")
 horizontal_alignment = 1
 
+[node name="NewBestLabel" type="Label" parent="CanvasLayer/GameOverUI/VBoxContainer" unique_id=2069846438]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 28
+text = "★ NEW BEST! ★"
+horizontal_alignment = 1
+
+[node name="WaveReached" type="Label" parent="CanvasLayer/GameOverUI/VBoxContainer" unique_id=2069846439]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 22
+text = "Wave Reached: 0"
+horizontal_alignment = 1
+
+[node name="EnemiesKilled" type="Label" parent="CanvasLayer/GameOverUI/VBoxContainer" unique_id=2069846440]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 22
+text = "Enemies Killed: 0"
+horizontal_alignment = 1
+
+[node name="CoinsCollected" type="Label" parent="CanvasLayer/GameOverUI/VBoxContainer" unique_id=2069846441]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 22
+text = "Coins: 0"
+horizontal_alignment = 1
+
+[node name="HighScoreLabel" type="Label" parent="CanvasLayer/GameOverUI/VBoxContainer" unique_id=2069846442]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 20
+text = "Best: 0"
+horizontal_alignment = 1
+
 [node name="BTN_Restart" type="Button" parent="CanvasLayer/GameOverUI/VBoxContainer" unique_id=1430072336]
 process_mode = 2
 custom_minimum_size = Vector2(200, 60)
@@ -412,9 +514,9 @@ layout_mode = 2
 action_mode = 0
 text = "Quit"
 
-[node name="WeaponShop" parent="CanvasLayer" instance=ExtResource("19_ws")]
+[node name="WeaponShop" parent="CanvasLayer" unique_id=906890572 instance=ExtResource("19_ws")]
 
-[node name="LevelUpUI" parent="CanvasLayer" instance=ExtResource("20_lvui")]
+[node name="LevelUpUI" parent="CanvasLayer" unique_id=1927603641 instance=ExtResource("20_lvui")]
 
 [node name="PauseMenu" type="Control" parent="CanvasLayer" unique_id=747070953]
 process_mode = 3
@@ -458,7 +560,56 @@ label_settings = SubResource("LabelSettings_wxwew")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BTN_Resume" type="Button" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032022]
+[node name="StatsHeader" type="Label" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032020]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 22
+text = "--- STATS ---"
+horizontal_alignment = 1
+
+[node name="StatsSpeed" type="Label" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032021]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 18
+text = "Speed: 400"
+horizontal_alignment = 1
+
+[node name="StatsDamage" type="Label" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032022]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 18
+text = "Damage: +0"
+horizontal_alignment = 1
+
+[node name="StatsPierce" type="Label" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032023]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 18
+text = "Pierce: 0"
+horizontal_alignment = 1
+
+[node name="StatsFireRate" type="Label" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032024]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 18
+text = "Fire Rate: +0%"
+horizontal_alignment = 1
+
+[node name="StatsLevel" type="Label" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032025]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 18
+text = "Level: 1"
+horizontal_alignment = 1
+
+[node name="StatsXp" type="Label" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032026]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 18
+text = "XP: 0/100"
+horizontal_alignment = 1
+
+[node name="BTN_Resume" type="Button" parent="CanvasLayer/PauseMenu/VBoxContainer" unique_id=1336032027]
 process_mode = 2
 z_index = 5
 custom_minimum_size = Vector2(200, 60)

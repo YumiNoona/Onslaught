@@ -9,8 +9,8 @@
 
 [node name="EnemySpawner" type="Node"]
 script = ExtResource("1_4b1db")
-min_random = 1.0
-max_random = 2.0
+min_random = 0.5
+max_random = 1.2
 fixed_time = 1.0
 early_wave_enemies = Array[PackedScene]([ExtResource("5_kpa3q")])
 mid_wave_enemies = Array[PackedScene]([ExtResource("5_kpa3q"), ExtResource("3_16a1j")])
