@@ -48,6 +48,7 @@ func _physics_process(_delta: float) -> void:
 	var player_direction = GameManager.player.global_position - global_position
 	
 	if player_direction.length() <= 120 or not can_move:
+		velocity = Vector2.ZERO
 		return
 	
 	var direction = player_direction.normalized()

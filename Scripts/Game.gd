@@ -252,7 +252,7 @@ func update_xp_bar() -> void:
 
 func update_ability_cooldown() -> void:
 	if player and player.ability_cooldown > 0:
-		ability_bar.max_value = 6.0 if player.character_type == Player.CharacterType.ROCKY else (10.0 if player.character_type == Player.CharacterType.DEFAULT else 2.0)
+		ability_bar.max_value = player.ability_max_cooldown
 		ability_bar.value = ability_bar.max_value - player.ability_cooldown
 		ability_bar.show()
 	else:
@@ -322,7 +322,7 @@ func update_stats() -> void:
 		return
 	stats_speed.text = "Speed: %s" % player.move_speed
 	stats_damage.text = "Damage: +%s" % player.damage_bonus
-	stats_pierce.text = "Pierce: %s" % (player.pierce_bonus + player.base_pierce if "base_pierce" in player else player.pierce_bonus)
+	stats_pierce.text = "Pierce: %s" % player.pierce_bonus
 	stats_fire_rate.text = "Fire Rate: +%s%%" % int(player.fire_rate_mod * 100 - 100)
 	stats_level.text = "Level: %s" % GameManager.level
 	stats_xp.text = "XP: %s/%s" % [GameManager.xp, GameManager.xp_to_next]

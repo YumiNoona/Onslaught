@@ -31,9 +31,10 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			enemy.health_component.take_damage(damage)
 			GameManager.play_damage_text(global_position, int(damage))
 			spawn_hit_spark()
-			Engine.time_scale = 0.05
-			await get_tree().create_timer(0.02, true, false, true).timeout
-			Engine.time_scale = 1.0
+			if Engine.time_scale == 1.0:
+				Engine.time_scale = 0.05
+				await get_tree().create_timer(0.02, true, false, true).timeout
+				Engine.time_scale = 1.0
 			if pierce > 0:
 				pierce -= 1
 				return
@@ -57,7 +58,7 @@ func spawn_hit_spark() -> void:
 	spark.scale = Vector2(0.15, 0.15)
 	spark.modulate = Color(1, 1, 0.5, 1)
 	spark.z_index = 10
-	get_tree().root.add_child(spark)
+	get_tree().current_scene.add_child(spark)
 	var t = create_tween()
 	t.tween_property(spark, "modulate:a", 0, 0.1)
 	t.tween_property(spark, "scale", Vector2(0.4, 0.4), 0.1)

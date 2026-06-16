@@ -66,7 +66,7 @@ func show_pickup_text() -> void:
 	label.global_position = global_position - Vector2(50, 0)
 	label.modulate = color_map[power_type]
 	label.z_index = 20
-	get_tree().root.add_child(label)
+	get_tree().current_scene.add_child(label)
 	var t = create_tween()
 	t.tween_property(label, "position", label.position + Vector2(0, -40), 0.6)
 	t.parallel().tween_property(label, "modulate:a", 0, 0.6)

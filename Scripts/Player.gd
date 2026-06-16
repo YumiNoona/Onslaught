@@ -27,6 +27,7 @@ var damage_bonus: float = 0.0
 
 # Character ability
 var ability_cooldown: float = 0.0
+var ability_max_cooldown: float = 10.0
 
 # Dash
 @export var dash_speed: float = 1500.0
@@ -152,6 +153,7 @@ func use_ability() -> void:
 
 func adrenaline_rush() -> void:
 	ability_cooldown = 10.0
+	ability_max_cooldown = 10.0
 	move_speed *= 1.2
 	fire_rate_mod += 0.2
 	await get_tree().create_timer(3.0).timeout
@@ -161,6 +163,7 @@ func adrenaline_rush() -> void:
 
 func ground_slam() -> void:
 	ability_cooldown = 6.0
+	ability_max_cooldown = 6.0
 	anim_sprite.material = GameManager.HIT_MATERIAL
 	GameManager.on_shake_request.emit(3.0)
 
@@ -193,6 +196,7 @@ func ground_slam() -> void:
 
 func quick_dash() -> void:
 	ability_cooldown = 2.0
+	ability_max_cooldown = 2.0
 	var dir = Input.get_vector("Move_Left", "Move_Right", "Move_Up", "Move_Down")
 	if dir == Vector2.ZERO:
 		dir = Vector2.RIGHT if anim_sprite.flip_h else Vector2.LEFT

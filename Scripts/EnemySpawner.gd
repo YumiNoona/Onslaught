@@ -80,17 +80,22 @@ func spawn_enemy() -> void:
 	
 func get_tiered_enemy() -> PackedScene:
 	var pool: Array[PackedScene] = []
-	if not enemy_list.is_empty():
-		pool.append_array(enemy_list)
-		if wave_number > 3:
-			for i in range(min(wave_number, 5)):
-				pool.append(enemy_list.pick_random())
-	if wave_number <= 7 and not mid_wave_enemies.is_empty():
-		for i in range(3):
-			pool.append(mid_wave_enemies.pick_random())
-	if wave_number <= 3 and not early_wave_enemies.is_empty():
-		for i in range(4):
+	if wave_number <= 3:
+		if not early_wave_enemies.is_empty():
+			for i in range(5):
+				pool.append(early_wave_enemies.pick_random())
+	elif wave_number <= 7:
+		if not early_wave_enemies.is_empty():
 			pool.append(early_wave_enemies.pick_random())
+		if not mid_wave_enemies.is_empty():
+			for i in range(4):
+				pool.append(mid_wave_enemies.pick_random())
+	else:
+		if not mid_wave_enemies.is_empty():
+			pool.append(mid_wave_enemies.pick_random())
+		if not enemy_list.is_empty():
+			for i in range(5):
+				pool.append(enemy_list.pick_random())
 	return pool.pick_random()
 
 func start_enemy_timer() -> void:
