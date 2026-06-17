@@ -105,12 +105,22 @@ theme_override_fonts/font = ExtResource("2_tt5f1")
 theme_override_font_sizes/font_size = 30
 text = "ACHIEVEMENTS"
 
-[node name="BTN_Quit" type="Button" parent="."]
+[node name="BTN_Fullscreen" type="Button" parent="."]
 layout_mode = 0
 offset_left = 850.0
 offset_top = 680.0
 offset_right = 1070.0
 offset_bottom = 740.0
+theme_override_fonts/font = ExtResource("2_tt5f1")
+theme_override_font_sizes/font_size = 30
+text = "FULLSCREEN"
+
+[node name="BTN_Quit" type="Button" parent="."]
+layout_mode = 0
+offset_left = 850.0
+offset_top = 750.0
+offset_right = 1070.0
+offset_bottom = 810.0
 theme_override_fonts/font = ExtResource("2_tt5f1")
 theme_override_font_sizes/font_size = 30
 text = "QUIT"

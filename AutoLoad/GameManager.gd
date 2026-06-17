@@ -259,9 +259,9 @@ func play_explosion_anim(pos: Vector2) -> void:
 	get_tree().current_scene.add_child(anim)
 	anim.play()
 	var timer = get_tree().create_timer(2.0)
-	var finished = false
-	anim.animation_finished.connect(func(): finished = true)
-	while not finished and timer.time_left > 0:
+	var state = [false]
+	anim.animation_finished.connect(func(): state[0] = true)
+	while not state[0] and timer.time_left > 0:
 		await get_tree().process_frame
 	if is_instance_valid(anim):
 		anim.queue_free()

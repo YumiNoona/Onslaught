@@ -26,6 +26,11 @@ func _input(event: InputEvent) -> void:
 			audio_pick_up.play()
 			GameManager.remove_coin(weapon_data.buy_price)
 			GameManager.player.setup_weapon(weapon_data)
+			hide()
+			can_interact = false
+			set_deferred("monitoring", false)
+			await audio_pick_up.finished
+			queue_free()
 
 func _on_body_entered(_body: Node2D) -> void:
 	buy_label.show()

@@ -4,6 +4,7 @@ extends Control
 @onready var btn_quit: Button = $BTN_Quit
 @onready var btn_settings: Button = $BTN_Settings
 @onready var btn_achievements: Button = $BTN_Achievements
+@onready var btn_fullscreen: Button = $BTN_Fullscreen
 @onready var settings_panel: Control = $SettingsPanel
 @onready var achievements_panel: Control = $AchievementsPanel
 @onready var version_label: Label = $VersionLabel
@@ -15,10 +16,14 @@ func _ready() -> void:
 	btn_quit.pressed.connect(_on_quit_pressed)
 	btn_settings.pressed.connect(_on_settings_pressed)
 	btn_achievements.pressed.connect(_on_achievements_pressed)
+	btn_fullscreen.pressed.connect(_on_fullscreen_pressed)
 	var t = create_tween().set_loops()
 	t.tween_property($Title, "modulate", Color(0.9, 0.9, 1, 0.7), 1.5)
 	t.tween_property($Title, "modulate", Color(0.9, 0.9, 1, 1), 1.5)
 	version_label.text = "v1.0"
+	
+	if OS.get_name() == "Web":
+		btn_quit.hide()
 
 
 func _process(delta: float) -> void:
@@ -40,3 +45,10 @@ func _on_settings_pressed() -> void:
 func _on_achievements_pressed() -> void:
 	achievements_panel.populate()
 	achievements_panel.show()
+
+func _on_fullscreen_pressed() -> void:
+	var current = DisplayServer.window_get_mode()
+	if current == DisplayServer.WINDOW_MODE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)

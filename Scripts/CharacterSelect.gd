@@ -35,7 +35,11 @@ var characters := [
 ]
 
 func _ready() -> void:
-	ResourceLoader.load_threaded_request("res://Scenes/Game.tscn")
+	if OS.has_feature("web"):
+		game_scene = load("res://Scenes/Game.tscn")
+		game_loaded = true
+	else:
+		ResourceLoader.load_threaded_request("res://Scenes/Game.tscn")
 	var title = $VBox/Title
 	var t = create_tween().set_loops()
 	t.tween_property(title, "modulate", Color(0.9, 0.9, 1, 0.7), 1.5)
@@ -69,7 +73,7 @@ func _set_diff(mult: float, btn: String) -> void:
 		node.modulate = selected if b == btn else normal
 
 func _process(_delta: float) -> void:
-	if not game_loaded and ResourceLoader.load_threaded_get_status("res://Scenes/Game.tscn") == ResourceLoader.THREAD_LOAD_LOADED:
+	if not game_loaded and not OS.has_feature("web") and ResourceLoader.load_threaded_get_status("res://Scenes/Game.tscn") == ResourceLoader.THREAD_LOAD_LOADED:
 		game_scene = ResourceLoader.load_threaded_get("res://Scenes/Game.tscn") as PackedScene
 		game_loaded = true
 
@@ -78,8 +82,5 @@ func _on_select(c: Dictionary) -> void:
 	if game_loaded:
 		get_tree().change_scene_to_packed(game_scene)
 	else:
-		if has_node("LoadingLabel"):
-			$LoadingLabel.show()
-		while not game_loaded:
-			await get_tree().process_frame
-		get_tree().change_scene_to_packed(game_scene)
+		# fallback for web where threading may not work
+		get_tree().change_scene_to_file("res://Scenes/Game.tscn")

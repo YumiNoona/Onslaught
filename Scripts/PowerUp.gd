@@ -31,6 +31,8 @@ func _on_body_entered(body: Node2D) -> void:
 	var player = body as Player
 	if not player:
 		return
+	hide()
+	set_deferred("monitoring", false)
 	show_pickup_text()
 	GameManager.on_shake_request.emit(GameConfig.powerup_pickup_shake)
 

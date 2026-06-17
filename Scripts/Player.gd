@@ -126,6 +126,8 @@ func _process(_delta: float) -> void:
 	update_weapon_rotation()
 
 func play_footstep() -> void:
+	if OS.get_name() == "Web":
+		return
 	var player = AudioStreamPlayer2D.new()
 	var gen = AudioStreamGenerator.new()
 	gen.mix_rate = GameConfig.footstep_mix_rate

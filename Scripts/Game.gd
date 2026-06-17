@@ -93,7 +93,6 @@ func _ready() -> void:
 	add_child(player)
 	move_child(player, 0)
 	GameManager.player = player
-	_start_first_wave()
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	GameManager.on_game_over.connect(_on_game_over)
 
@@ -129,6 +128,7 @@ func _ready() -> void:
 	# Screen fade in
 	fade_overlay.color = Color.BLACK
 	var fade_tween = create_tween()
+	fade_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	fade_tween.tween_property(fade_overlay, "color:a", 0.0, GameConfig.fade_in_duration).set_delay(GameConfig.fade_in_delay)
 
 	# Pause Menu UI setup
@@ -142,6 +142,9 @@ func _ready() -> void:
 	pause_btn_main_menu.pressed.connect(_on_main_menu)
 
 	print("✅ Game ready, game_over state:", GameManager.is_game_over)
+
+	# Start first wave last — this pauses the tree for the shop
+	_start_first_wave()
 
 
 func _process(_delta: float) -> void:

@@ -19,13 +19,22 @@ func _ready() -> void:
 
 func load_all_weapons() -> void:
 	all_weapons.clear()
-	var dir = DirAccess.open("res://Data")
-	if dir:
-		for file in dir.get_files():
-			if file.ends_with(".tres"):
-				var w = load("res://Data/" + file) as WeaponData
-				if w:
-					all_weapons.append(w)
+	var weapons = [
+		preload("res://Data/W_AKM.tres"),
+		preload("res://Data/W_AR.tres"),
+		preload("res://Data/W_Auto_Pistol.tres"),
+		preload("res://Data/W_DoubleShotGun.tres"),
+		preload("res://Data/W_HandGun.tres"),
+		preload("res://Data/W_M24.tres"),
+		preload("res://Data/W_M4.tres"),
+		preload("res://Data/W_M416.tres"),
+		preload("res://Data/W_Pistol.tres"),
+		preload("res://Data/W_ShotGun.tres"),
+		preload("res://Data/W_UZI.tres"),
+	]
+	for w in weapons:
+		if w:
+			all_weapons.append(w)
 
 var seen_weapons: Array[String] = []
 
@@ -70,6 +79,8 @@ func show_shop() -> void:
 	populate_cards()
 
 func populate_cards() -> void:
+	if selected_weapons.size() < 3:
+		return
 	for i in 3:
 		var w = selected_weapons[i]
 		var card = cards[i]
