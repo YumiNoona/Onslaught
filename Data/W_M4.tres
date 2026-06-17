@@ -17,3 +17,4 @@ pierce = 0
 gun_name = "M4"
 description = "Standard rifle. Balanced fire rate."
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"
+spread_angle = 1.5

@@ -56,6 +56,26 @@ var main_menu_scene := preload("res://Scenes/MainMenu.tscn")
 
 const POWERUP_LABEL = preload("res://Scenes/PowerUpLabel.tscn")
 
+const PRELOADED_CHARACTERS = {
+	"res://Scenes/Player.tscn": preload("res://Scenes/Player.tscn"),
+	"res://Scenes/Player_Rocky.tscn": preload("res://Scenes/Player_Rocky.tscn"),
+	"res://Scenes/Player_Simon.tscn": preload("res://Scenes/Player_Simon.tscn")
+}
+
+const PRELOADED_WEAPONS = [
+	preload("res://Data/W_AKM.tres"),
+	preload("res://Data/W_AR.tres"),
+	preload("res://Data/W_Auto_Pistol.tres"),
+	preload("res://Data/W_DoubleShotGun.tres"),
+	preload("res://Data/W_HandGun.tres"),
+	preload("res://Data/W_M24.tres"),
+	preload("res://Data/W_M4.tres"),
+	preload("res://Data/W_M416.tres"),
+	preload("res://Data/W_Pistol.tres"),
+	preload("res://Data/W_ShotGun.tres"),
+	preload("res://Data/W_UZI.tres")
+]
+
 var combo_tween: Tween
 var crosshair_recoil: Vector2 = Vector2.ZERO
 var tracked_boss: Enemy = null
@@ -65,7 +85,9 @@ var hud_update_counter: int = 0
 
 func _ready() -> void:
 	GameManager.reset_game_state()
-	var scene = load(GameManager.selected_character_scene) as PackedScene
+	var scene = PRELOADED_CHARACTERS.get(GameManager.selected_character_scene)
+	if not scene:
+		scene = load(GameManager.selected_character_scene) as PackedScene
 	player = scene.instantiate()
 	player.name = "Player Veneca"
 	add_child(player)

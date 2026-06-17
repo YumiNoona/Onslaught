@@ -56,7 +56,7 @@ func shoot_weapon() -> void:
 	if equipped_weapon.max_ammo > 0:
 		current_ammo -= 1
 	var dir = (get_global_mouse_position() - global_position).normalized()
-	var b_count = equipped_weapon.bullet_count
+	var b_count = min(equipped_weapon.bullet_count, 8)
 	var spread = equipped_weapon.spread_angle
 	for i in b_count:
 		var bullet: Bullet = equipped_weapon.bullet_scene.instantiate()
@@ -64,19 +64,20 @@ func shoot_weapon() -> void:
 		bullet.damage = equipped_weapon.damage + GameManager.player.damage_bonus
 		bullet.pierce = equipped_weapon.pierce + GameManager.player.pierce_bonus
 		bullet.crit_chance = equipped_weapon.crit_chance + GameManager.player.crit_bonus
-		if b_count > 1:
-			var offset = randf_range(-spread, spread)
-			bullet.move_direction = dir.rotated(deg_to_rad(offset))
-		else:
-			bullet.move_direction = dir
+		
+		var offset = randf_range(-spread, spread) if spread > 0 else 0.0
+		bullet.move_direction = dir.rotated(deg_to_rad(offset))
+		
 		get_tree().current_scene.add_child(bullet)
 	fire_audio.play()
 	anim_player.play("Shoot")
 	GameManager.on_shake_request.emit(equipped_weapon.damage / 3.0)
 	GameManager.on_weapon_fired.emit(dir)
-	delay_btw_shots = equipped_weapon.delay_between_shots / GameManager.player.fire_rate_mod
+	delay_btw_shots = max(equipped_weapon.delay_between_shots / GameManager.player.fire_rate_mod, 0.05)
 
-	# Muzzle flash
+	call_deferred("_play_muzzle_flash")
+
+func _play_muzzle_flash() -> void:
 	weapon_sprite.material = GameManager.HIT_MATERIAL
 	await get_tree().create_timer(GameConfig.muzzle_flash_duration).timeout
 	if is_instance_valid(weapon_sprite):

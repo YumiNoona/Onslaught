@@ -75,7 +75,11 @@ func _process(_delta: float) -> void:
 
 func _on_select(c: Dictionary) -> void:
 	GameManager.selected_character_scene = c["scene"]
-	if game_scene:
+	if game_loaded:
 		get_tree().change_scene_to_packed(game_scene)
 	else:
-		get_tree().change_scene_to_file("res://Scenes/Game.tscn")
+		if has_node("LoadingLabel"):
+			$LoadingLabel.show()
+		while not game_loaded:
+			await get_tree().process_frame
+		get_tree().change_scene_to_packed(game_scene)

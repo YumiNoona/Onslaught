@@ -176,13 +176,13 @@ extends Node
 ## Lifetime of each death particle in seconds
 @export var death_particles_lifetime: float = 0.4
 ## Minimum initial velocity of death particles
-@export var death_particles_velocity_min: float = 200.0
+@export var death_particles_velocity_min: float = 400.0
 ## Maximum initial velocity of death particles
-@export var death_particles_velocity_max: float = 400.0
+@export var death_particles_velocity_max: float = 700.0
 ## Minimum scale of death particles
-@export var death_particles_scale_min: float = 2.0
+@export var death_particles_scale_min: float = 8.0
 ## Maximum scale of death particles
-@export var death_particles_scale_max: float = 4.0
+@export var death_particles_scale_max: float = 16.0
 ## Gravity force applied to death particles on Y axis
 @export var death_particles_gravity_y: float = 200.0
 

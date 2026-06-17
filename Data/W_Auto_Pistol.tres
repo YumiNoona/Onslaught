@@ -15,3 +15,4 @@ delay_between_shots = 0.2
 fire_pos = Vector2(580, -50)
 bullet_scene = ExtResource("1_3eq05")
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"
+spread_angle = 3.0

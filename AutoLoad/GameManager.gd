@@ -257,8 +257,14 @@ func play_explosion_anim(pos: Vector2) -> void:
 	anim.global_position = pos
 	anim.z_index = 99
 	get_tree().current_scene.add_child(anim)
-	await anim.animation_finished
-	anim.queue_free()
+	anim.play()
+	var timer = get_tree().create_timer(2.0)
+	var finished = false
+	anim.animation_finished.connect(func(): finished = true)
+	while not finished and timer.time_left > 0:
+		await get_tree().process_frame
+	if is_instance_valid(anim):
+		anim.queue_free()
 
 func play_damage_text(pos: Vector2, value: int, is_crit: bool = false) -> void:
 	var damage = DAMAGE_TEXT.instantiate() as DamageText
