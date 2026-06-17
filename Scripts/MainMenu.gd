@@ -2,17 +2,43 @@ extends Control
 
 @onready var btn_start: Button = $BTN_Start
 @onready var btn_quit: Button = $BTN_Quit
-@onready var title: Label = $Title
+@onready var btn_settings: Button = $BTN_Settings
+@onready var btn_achievements: Button = $BTN_Achievements
+@onready var bg_far: TextureRect = $BgTilesFar
+@onready var bg_near: TextureRect = $BgTiles
+@onready var settings_panel: Control = $SettingsPanel
+@onready var achievements_panel: Control = $AchievementsPanel
+@onready var version_label: Label = $VersionLabel
+
 
 func _ready() -> void:
 	btn_start.pressed.connect(_on_start_pressed)
 	btn_quit.pressed.connect(_on_quit_pressed)
+	btn_settings.pressed.connect(_on_settings_pressed)
+	btn_achievements.pressed.connect(_on_achievements_pressed)
 	var t = create_tween().set_loops()
-	t.tween_property(title, "modulate", Color(0.9, 0.9, 1, 0.7), 1.5)
-	t.tween_property(title, "modulate", Color(0.9, 0.9, 1, 1), 1.5)
+	t.tween_property($Title, "modulate", Color(0.9, 0.9, 1, 0.7), 1.5)
+	t.tween_property($Title, "modulate", Color(0.9, 0.9, 1, 1), 1.5)
+	version_label.text = "v1.0"
+
+
+func _process(delta: float) -> void:
+	bg_far.region_rect.position.x -= delta * 6
+	bg_near.region_rect.position.x -= delta * 18
+
 
 func _on_start_pressed() -> void:
 	get_tree().change_scene_to_file("res://Scenes/CharacterSelect.tscn")
 
+
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+
+func _on_settings_pressed() -> void:
+	settings_panel.show()
+
+
+func _on_achievements_pressed() -> void:
+	achievements_panel.populate()
+	achievements_panel.show()

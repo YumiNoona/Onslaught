@@ -162,7 +162,7 @@ _data = {
 &"Shoot": SubResource("Animation_kih0c")
 }
 
-[node name="Player" type="CharacterBody2D" unique_id=665741448]
+[node name="Player_Veneca" type="CharacterBody2D" unique_id=665741448]
 material = ExtResource("1_lyrkg")
 scale = Vector2(0.25, 0.25)
 collision_layer = 2

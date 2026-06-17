@@ -1,10 +1,10 @@
 extends CharacterBody2D
 class_name Player
 
-enum CharacterType { DEFAULT, ROCKY, SIMON }
+enum CharacterType { VENECA, ROCKY, SIMON }
 
 
-@export var character_type: CharacterType = CharacterType.DEFAULT
+@export var character_type: CharacterType = CharacterType.VENECA
 
 @export var move_speed := 700.0
 @export var max_health: float = 10.0:
@@ -25,6 +25,7 @@ var mouse_pos: Vector2
 # Perk bonus stats
 var pierce_bonus: int = 0
 var damage_bonus: float = 0.0
+var crit_bonus: float = 0.0
 @export var fire_rate_mod: float = 1.0
 
 # Character ability

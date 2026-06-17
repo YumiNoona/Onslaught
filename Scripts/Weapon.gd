@@ -63,6 +63,7 @@ func shoot_weapon() -> void:
 		bullet.global_position = fire_pos.global_position
 		bullet.damage = equipped_weapon.damage + GameManager.player.damage_bonus
 		bullet.pierce = equipped_weapon.pierce + GameManager.player.pierce_bonus
+		bullet.crit_chance = equipped_weapon.crit_chance + GameManager.player.crit_bonus
 		if b_count > 1:
 			var offset = randf_range(-spread, spread)
 			bullet.move_direction = dir.rotated(deg_to_rad(offset))

@@ -122,8 +122,12 @@ func spawn_death_particles() -> void:
 	particles.color_ramp = null
 	particles.gravity = Vector2(0, GameConfig.death_particles_gravity_y)
 	particles.z_index = 15
-	add_child(particles)
+	particles.global_position = global_position
+	get_tree().current_scene.add_child(particles)
 	particles.emitting = true
+	await get_tree().create_timer(particles.lifetime + 0.2).timeout
+	if is_instance_valid(particles):
+		particles.queue_free()
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:

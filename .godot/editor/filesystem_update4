@@ -17,3 +17,16 @@ res://Scenes/Game.tscn
 res://AutoLoad/GameConfig.gd
 res://Scenes/Player_Simon.tscn
 res://Scenes/Player.tscn
+res://Data/W_AKM.tres
+res://Data/W_AR.tres
+res://Data/W_Auto_Pistol.tres
+res://Data/W_DoubleShotGun.tres
+res://Data/W_HandGun.tres
+res://Data/W_M24.tres
+res://Data/W_M416.tres
+res://Data/W_Pistol.tres
+res://Data/W_ShotGun.tres
+res://Data/W_UZI.tres
+res://Scripts/WeaponData.gd
+res://Scenes/WeaponShop.tscn
+res://Scripts/HealthPickup.gd

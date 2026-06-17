@@ -19,6 +19,8 @@ var characters := [
 		"ability": "Ground Slam: knocks back & damages nearby enemies (6s CD)",
 		"pros": "+50% HP, damage resist",
 		"cons": "-20% move speed, -15% fire rate",
+		"unlock_hint": "Kill 100 enemies total",
+		"unlock_check": func(): return GameManager.persistent_kills >= 100,
 	},
 	{
 		"name": "SIMON",
@@ -27,6 +29,8 @@ var characters := [
 		"ability": "Quick Dash: fast short-dash with invulnerability (2s CD)",
 		"pros": "+25% speed, +15% fire rate",
 		"cons": "-30% HP",
+		"unlock_hint": "Reach wave 10",
+		"unlock_check": func(): return GameManager.persistent_max_wave >= 10,
 	},
 ]
 
@@ -44,7 +48,14 @@ func _ready() -> void:
 		card.get_node("AbilityLabel").text = c["ability"]
 		card.get_node("ProsLabel").text = c["pros"]
 		card.get_node("ConsLabel").text = c["cons"]
-		card.get_node("SelectBtn").pressed.connect(_on_select.bind(c))
+		var btn = card.get_node("SelectBtn") as Button
+		if c.has("unlock_check") and not c["unlock_check"].call():
+			btn.text = "LOCKED"
+			btn.disabled = true
+			card.get_node("DescLabel").text = "LOCKED — %s" % c["unlock_hint"]
+		else:
+			btn.text = "SELECT"
+			btn.pressed.connect(_on_select.bind(c))
 	$VBox/DiffRow/BtnEasy.pressed.connect(_set_diff.bind(GameConfig.difficulty_easy_mult, "BtnEasy"))
 	$VBox/DiffRow/BtnNormal.pressed.connect(_set_diff.bind(GameConfig.difficulty_normal_mult, "BtnNormal"))
 	$VBox/DiffRow/BtnHard.pressed.connect(_set_diff.bind(GameConfig.difficulty_hard_mult, "BtnHard"))

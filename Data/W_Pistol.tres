@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponData" load_steps=4 format=3 uid="uid://b8xthspugij0h"]
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://b8xthspugij0h"]
 
 [ext_resource type="PackedScene" uid="uid://djjrr53cykr6u" path="res://Scenes/Bullet.tscn" id="1_8erfv"]
 [ext_resource type="Script" uid="uid://b07a6gnc1a03x" path="res://Scripts/WeaponData.gd" id="1_idrih"]
@@ -6,13 +6,12 @@
 
 [resource]
 script = ExtResource("1_idrih")
+gun_name = "Pistol"
 gun_sprite = ExtResource("1_roojr")
 gun_colour = Color(0, 1, 0, 1)
 buy_price = 30
-damage = 1.0
-delay_between_shots = 0.6
+damage = 2.0
+delay_between_shots = 0.35
 fire_pos = Vector2(580, -50)
 bullet_scene = ExtResource("1_8erfv")
-pierce = 0
-gun_name = "Pistol"
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"

@@ -23,6 +23,7 @@ func show_perks() -> void:
 		{"name": "Bullet Pierce +1", "apply": func(p): p.pierce_bonus += 1},
 		{"name": "Fire Rate +20%", "apply": func(p): p.fire_rate_mod += 0.2},
 		{"name": "Damage +1", "apply": func(p): p.damage_bonus += 1},
+		{"name": "Crit Chance +5%", "apply": func(p): p.crit_bonus += 0.05},
 	]
 
 	var pool = perk_pool.duplicate()
@@ -45,11 +46,13 @@ func populate_cards() -> void:
 func _on_perk_chosen(perk: Dictionary) -> void:
 	perk["apply"].call(GameManager.player)
 	GameManager.perks_log.append(perk["name"])
+	SoundManager.play_click()
 	hide()
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 func _on_skip() -> void:
+	SoundManager.play_click()
 	hide()
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN

@@ -8,11 +8,12 @@
 script = ExtResource("3_adwuy")
 gun_sprite = ExtResource("2_ymwu8")
 gun_colour = Color(0.520749, 0.110207, 0.368327, 1)
-buy_price = 80
-damage = 4.5
-delay_between_shots = 0.3
+buy_price = 85
+damage = 4.0
+delay_between_shots = 0.25
 fire_pos = Vector2(580, -10)
 bullet_scene = ExtResource("1_ymwu8")
 pierce = 0
 gun_name = "M4"
+description = "Standard rifle. Balanced fire rate."
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"

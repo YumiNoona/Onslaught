@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://62pr0s81n05d"]
+[gd_scene load_steps=7 format=3 uid="uid://62pr0s81n05d"]
 
 [ext_resource type="Script" uid="uid://hf3ftd0v1qpv" path="res://Scripts/MainMenu.gd" id="1_tt5f1"]
 [ext_resource type="FontFile" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="2_tt5f1"]
 [ext_resource type="Texture2D" uid="uid://ubm1eqcoxtwx" path="res://Assets/Sprites/Environment/ground2_white.png" id="3_bg"]
 [ext_resource type="Texture2D" uid="uid://drpmj5jkfv8o7" path="res://Assets/Sprites/Extras/crosshair.png" id="4_glow"]
+[ext_resource type="PackedScene" uid="uid://bg3b76tmhj2qm" path="res://Scenes/SettingsPanel.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://cq8gciopew26a" path="res://Scenes/AchievementsPanel.tscn" id="6"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -13,6 +15,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tt5f1")
+
+[node name="BgTilesFar" type="TextureRect" parent="."]
+modulate = Color(0.25, 0.25, 0.25, 1)
+texture = ExtResource("3_bg")
+expand_mode = 1
+stretch_mode = 6
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
 
 [node name="BgTiles" type="TextureRect" parent="."]
 modulate = Color(0.3, 0.3, 0.3, 1)
@@ -64,20 +77,54 @@ modulate = Color(0.9, 0.9, 1, 1)
 
 [node name="BTN_Start" type="Button" parent="."]
 layout_mode = 0
-offset_left = 860.0
-offset_top = 480.0
-offset_right = 1060.0
-offset_bottom = 540.0
+offset_left = 850.0
+offset_top = 470.0
+offset_right = 1070.0
+offset_bottom = 530.0
 theme_override_fonts/font = ExtResource("2_tt5f1")
 theme_override_font_sizes/font_size = 40
 text = "START"
 
+[node name="BTN_Settings" type="Button" parent="."]
+layout_mode = 0
+offset_left = 850.0
+offset_top = 540.0
+offset_right = 1070.0
+offset_bottom = 600.0
+theme_override_fonts/font = ExtResource("2_tt5f1")
+theme_override_font_sizes/font_size = 30
+text = "SETTINGS"
+
+[node name="BTN_Achievements" type="Button" parent="."]
+layout_mode = 0
+offset_left = 850.0
+offset_top = 610.0
+offset_right = 1070.0
+offset_bottom = 670.0
+theme_override_fonts/font = ExtResource("2_tt5f1")
+theme_override_font_sizes/font_size = 30
+text = "ACHIEVEMENTS"
+
 [node name="BTN_Quit" type="Button" parent="."]
 layout_mode = 0
-offset_left = 860.0
-offset_top = 560.0
-offset_right = 1060.0
-offset_bottom = 620.0
+offset_left = 850.0
+offset_top = 680.0
+offset_right = 1070.0
+offset_bottom = 740.0
 theme_override_fonts/font = ExtResource("2_tt5f1")
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 30
 text = "QUIT"
+
+[node name="VersionLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 1040.0
+offset_right = 200.0
+offset_bottom = 1070.0
+theme_override_fonts/font = ExtResource("2_tt5f1")
+theme_override_font_sizes/font_size = 18
+modulate = Color(0.5, 0.5, 0.5, 1)
+
+[node name="SettingsPanel" parent="." instance=ExtResource("5")]
+
+[node name="AchievementsPanel" parent="." instance=ExtResource("6")]

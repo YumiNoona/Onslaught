@@ -17,6 +17,7 @@ var player: Player
 @onready var powerup_indicator: VBoxContainer = %PowerUpIndicator
 @onready var ability_bar: ProgressBar = %AbilityBar
 @onready var reload_bar: ProgressBar = %ReloadBar
+@onready var ammo_label: Label = %AmmoLabel
 @onready var boss_health_bar: ProgressBar = %BossHealthBar
 @onready var boss_health_label: Label = %BossHealthLabel
 
@@ -57,13 +58,14 @@ var combo_tween: Tween
 var crosshair_recoil: Vector2 = Vector2.ZERO
 var tracked_boss: Enemy = null
 var health_pulse_time: float = 0.0
+var hud_update_counter: int = 0
 
 
 func _ready() -> void:
 	GameManager.reset_game_state()
 	var scene = load(GameManager.selected_character_scene) as PackedScene
 	player = scene.instantiate()
-	player.name = "Player"
+	player.name = "Player Venesa"
 	add_child(player)
 	move_child(player, 0)
 	GameManager.player = player
@@ -127,10 +129,13 @@ func _process(_delta: float) -> void:
 		update_combo_display()
 		update_xp_bar()
 		update_ability_cooldown()
-		update_powerup_indicator()
 		update_boss_health_bar()
 		update_reload_bar()
+		update_ammo_label()
 		update_low_health_vignette(_delta)
+		hud_update_counter += 1
+		if hud_update_counter % 5 == 0:
+			update_powerup_indicator()
 
 
 func _input(event) -> void:
@@ -327,6 +332,16 @@ func update_boss_health_bar() -> void:
 				tracked_boss = enemy
 				break
 
+func update_ammo_label() -> void:
+	if not player:
+		return
+	var w = player.weapon
+	if w.equipped_weapon and w.equipped_weapon.max_ammo > 0:
+		ammo_label.text = "%s / %s" % [w.current_ammo, w.equipped_weapon.max_ammo]
+		ammo_label.show()
+	else:
+		ammo_label.hide()
+
 func update_reload_bar() -> void:
 	if player and player.weapon.is_reloading:
 		reload_bar.max_value = player.weapon.equipped_weapon.reload_time
@@ -367,6 +382,7 @@ func _on_weapon_fired(direction: Vector2) -> void:
 	crosshair_recoil = -direction * GameConfig.crosshair_recoil_impulse
 
 func _on_level_up() -> void:
+	SoundManager.play_levelup()
 	GameManager.on_shake_request.emit(GameConfig.level_up_shake)
 	var mat = vignette.material as ShaderMaterial
 	mat.set_shader_parameter("tint_color", GameConfig.level_up_tint)
@@ -383,6 +399,7 @@ func _on_player_hit() -> void:
 
 
 func _on_enemy_spawner_on_wave_completed() -> void:
+	SoundManager.play_levelup()
 	wave_label.show()
 	enemy_count_label.hide()
 	wave_timer.start()

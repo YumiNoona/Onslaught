@@ -35,6 +35,9 @@ func show_shop() -> void:
 	shop_wave = GameManager.current_wave
 
 	var pool = all_weapons.duplicate()
+	var current = GameManager.player.weapon.equipped_weapon
+	if current:
+		pool = pool.filter(func(w): return w.gun_name != current.gun_name)
 	pool.shuffle()
 	selected_weapons = pool.slice(0, 3)
 
@@ -47,7 +50,7 @@ func populate_cards() -> void:
 		card.get_node("NameLabel").text = w.gun_name
 		card.get_node("Sprite").texture = w.gun_sprite
 		card.get_node("Sprite").modulate = w.gun_colour
-		card.get_node("StatsLabel").text = "DMG: %s  Rate: %s/s\nPierce: %s" % [w.damage, str(1.0 / w.delay_between_shots).pad_decimals(1), w.pierce]
+		card.get_node("StatsLabel").text = "DMG: %s  RoF: %s/s\nPierce: %s\n%s" % [w.damage, str(1.0 / w.delay_between_shots).pad_decimals(1), w.pierce, w.description]
 		card.get_node("PriceLabel").text = "%s coins" % w.buy_price
 		var btn = card.get_node("BuyBtn") as Button
 		btn.text = "Buy"
@@ -69,6 +72,7 @@ func _on_buy(w: WeaponData, btn: Button) -> void:
 	GameManager.remove_coin(w.buy_price)
 	GameManager.player.setup_weapon(w)
 	bought_any = true
+	SoundManager.play_click()
 	close_shop()
 
 func close_shop() -> void:
@@ -78,6 +82,7 @@ func close_shop() -> void:
 	skipped.emit()
 
 func _on_skip() -> void:
+	SoundManager.play_click()
 	if not bought_any and shop_wave == 1:
 		var cheapest = get_cheapest_weapon()
 		if cheapest:

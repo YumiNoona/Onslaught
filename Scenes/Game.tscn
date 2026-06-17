@@ -20,7 +20,7 @@
 [ext_resource type="Resource" uid="uid://diyqdwbxs8m0b" path="res://Data/W_HandGun.tres" id="15_raj38"]
 [ext_resource type="Resource" uid="uid://ba75x0sd5yst6" path="res://Data/W_UZI.tres" id="16_8e0uq"]
 [ext_resource type="Texture2D" uid="uid://d0ioacy2yuqsg" path="res://Assets/Sprites/tile_coin.png" id="16_alh3a"]
-[ext_resource type="Script" uid="uid://bya3r76wrly86" path="res://Scripts/Minimap.gd" id="17_ny8n0"]
+[ext_resource type="PackedScene" uid="uid://c0eh2bfuwtm7i" path="res://Scenes/Minimap.tscn" id="17_ny8n0"]
 [ext_resource type="Shader" uid="uid://c6lstk4g36acj" path="res://Material/Vignette.gdshader" id="18_x3xnh"]
 [ext_resource type="PackedScene" uid="uid://jf4pjism4f6w" path="res://Scenes/WeaponShop.tscn" id="19_ws"]
 [ext_resource type="PackedScene" uid="uid://cdrcvt121oe7i" path="res://Scenes/LevelUpUI.tscn" id="20_lvui"]
@@ -300,17 +300,13 @@ text = "Score: 0"
 label_settings = SubResource("LabelSettings_alh3a")
 horizontal_alignment = 2
 
-[node name="Minimap" type="Control" parent="CanvasLayer/GameUI" unique_id=305688914]
-custom_minimum_size = Vector2(200, 200)
+[node name="Minimap" parent="CanvasLayer/GameUI" unique_id=305688914 instance=ExtResource("17_ny8n0")]
 anchors_preset = 0
 offset_left = 1700.0
 offset_top = 40.0
 offset_right = 1900.0
 offset_bottom = 240.0
 mouse_filter = 2
-script = ExtResource("17_ny8n0")
-map_size = null
-radar_radius = null
 
 [node name="XpBar" type="ProgressBar" parent="CanvasLayer/GameUI" unique_id=340015634]
 unique_name_in_owner = true
@@ -349,6 +345,18 @@ offset_top = 920.0
 offset_right = 1150.0
 offset_bottom = 945.0
 show_percentage = false
+
+[node name="AmmoLabel" type="Label" parent="CanvasLayer/GameUI" unique_id=340015639]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 750.0
+offset_top = 890.0
+offset_right = 1150.0
+offset_bottom = 915.0
+theme_override_fonts/font = ExtResource("15_acvyw")
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
 
 [node name="BossHealthBar" type="ProgressBar" parent="CanvasLayer/GameUI" unique_id=340015638]
 unique_name_in_owner = true

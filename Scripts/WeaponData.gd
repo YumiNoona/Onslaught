@@ -14,3 +14,7 @@ class_name WeaponData
 @export var reload_time: float = 1.0
 @export var bullet_count: int = 1
 @export var spread_angle: float = 0.0
+## Short pros/cons text shown in the weapon shop card
+@export var description: String = ""
+## Critical hit chance (0.0–1.0). On crit, damage is doubled.
+@export var crit_chance: float = 0.1
