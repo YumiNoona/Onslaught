@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" uid="uid://b02fjafkqo3sv" path="res://Assets/Sprites/light.png" id="1"]
+
+[node name="HitSpark" type="Sprite2D"]
+texture = ExtResource("1")
+z_index = 10
+modulate = Color(1, 1, 0.5, 1)

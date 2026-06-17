@@ -69,7 +69,7 @@ func shoot_weapon() -> void:
 			bullet.move_direction = dir.rotated(deg_to_rad(offset))
 		else:
 			bullet.move_direction = dir
-		get_tree().root.add_child(bullet)
+		get_tree().current_scene.add_child(bullet)
 	fire_audio.play()
 	anim_player.play("Shoot")
 	GameManager.on_shake_request.emit(equipped_weapon.damage / 3.0)

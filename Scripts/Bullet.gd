@@ -54,12 +54,9 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	queue_free()
 
 func spawn_hit_spark() -> void:
-	var spark = Sprite2D.new()
-	spark.texture = preload("res://Assets/Sprites/light.png")
+	var spark = preload("res://Scenes/HitSpark.tscn").instantiate()
 	spark.global_position = global_position
 	spark.scale = Vector2(GameConfig.hit_spark_initial_scale, GameConfig.hit_spark_initial_scale)
-	spark.modulate = Color(1, 1, 0.5, 1)
-	spark.z_index = 10
 	get_tree().current_scene.add_child(spark)
 	var t = create_tween()
 	t.tween_property(spark, "modulate:a", 0, GameConfig.hit_spark_fade_duration)

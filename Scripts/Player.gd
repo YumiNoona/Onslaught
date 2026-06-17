@@ -87,7 +87,7 @@ func start_dash() -> void:
 	trail.default_color = Color(1, 1, 1, 0.5)
 	trail.width = 6
 	trail.z_index = -1
-	get_tree().root.add_child(trail)
+	get_tree().current_scene.add_child(trail)
 	var elapsed = 0.0
 	while elapsed < dash_duration:
 		trail.add_point(global_position)
@@ -131,7 +131,7 @@ func play_footstep() -> void:
 	player.stream = gen
 	player.max_distance = GameConfig.footstep_max_distance
 	player.volume_db = GameConfig.footstep_base_volume + randf_range(-GameConfig.footstep_volume_variation, GameConfig.footstep_volume_variation)
-	get_tree().root.add_child(player)
+	get_tree().current_scene.add_child(player)
 	player.play()
 	var playback = player.get_stream_playback()
 	var frames = 400
@@ -170,13 +170,10 @@ func ground_slam() -> void:
 	anim_sprite.material = GameManager.HIT_MATERIAL
 	GameManager.on_shake_request.emit(GameConfig.ground_slam_shake)
 
-	var ring = Sprite2D.new()
-	ring.texture = preload("res://Assets/Sprites/light.png")
+	var ring = preload("res://Scenes/GroundSlamRing.tscn").instantiate()
 	ring.position = global_position
-	ring.modulate = Color(1, 0.6, 0.2, 0.8)
 	ring.scale = Vector2(GameConfig.ground_slam_ring_initial_scale, GameConfig.ground_slam_ring_initial_scale)
-	ring.z_index = 10
-	get_tree().root.add_child(ring)
+	get_tree().current_scene.add_child(ring)
 	var ring_tween = create_tween()
 	ring_tween.tween_property(ring, "scale", Vector2(GameConfig.ground_slam_ring_final_scale, GameConfig.ground_slam_ring_final_scale), GameConfig.ground_slam_ring_anim_duration)
 	ring_tween.parallel().tween_property(ring, "modulate:a", 0, GameConfig.ground_slam_ring_anim_duration)
@@ -211,7 +208,7 @@ func quick_dash() -> void:
 	trail.default_color = Color(0.6, 0.8, 1, 0.6)
 	trail.width = 6
 	trail.z_index = -1
-	get_tree().root.add_child(trail)
+	get_tree().current_scene.add_child(trail)
 	var elapsed = 0.0
 	while elapsed < GameConfig.quick_dash_duration:
 		trail.add_point(global_position)

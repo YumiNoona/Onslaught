@@ -83,8 +83,8 @@ func _on_health_component_on_defeated() -> void:
 		spawn_powerup()
 	GameManager.add_score(int(GameConfig.score_per_kill_base * max(GameManager.current_wave, 1)))
 	GameManager.add_xp(int(GameConfig.xp_per_kill_base * max(GameManager.current_wave, 1)))
-	GameManager.increment_combo()
 	GameManager.total_enemies_killed += 1
+	GameManager.increment_combo()
 	spawn_death_particles()
 	GameManager.play_explosion_anim(global_position)
 	GameManager.on_shake_request.emit(GameConfig.shake_boss_death if is_boss else GameConfig.shake_enemy_death)

@@ -27,7 +27,7 @@ func _process(delta: float) -> void:
 		global_position += dir * magnet_speed * delta
 
 func _on_body_entered(_body: Node2D) -> void:
-	GameManager.coins += coin_value
+	GameManager.add_coins(coin_value)
 	pickup.play()
 	await pickup.finished
 	queue_free()

@@ -26,3 +26,7 @@ func play_click() -> void:
 
 func play_levelup() -> void:
 	play(levelup)
+
+
+func play_achievement_unlock() -> void:
+	play(levelup)

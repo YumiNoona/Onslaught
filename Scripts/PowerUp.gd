@@ -63,14 +63,10 @@ func _on_body_entered(body: Node2D) -> void:
 
 func show_pickup_text() -> void:
 	var names = {Type.SPEED: "+SPEED", Type.DAMAGE: "+DAMAGE", Type.INVULN: "+INVULN"}
-	var label = Label.new()
+	var label = preload("res://Scenes/FloatingText.tscn").instantiate()
 	label.text = names[power_type]
-	label.add_theme_font_override("font", preload("res://Assets/Fonts/kenpixel_mini_square.ttf"))
-	label.add_theme_font_size_override("font_size", 28)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.global_position = global_position - Vector2(50, 0)
 	label.modulate = color_map[power_type]
-	label.z_index = 20
 	get_tree().current_scene.add_child(label)
 	var t = get_tree().create_tween()
 	t.tween_property(label, "position", label.position + Vector2(0, -40), 0.3)

@@ -54,6 +54,8 @@ var player: Player
 # Preload main menu for faster transition
 var main_menu_scene := preload("res://Scenes/MainMenu.tscn")
 
+const POWERUP_LABEL = preload("res://Scenes/PowerUpLabel.tscn")
+
 var combo_tween: Tween
 var crosshair_recoil: Vector2 = Vector2.ZERO
 var tracked_boss: Enemy = null
@@ -98,6 +100,9 @@ func _ready() -> void:
 
 	# Wire weapon fired for crosshair recoil
 	GameManager.on_weapon_fired.connect(_on_weapon_fired)
+
+	# Wire achievement unlocks
+	GameManager.on_achievement_unlocked.connect(_on_achievement_unlocked)
 
 	# Screen fade in
 	fade_overlay.color = Color.BLACK
@@ -298,9 +303,7 @@ func update_powerup_indicator() -> void:
 		if idx < existing.size():
 			label = existing[idx]
 		else:
-			label = Label.new()
-			label.add_theme_font_override("font", preload("res://Assets/Fonts/kenpixel_mini_square.ttf"))
-			label.add_theme_font_size_override("font_size", 20)
+			label = POWERUP_LABEL.instantiate()
 			powerup_indicator.add_child(label)
 		var stack = " x%d" % g["count"] if g["count"] > 1 else ""
 		label.text = "%s%s  %ds" % [g["name"], stack, int(g["max_remaining"])]
@@ -392,6 +395,17 @@ func _on_level_up() -> void:
 	t.tween_callback(func(): mat.set_shader_parameter("tint_color", Color(0, 0, 0, 1)))
 	level_up_ui.show_perks()
 
+func _on_achievement_unlocked(ach_id: String) -> void:
+	SoundManager.play_achievement_unlock()
+	var toast = preload("res://Scenes/AchievementToast.tscn").instantiate()
+	for a in GameManager.achievement_defs:
+		if a["id"] == ach_id:
+			var container = $CanvasLayer/GameUI
+			container.add_child(toast)
+			toast.setup(a, container.size.x)
+			break
+
+
 func _on_player_hit() -> void:
 	hit_flash.color = GameConfig.hit_flash_color
 	var tween = create_tween()
@@ -400,6 +414,7 @@ func _on_player_hit() -> void:
 
 func _on_enemy_spawner_on_wave_completed() -> void:
 	SoundManager.play_levelup()
+	GameManager.check_achievements()
 	wave_label.show()
 	enemy_count_label.hide()
 	wave_timer.start()
