@@ -56,6 +56,14 @@ theme_override_font_sizes/font_size = 30
 text = "Coins: 0"
 horizontal_alignment = 1
 
+[node name="TimerLabel" type="Label" parent="Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
 [node name="Cards" type="HBoxContainer" parent="Margin/VBox" unique_id=1553753484]
 layout_mode = 2
 theme_override_constants/separation = 30

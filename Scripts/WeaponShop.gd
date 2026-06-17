@@ -10,6 +10,7 @@ var shop_wave: int = 0
 
 @onready var cards := [%Card0, %Card1, %Card2]
 @onready var coins_label: Label = %CoinsLabel
+@onready var timer_label: Label = %TimerLabel
 @onready var skip_btn: Button = %SkipBtn
 
 func _ready() -> void:
@@ -28,6 +29,18 @@ func load_all_weapons() -> void:
 
 var seen_weapons: Array[String] = []
 
+func _process(_delta: float) -> void:
+	if not visible:
+		return
+	var game = get_tree().current_scene
+	if game and game.has_node("WaveTimer"):
+		var wave_timer = game.get_node("WaveTimer") as Timer
+		if not wave_timer.is_stopped():
+			timer_label.text = "Wave %s starts in %s" % [shop_wave + 1, int(wave_timer.time_left)]
+			timer_label.show()
+		else:
+			timer_label.hide()
+			
 func show_shop() -> void:
 	show()
 	Input.flush_buffered_events()

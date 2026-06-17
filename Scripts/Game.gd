@@ -264,7 +264,7 @@ func _on_wave_timer_timeout() -> void:
 	show_wave_announcement()
 
 func _start_first_wave() -> void:
-	weapons.show()
+	weapons.hide()
 	weapon_shop.show_shop()
 	wave_label.hide()
 	enemy_count_label.hide()
