@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://bg3b76tmhj2qm"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://djukhrjqxjwxq" path="res://Scripts/SettingsPanel.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/SettingsPanel.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://c4x0jidjvbcs3" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="2"]
 
 [node name="SettingsPanel" type="Control"]

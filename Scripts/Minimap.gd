@@ -12,8 +12,16 @@ var frame_count: int = 0
 
 
 func _ready() -> void:
-	player_dot.position = size / 2 - player_dot.size / 2
 	player_dot.z_index = 1
+	await get_tree().process_frame
+	player_dot.position = size / 2 - player_dot.size / 2
+	queue_redraw()
+
+
+func _draw() -> void:
+	var center = size / 2
+	draw_circle(center, radar_radius, Color(0, 0, 0, 0.5))
+	draw_arc(center, radar_radius, 0, TAU, 64, Color(1, 1, 1, 0.3), 2.0)
 
 
 func _process(_delta: float) -> void:

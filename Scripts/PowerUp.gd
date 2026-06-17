@@ -73,6 +73,9 @@ func show_pickup_text() -> void:
 	label.z_index = 20
 	get_tree().current_scene.add_child(label)
 	var t = get_tree().create_tween()
-	t.tween_property(label, "position", label.position + Vector2(0, -40), 0.6)
-	t.parallel().tween_property(label, "modulate:a", 0, 0.6)
-	t.tween_callback(label.queue_free)
+	t.tween_property(label, "position", label.position + Vector2(0, -40), 0.3)
+	t.parallel().tween_property(label, "modulate:a", 0, 0.25)
+	t.tween_callback(func():
+		if is_instance_valid(label):
+			label.queue_free()
+	)

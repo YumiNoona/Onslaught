@@ -67,7 +67,6 @@ limit_top = -3072
 limit_right = 3072
 limit_bottom = 3072
 script = ExtResource("4_4q8tf")
-shake_delay = null
 shake_strength = null
 shake_max_roll = null
 
@@ -301,7 +300,10 @@ label_settings = SubResource("LabelSettings_alh3a")
 horizontal_alignment = 2
 
 [node name="Minimap" parent="CanvasLayer/GameUI" unique_id=305688914 instance=ExtResource("17_ny8n0")]
+layout_mode = 0
 anchors_preset = 0
+anchor_top = 0.0
+anchor_bottom = 0.0
 offset_left = 1700.0
 offset_top = 40.0
 offset_right = 1900.0
@@ -370,7 +372,7 @@ offset_bottom = 75.0
 value = 100.0
 show_percentage = false
 
-[node name="BossHealthLabel" type="Label" parent="CanvasLayer/GameUI" unique_id=340015639]
+[node name="BossHealthLabel" type="Label" parent="CanvasLayer/GameUI" unique_id=1806521095]
 unique_name_in_owner = true
 visible = false
 layout_mode = 0

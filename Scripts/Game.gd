@@ -65,7 +65,7 @@ func _ready() -> void:
 	GameManager.reset_game_state()
 	var scene = load(GameManager.selected_character_scene) as PackedScene
 	player = scene.instantiate()
-	player.name = "Player Venesa"
+	player.name = "Player Veneca"
 	add_child(player)
 	move_child(player, 0)
 	GameManager.player = player

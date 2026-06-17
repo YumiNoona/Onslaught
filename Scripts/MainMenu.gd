@@ -4,11 +4,10 @@ extends Control
 @onready var btn_quit: Button = $BTN_Quit
 @onready var btn_settings: Button = $BTN_Settings
 @onready var btn_achievements: Button = $BTN_Achievements
-@onready var bg_far: TextureRect = $BgTilesFar
-@onready var bg_near: TextureRect = $BgTiles
 @onready var settings_panel: Control = $SettingsPanel
 @onready var achievements_panel: Control = $AchievementsPanel
 @onready var version_label: Label = $VersionLabel
+@onready var deco: TextureRect = $Deco
 
 
 func _ready() -> void:
@@ -23,8 +22,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	bg_far.region_rect.position.x -= delta * 6
-	bg_near.region_rect.position.x -= delta * 18
+	deco.rotation += delta * 0.15
 
 
 func _on_start_pressed() -> void:

@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://cq8gciopew26a"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://b2bclm4h6cllj" path="res://Scripts/AchievementsPanel.gd" id="1"]
+[ext_resource type="Script" path="res://Scripts/AchievementsPanel.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://c4x0jidjvbcs3" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="2"]
 
 [node name="AchievementsPanel" type="Control"]

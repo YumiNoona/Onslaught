@@ -30,3 +30,7 @@ res://Data/W_UZI.tres
 res://Scripts/WeaponData.gd
 res://Scenes/WeaponShop.tscn
 res://Scripts/HealthPickup.gd
+res://Scenes/MainMenu.tscn
+res://Scripts/Damage.gd
+res://Scripts/MainMenu.gd
+res://Scripts/AchievementsPanel.gd

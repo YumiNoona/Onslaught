@@ -28,15 +28,15 @@ func populate() -> void:
 
 		var name_lbl = Label.new()
 		name_lbl.text = a["name"]
-		name_lbl.theme_override_fonts/font = load("res://Assets/Fonts/kenpixel_mini_square.ttf")
-		name_lbl.theme_override_font_sizes/font_size = 20
+		name_lbl.add_theme_font_override("font", load("res://Assets/Fonts/kenpixel_mini_square.ttf"))
+		name_lbl.add_theme_font_size_override("font_size", 20)
 		name_lbl.modulate = Color(1, 1, 1, 1) if a["unlocked"] else Color(0.5, 0.5, 0.5, 1)
 		text_vbox.add_child(name_lbl)
 
 		var desc_lbl = Label.new()
 		desc_lbl.text = a["desc"]
-		desc_lbl.theme_override_fonts/font = load("res://Assets/Fonts/kenpixel_mini_square.ttf")
-		desc_lbl.theme_override_font_sizes/font_size = 14
+		desc_lbl.add_theme_font_override("font", load("res://Assets/Fonts/kenpixel_mini_square.ttf"))
+		desc_lbl.add_theme_font_size_override("font_size", 14)
 		desc_lbl.modulate = Color(0.7, 0.7, 0.7, 1)
 		text_vbox.add_child(desc_lbl)
 
@@ -44,8 +44,8 @@ func populate() -> void:
 
 		var status_lbl = Label.new()
 		status_lbl.text = "✓" if a["unlocked"] else "✗"
-		status_lbl.theme_override_fonts/font = load("res://Assets/Fonts/kenpixel_mini_square.ttf")
-		status_lbl.theme_override_font_sizes/font_size = 22
+		status_lbl.add_theme_font_override("font", load("res://Assets/Fonts/kenpixel_mini_square.ttf"))
+		status_lbl.add_theme_font_size_override("font_size", 22)
 		status_lbl.modulate = Color(0, 1, 0, 1) if a["unlocked"] else Color(0.5, 0.1, 0.1, 1)
 		row.add_child(status_lbl)
 
