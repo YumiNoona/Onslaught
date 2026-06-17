@@ -26,6 +26,7 @@ enum SpawnType {
 var enemies_remainig: int
 var spawned_enemies: int
 var wave_number: int = 0
+var pre_boss_count: int = 0
 var wave_active: bool = false
 
 func _ready() -> void:
@@ -38,8 +39,17 @@ func _ready() -> void:
 func scale_difficulty() -> void:
 	wave_number += 1
 	GameManager.current_wave = wave_number
-	if wave_number % GameConfig.boss_wave_interval != 0:
-		enemies_per_wave += 1
+	
+	if wave_number % GameConfig.boss_wave_interval == 0:
+		pre_boss_count = enemies_per_wave
+		enemies_per_wave = 1
+	else:
+		if pre_boss_count > 0:
+			enemies_per_wave = pre_boss_count + 1
+			pre_boss_count = 0
+		else:
+			enemies_per_wave += 1
+			
 	enemies_per_wave = max(1, ceil(enemies_per_wave * GameManager.difficulty_multiplier))
 	min_random = max(min_random - 0.1, GameConfig.spawn_timer_min_floor)
 	max_random = max(max_random - 0.2, GameConfig.spawn_timer_max_floor)
@@ -146,7 +156,7 @@ func _on_enemy_died() -> void:
 		wave_active = false
 		spawn_timer.stop()
 		await get_tree().create_timer(GameConfig.wave_completion_delay).timeout
-		on_wave_completed.emit()
 		scale_difficulty()
+		on_wave_completed.emit()
 		enemies_remainig = enemies_per_wave
 		spawned_enemies = 0

@@ -125,9 +125,7 @@ func spawn_death_particles() -> void:
 	particles.global_position = global_position
 	get_tree().current_scene.add_child(particles)
 	particles.emitting = true
-	await get_tree().create_timer(particles.lifetime + 0.2).timeout
-	if is_instance_valid(particles):
-		particles.queue_free()
+	get_tree().create_timer(particles.lifetime + 0.2).timeout.connect(particles.queue_free)
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:

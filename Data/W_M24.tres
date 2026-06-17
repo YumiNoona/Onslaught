@@ -18,3 +18,5 @@ pierce = 3
 max_ammo = 5
 reload_time = 1.8
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"
+
+description = "Sniper. Slow but pierces 2 enemies."

@@ -17,3 +17,5 @@ bullet_scene = ExtResource("1_i7rqx")
 pierce = 2
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"
 spread_angle = 2.0
+
+description = "High fire rate, medium damage."

@@ -97,7 +97,8 @@ func start_dash() -> void:
 		elapsed += get_process_delta_time()
 
 	is_dashing = false
-	health_component.invulnerable = false
+	if is_instance_valid(self) and is_instance_valid(health_component):
+		health_component.invulnerable = false
 	if is_instance_valid(anim_sprite):
 		anim_sprite.material = null
 
@@ -217,7 +218,7 @@ func quick_dash() -> void:
 		await get_tree().process_frame
 		elapsed += get_process_delta_time()
 
-	if is_instance_valid(self):
+	if is_instance_valid(self) and is_instance_valid(health_component):
 		health_component.invulnerable = false
 	if is_instance_valid(anim_sprite):
 		anim_sprite.material = null

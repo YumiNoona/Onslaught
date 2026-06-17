@@ -93,7 +93,7 @@ func _ready() -> void:
 	add_child(player)
 	move_child(player, 0)
 	GameManager.player = player
-	wave_timer.start()
+	_start_first_wave()
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	GameManager.on_game_over.connect(_on_game_over)
 
@@ -244,6 +244,7 @@ func _on_main_menu() -> void:
 
 
 func _on_wave_timer_timeout() -> void:
+	wave_timer.wait_time = GameConfig.wave_timer_wait_time
 	if weapon_shop.visible or level_up_ui.visible:
 		wave_timer.start()
 		return
@@ -254,7 +255,21 @@ func _on_wave_timer_timeout() -> void:
 	level_up_ui.hide()
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	
+	if GameManager.player.weapon.equipped_weapon == null:
+		var cheapest = weapon_shop.get_cheapest_weapon()
+		if cheapest:
+			GameManager.player.setup_weapon(cheapest)
+			
 	show_wave_announcement()
+
+func _start_first_wave() -> void:
+	weapons.show()
+	weapon_shop.show_shop()
+	wave_label.hide()
+	enemy_count_label.hide()
+	wave_timer.wait_time = GameConfig.first_wave_timer
+	wave_timer.start()
 
 func _on_shop_skipped() -> void:
 	wave_timer.stop()
@@ -439,8 +454,17 @@ func _on_enemy_spawner_on_wave_completed() -> void:
 	GameManager.check_achievements()
 	wave_label.show()
 	enemy_count_label.hide()
+	wave_timer.wait_time = GameConfig.wave_timer_wait_time
 	wave_timer.start()
-	if GameManager.current_wave > 0 and GameManager.current_wave % GameConfig.boss_wave_interval == 0:
+
+	var w = GameManager.current_wave
+	var is_boss_wave = w > 0 and w % GameConfig.boss_wave_interval == 0
+	var is_scene_weapon_wave = not is_boss_wave and w % GameConfig.shop_wave_cycle == 0
+
+	if is_boss_wave:
+		weapons.hide()
+		weapon_shop.hide()
+	elif is_scene_weapon_wave:
 		weapons.show()
 		weapon_shop.hide()
 	else:

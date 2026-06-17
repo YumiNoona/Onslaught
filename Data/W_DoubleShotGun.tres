@@ -17,3 +17,5 @@ bullet_scene = ExtResource("1_tm26y")
 bullet_count = 8
 spread_angle = 20.0
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"
+
+description = "Double-barrel. High spread."

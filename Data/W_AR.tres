@@ -17,3 +17,5 @@ bullet_scene = ExtResource("1_jnfqr")
 pierce = 1
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"
 spread_angle = 1.5
+
+description = "Assault Rifle. Good all-rounder."

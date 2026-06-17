@@ -353,10 +353,14 @@ extends Node
 @export_category("Wave Intermission")
 ## Wait time between waves shown on the wave label in seconds
 @export var wave_timer_wait_time: float = 3.0
+## Wait time before the first wave begins in seconds
+@export var first_wave_timer: float = 30.0
 ## Short delay after last enemy dies before next wave starts in seconds
 @export var wave_completion_delay: float = 1.0
 ## Number of normal waves between boss waves
 @export var boss_wave_interval: int = 5
+## Number of waves between showing scene weapon pickups
+@export var shop_wave_cycle: int = 4
 
 @export_category("Enemy Spawn Tier Thresholds")
 ## Maximum wave number where only early-tier enemies spawn

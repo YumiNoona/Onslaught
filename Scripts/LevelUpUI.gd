@@ -33,7 +33,7 @@ func show_perks() -> void:
 	populate_cards()
 
 func populate_cards() -> void:
-	for i in 3:
+	for i in selected_perks.size():
 		var perk = selected_perks[i]
 		var card = cards[i]
 		card.get_node("PerkLabel").text = perk["name"]

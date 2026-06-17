@@ -26,6 +26,8 @@ func load_all_weapons() -> void:
 				if w:
 					all_weapons.append(w)
 
+var seen_weapons: Array[String] = []
+
 func show_shop() -> void:
 	show()
 	Input.flush_buffered_events()
@@ -38,8 +40,19 @@ func show_shop() -> void:
 	var current = GameManager.player.weapon.equipped_weapon
 	if current:
 		pool = pool.filter(func(w): return w.gun_name != current.gun_name)
-	pool.shuffle()
+		
+	var unseen = pool.filter(func(w): return w.gun_name not in seen_weapons)
+	var seen = pool.filter(func(w): return w.gun_name in seen_weapons)
+	
+	unseen.shuffle()
+	seen.shuffle()
+	
+	pool = unseen + seen
 	selected_weapons = pool.slice(0, 3)
+	
+	for w in selected_weapons:
+		if w.gun_name not in seen_weapons:
+			seen_weapons.append(w.gun_name)
 
 	populate_cards()
 
@@ -50,7 +63,14 @@ func populate_cards() -> void:
 		card.get_node("NameLabel").text = w.gun_name
 		card.get_node("Sprite").texture = w.gun_sprite
 		card.get_node("Sprite").modulate = w.gun_colour
-		card.get_node("StatsLabel").text = "DMG: %s  RoF: %s/s\nPierce: %s\n%s" % [w.damage, str(1.0 / w.delay_between_shots).pad_decimals(1), w.pierce, w.description]
+		var ammo_str = "∞" if w.max_ammo <= 0 else str(w.max_ammo)
+		card.get_node("StatsLabel").text = "DMG: %s  RoF: %s/s\nPierce: %s  Ammo: %s\n%s" % [
+			w.damage,
+			str(1.0 / w.delay_between_shots).pad_decimals(1),
+			w.pierce,
+			ammo_str,
+			w.description
+		]
 		card.get_node("PriceLabel").text = "%s coins" % w.buy_price
 		var btn = card.get_node("BuyBtn") as Button
 		btn.text = "Buy"
@@ -76,17 +96,20 @@ func _on_buy(w: WeaponData, btn: Button) -> void:
 	close_shop()
 
 func close_shop() -> void:
+	give_default_if_no_weapon()
 	hide()
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	skipped.emit()
 
-func _on_skip() -> void:
-	SoundManager.play_click()
-	if not bought_any and shop_wave == 1:
+func give_default_if_no_weapon() -> void:
+	if GameManager.player.weapon.equipped_weapon == null:
 		var cheapest = get_cheapest_weapon()
 		if cheapest:
 			GameManager.player.setup_weapon(cheapest)
+
+func _on_skip() -> void:
+	SoundManager.play_click()
 	close_shop()
 
 func get_cheapest_weapon() -> WeaponData:
