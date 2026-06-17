@@ -30,32 +30,34 @@ var wave_active: bool = false
 
 func _ready() -> void:
 	GameManager.on_enemy_died.connect(_on_enemy_died)
+	enemies_per_wave = GameConfig.base_enemies_per_wave
+	hp_per_wave = GameConfig.hp_per_wave
 	enemies_remainig = enemies_per_wave
 	wave_active = true
 
 func scale_difficulty() -> void:
 	wave_number += 1
 	GameManager.current_wave = wave_number
-	if wave_number % 5 == 0:
-		enemies_per_wave = 1
-	else:
+	if wave_number % GameConfig.boss_wave_interval != 0:
 		enemies_per_wave += 1
-	min_random = max(min_random - 0.1, 0.2)
-	max_random = max(max_random - 0.2, 0.5)
+	enemies_per_wave = max(1, ceil(enemies_per_wave * GameManager.difficulty_multiplier))
+	min_random = max(min_random - 0.1, GameConfig.spawn_timer_min_floor)
+	max_random = max(max_random - 0.2, GameConfig.spawn_timer_max_floor)
 
 #Spawn Enemy Fuction
 
 func get_spawn_position() -> Vector2:
 	var angle = randf_range(0, TAU)
-	var distance = randf_range(1800, 2200)
+	var distance = randf_range(GameConfig.spawn_distance_min, GameConfig.spawn_distance_max)
 	var pos = GameManager.player.global_position + Vector2(cos(angle), sin(angle)) * distance
-	pos.x = clamp(pos.x, -3000, 3000)
-	pos.y = clamp(pos.y, -3000, 3000)
+	pos.x = clamp(pos.x, -GameConfig.world_bound, GameConfig.world_bound)
+	pos.y = clamp(pos.y, -GameConfig.world_bound, GameConfig.world_bound)
 	return pos
 
 func spawn_enemy() -> void:
 	var spawn_anim: SpawnAnim = SPAWN_ANIM.instantiate()
-	var spawn_pos = get_spawn_position()
+	var is_boss_wave = wave_number > 0 and wave_number % 5 == 0
+	var spawn_pos = get_spawn_position() if not is_boss_wave else get_boss_spawn_position()
 	spawn_anim.global_position = spawn_pos
 	add_child(spawn_anim)
 	
@@ -63,28 +65,40 @@ func spawn_enemy() -> void:
 	await spawn_anim.on_spawn_enemy
 	spawn_anim.queue_free()
 	
-	var is_boss_wave = wave_number > 0 and wave_number % 5 == 0
 	var random_enemy: PackedScene = BOSS_ENEMY if is_boss_wave else get_tiered_enemy()
 	var enemy = random_enemy.instantiate() as Enemy
 	enemy.global_position = spawn_pos
 	get_parent().add_child(enemy)
 	if is_boss_wave:
-		GameManager.on_shake_request.emit(5.0)
+		GameManager.on_shake_request.emit(GameConfig.shake_boss_spawn)
 	else:
-		GameManager.on_shake_request.emit(0.3)
+		GameManager.on_shake_request.emit(GameConfig.shake_normal_spawn)
 	enemy.health_component.current_health += wave_number * hp_per_wave
 	enemy.health_component.max_health = enemy.health_component.current_health
+	if is_boss_wave:
+		enemy.move_speed += wave_number * GameConfig.boss_speed_per_wave
+		var atk_timer = enemy.get_node_or_null("BossAttackTimer")
+		if atk_timer:
+			atk_timer.wait_time = max(GameConfig.boss_attack_cooldown_min, GameConfig.boss_attack_cooldown_base - wave_number * GameConfig.boss_attack_cooldown_per_wave)
 	
 	spawned_enemies +=1
 	start_enemy_timer()
+
+func get_boss_spawn_position() -> Vector2:
+	var angle = randf_range(0, TAU)
+	var distance = randf_range(GameConfig.boss_spawn_distance_min, GameConfig.boss_spawn_distance_max)
+	var pos = GameManager.player.global_position + Vector2(cos(angle), sin(angle)) * distance
+	pos.x = clamp(pos.x, -GameConfig.world_bound, GameConfig.world_bound)
+	pos.y = clamp(pos.y, -GameConfig.world_bound, GameConfig.world_bound)
+	return pos
 	
 func get_tiered_enemy() -> PackedScene:
 	var pool: Array[PackedScene] = []
-	if wave_number <= 3:
+	if wave_number <= GameConfig.tier_early_only_max:
 		if not early_wave_enemies.is_empty():
 			for i in range(5):
 				pool.append(early_wave_enemies.pick_random())
-	elif wave_number <= 7:
+	elif wave_number <= GameConfig.tier_mid_only_max:
 		if not early_wave_enemies.is_empty():
 			pool.append(early_wave_enemies.pick_random())
 		if not mid_wave_enemies.is_empty():
@@ -131,7 +145,7 @@ func _on_enemy_died() -> void:
 	if enemies_remainig <= 0:
 		wave_active = false
 		spawn_timer.stop()
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(GameConfig.wave_completion_delay).timeout
 		on_wave_completed.emit()
 		scale_difficulty()
 		enemies_remainig = enemies_per_wave

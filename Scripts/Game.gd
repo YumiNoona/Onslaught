@@ -26,6 +26,7 @@ var player: Player
 @onready var stats_fire_rate: Label = $CanvasLayer/PauseMenu/VBoxContainer/StatsFireRate
 @onready var stats_level: Label = $CanvasLayer/PauseMenu/VBoxContainer/StatsLevel
 @onready var stats_xp: Label = $CanvasLayer/PauseMenu/VBoxContainer/StatsXp
+@onready var stats_perks: Label = $CanvasLayer/PauseMenu/VBoxContainer/StatsPerks
 @onready var hit_flash: ColorRect = $CanvasLayer/HitFlash
 @onready var level_up_ui: Control = $CanvasLayer/LevelUpUI
 @onready var weapon_shop: Control = $CanvasLayer/WeaponShop
@@ -99,7 +100,7 @@ func _ready() -> void:
 	# Screen fade in
 	fade_overlay.color = Color.BLACK
 	var fade_tween = create_tween()
-	fade_tween.tween_property(fade_overlay, "color:a", 0.0, 0.5).set_delay(0.3)
+	fade_tween.tween_property(fade_overlay, "color:a", 0.0, GameConfig.fade_in_duration).set_delay(GameConfig.fade_in_delay)
 
 	# Pause Menu UI setup
 	pause_menu.visible = false
@@ -116,10 +117,10 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if not GameManager.is_game_over:
-		crosshair_recoil = crosshair_recoil.move_toward(Vector2.ZERO, _delta * 3000)
+		crosshair_recoil = crosshair_recoil.move_toward(Vector2.ZERO, _delta * GameConfig.crosshair_recoil_recovery)
 		crosshair.global_position = get_global_mouse_position() + crosshair_recoil
 		camera_2d.global_position = player.global_position
-		wave_label.text = "NEW WAVE IN\n%s" % int(wave_timer.time_left)
+		wave_label.text = "NEXT WAVE IN\n%s" % int(wave_timer.time_left)
 		coins_label.text = str(GameManager.coins)
 		score_label.text = "Score: %s" % GameManager.score
 		enemy_count_label.text = "Enemy: %s" % str(enemy_spawner.enemies_remainig)
@@ -133,6 +134,10 @@ func _process(_delta: float) -> void:
 
 
 func _input(event) -> void:
+	if get_tree().paused:
+		if event.is_action_pressed("ui_cancel") and not GameManager.is_game_over:
+			_toggle_pause()
+		return
 	if event.is_action_pressed("ui_cancel") and not GameManager.is_game_over:
 		_toggle_pause()
 
@@ -143,6 +148,7 @@ func _toggle_pause() -> void:
 		get_tree().paused = false
 		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	else:
+		Input.flush_buffered_events()
 		game_over_ui.visible = false
 		pause_menu.visible = true
 		pause_btn_resume.grab_focus()
@@ -153,6 +159,7 @@ func _toggle_pause() -> void:
 
 func _on_game_over() -> void:
 	print("💀 Game Over triggered and UI shown")
+	Input.flush_buffered_events()
 	pause_menu.visible = false
 	game_over_ui.visible = true
 	gameover_btn_restart.disabled = false
@@ -168,6 +175,10 @@ func _on_game_over() -> void:
 	gameover_wave.text = "Wave Reached: %s" % GameManager.current_wave
 	gameover_kills.text = "Enemies Killed: %s" % GameManager.total_enemies_killed
 	gameover_coins.text = "Coins: %s" % GameManager.coins
+	var elapsed = (Time.get_ticks_msec() - GameManager.game_start_time) / 1000.0
+	var mins = int(elapsed / 60)
+	var secs = int(elapsed) % 60
+	gameover_score.text += "\nTime: %02d:%02d" % [mins, secs]
 	gameover_highscore.text = "Best: %s" % GameManager.highscore
 	gameover_new_best.visible = is_new_best
 	boss_health_bar.hide()
@@ -218,33 +229,33 @@ func _on_shop_skipped() -> void:
 	_on_wave_timer_timeout()
 
 func show_wave_announcement() -> void:
-	var is_boss = GameManager.current_wave > 0 and GameManager.current_wave % 5 == 0
+	var is_boss = GameManager.current_wave > 0 and GameManager.current_wave % GameConfig.boss_wave_interval == 0
 	if is_boss:
 		wave_announce.text = "⚠ BOSS WAVE ⚠"
 		wave_announce.modulate = Color(1, 0.2, 0.2, 1)
 	else:
 		wave_announce.text = "WAVE %s" % GameManager.current_wave
 		wave_announce.modulate = Color(1, 1, 1, 1)
-	wave_announce.scale = Vector2(2, 2)
+	wave_announce.scale = Vector2(GameConfig.wave_announce_initial_scale, GameConfig.wave_announce_initial_scale)
 	wave_announce.show()
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(wave_announce, "scale", Vector2(1, 1), 0.4)
-	tween.tween_property(wave_announce, "modulate:a", 0, 0.7).set_delay(0.6)
+	tween.tween_property(wave_announce, "scale", Vector2(1, 1), GameConfig.wave_announce_scale_in_duration)
+	tween.tween_property(wave_announce, "modulate:a", 0, GameConfig.wave_announce_fade_duration).set_delay(GameConfig.wave_announce_fade_delay)
 	await tween.finished
 	wave_announce.hide()
 	enemy_spawner.start_enemy_timer()
 
 func update_combo_display() -> void:
-	if GameManager.kill_streak >= 2:
+	if GameManager.kill_streak >= GameConfig.combo_min_streak:
 		combo_label.text = "x%s COMBO!" % GameManager.kill_streak
 		if not combo_label.visible:
 			combo_label.show()
-			combo_label.scale = Vector2(1.5, 1.5)
+			combo_label.scale = Vector2(GameConfig.combo_pop_scale, GameConfig.combo_pop_scale)
 			if combo_tween and combo_tween.is_valid():
 				combo_tween.kill()
 			combo_tween = create_tween()
-			combo_tween.tween_property(combo_label, "scale", Vector2(1, 1), 0.2)
+			combo_tween.tween_property(combo_label, "scale", Vector2(1, 1), GameConfig.combo_normalize_duration)
 
 func update_xp_bar() -> void:
 	xp_bar.max_value = GameManager.xp_to_next
@@ -262,19 +273,37 @@ func update_ability_cooldown() -> void:
 func update_powerup_indicator() -> void:
 	var active = GameManager.active_powerups
 	powerup_indicator.visible = not active.is_empty()
-	for child in powerup_indicator.get_children():
-		child.queue_free()
 	if active.is_empty():
 		return
+	var groups: Dictionary = {}
 	for entry in active:
+		var key = entry["type"]
+		if not groups.has(key):
+			groups[key] = {"name": entry["name"], "color": entry["color"], "count": 0, "max_remaining": 0.0}
+		groups[key]["count"] += 1
 		var elapsed = (Time.get_ticks_msec() - entry["start_time"]) / 1000.0
 		var remaining = max(0, entry["duration"] - elapsed)
-		var label = Label.new()
-		label.add_theme_font_override("font", preload("res://Assets/Fonts/kenpixel_mini_square.ttf"))
-		label.add_theme_font_size_override("font_size", 20)
-		label.text = "%s  %ds" % [entry["name"], int(remaining)]
-		label.modulate = entry["color"]
-		powerup_indicator.add_child(label)
+		if remaining > groups[key]["max_remaining"]:
+			groups[key]["max_remaining"] = remaining
+	var existing = powerup_indicator.get_children()
+	var idx = 0
+	for key in groups:
+		var g = groups[key]
+		var label: Label
+		if idx < existing.size():
+			label = existing[idx]
+		else:
+			label = Label.new()
+			label.add_theme_font_override("font", preload("res://Assets/Fonts/kenpixel_mini_square.ttf"))
+			label.add_theme_font_size_override("font_size", 20)
+			powerup_indicator.add_child(label)
+		var stack = " x%d" % g["count"] if g["count"] > 1 else ""
+		label.text = "%s%s  %ds" % [g["name"], stack, int(g["max_remaining"])]
+		label.modulate = g["color"]
+		idx += 1
+	while idx < existing.size():
+		existing[idx].queue_free()
+		idx += 1
 
 func update_boss_health_bar() -> void:
 	if tracked_boss and is_instance_valid(tracked_boss):
@@ -310,11 +339,11 @@ func update_low_health_vignette(_delta: float) -> void:
 	if not player or not is_instance_valid(player):
 		return
 	var health = player.health_component.current_health
-	if health <= 0 or health > 3:
+	if health <= 0 or health > GameConfig.low_health_threshold:
 		vignette.material.set_shader_parameter("MainAlpha", 0.0)
 		return
-	health_pulse_time += _delta * 3.0
-	var pulse = 0.3 + sin(health_pulse_time) * 0.15
+	health_pulse_time += _delta * GameConfig.vignette_pulse_speed
+	var pulse = GameConfig.vignette_pulse_alpha_base + sin(health_pulse_time) * GameConfig.vignette_pulse_alpha_range
 	vignette.material.set_shader_parameter("MainAlpha", pulse)
 
 func update_stats() -> void:
@@ -326,34 +355,38 @@ func update_stats() -> void:
 	stats_fire_rate.text = "Fire Rate: +%s%%" % int(player.fire_rate_mod * 100 - 100)
 	stats_level.text = "Level: %s" % GameManager.level
 	stats_xp.text = "XP: %s/%s" % [GameManager.xp, GameManager.xp_to_next]
+	if GameManager.perks_log.is_empty():
+		stats_perks.text = "None"
+	else:
+		stats_perks.text = ", ".join(GameManager.perks_log)
 
 func _on_combo_broken() -> void:
 	combo_label.hide()
 
 func _on_weapon_fired(direction: Vector2) -> void:
-	crosshair_recoil = -direction * 60
+	crosshair_recoil = -direction * GameConfig.crosshair_recoil_impulse
 
 func _on_level_up() -> void:
-	GameManager.on_shake_request.emit(3.0)
+	GameManager.on_shake_request.emit(GameConfig.level_up_shake)
 	var mat = vignette.material as ShaderMaterial
-	mat.set_shader_parameter("tint_color", Color(1, 0.9, 0, 1))
-	mat.set_shader_parameter("MainAlpha", 0.6)
+	mat.set_shader_parameter("tint_color", GameConfig.level_up_tint)
+	mat.set_shader_parameter("MainAlpha", GameConfig.level_up_vignette_alpha)
 	var t = create_tween()
-	t.tween_method(func(v): mat.set_shader_parameter("MainAlpha", v), 0.6, 0.0, 0.5)
+	t.tween_method(func(v): mat.set_shader_parameter("MainAlpha", v), GameConfig.level_up_vignette_alpha, 0.0, GameConfig.level_up_vignette_fade_duration)
 	t.tween_callback(func(): mat.set_shader_parameter("tint_color", Color(0, 0, 0, 1)))
 	level_up_ui.show_perks()
 
 func _on_player_hit() -> void:
-	hit_flash.color = Color(1, 0, 0, 0.35)
+	hit_flash.color = GameConfig.hit_flash_color
 	var tween = create_tween()
-	tween.tween_property(hit_flash, "color", Color(1, 0, 0, 0), 0.3)
+	tween.tween_property(hit_flash, "color", Color(1, 0, 0, 0), GameConfig.hit_flash_fade_duration)
 
 
 func _on_enemy_spawner_on_wave_completed() -> void:
 	wave_label.show()
 	enemy_count_label.hide()
 	wave_timer.start()
-	if GameManager.current_wave > 0 and GameManager.current_wave % 5 == 0:
+	if GameManager.current_wave > 0 and GameManager.current_wave % GameConfig.boss_wave_interval == 0:
 		weapons.show()
 		weapon_shop.hide()
 	else:

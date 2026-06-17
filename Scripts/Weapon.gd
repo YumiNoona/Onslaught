@@ -77,7 +77,7 @@ func shoot_weapon() -> void:
 
 	# Muzzle flash
 	weapon_sprite.material = GameManager.HIT_MATERIAL
-	await get_tree().create_timer(0.05).timeout
+	await get_tree().create_timer(GameConfig.muzzle_flash_duration).timeout
 	if is_instance_valid(weapon_sprite):
 		weapon_sprite.material = null
 	

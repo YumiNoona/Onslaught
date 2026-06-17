@@ -45,6 +45,17 @@ func _ready() -> void:
 		card.get_node("ProsLabel").text = c["pros"]
 		card.get_node("ConsLabel").text = c["cons"]
 		card.get_node("SelectBtn").pressed.connect(_on_select.bind(c))
+	$VBox/DiffRow/BtnEasy.pressed.connect(_set_diff.bind(GameConfig.difficulty_easy_mult, "BtnEasy"))
+	$VBox/DiffRow/BtnNormal.pressed.connect(_set_diff.bind(GameConfig.difficulty_normal_mult, "BtnNormal"))
+	$VBox/DiffRow/BtnHard.pressed.connect(_set_diff.bind(GameConfig.difficulty_hard_mult, "BtnHard"))
+
+func _set_diff(mult: float, btn: String) -> void:
+	GameManager.difficulty_multiplier = mult
+	var selected = Color(0.3, 0.7, 0.3, 1)
+	var normal = Color(0.5, 0.5, 0.5, 1)
+	for b in ["BtnEasy", "BtnNormal", "BtnHard"]:
+		var node = $VBox/DiffRow.get_node(b)
+		node.modulate = selected if b == btn else normal
 
 func _process(_delta: float) -> void:
 	if not game_loaded and ResourceLoader.load_threaded_get_status("res://Scenes/Game.tscn") == ResourceLoader.THREAD_LOAD_LOADED:

@@ -3,7 +3,9 @@ class_name Player
 
 enum CharacterType { DEFAULT, ROCKY, SIMON }
 
+
 @export var character_type: CharacterType = CharacterType.DEFAULT
+
 @export var move_speed := 700.0
 @export var max_health: float = 10.0:
 	set(v):
@@ -64,10 +66,10 @@ func _physics_process(_delta: float) -> void:
 	velocity = input.normalized() * move_speed
 	move_and_slide()
 
-	if velocity.length() > 10:
+	if velocity.length() > GameConfig.footstep_velocity_threshold:
 		footstep_timer -= _delta
 		if footstep_timer <= 0:
-			footstep_timer = 0.3
+			footstep_timer = GameConfig.footstep_interval
 			play_footstep()
 
 func start_dash() -> void:
@@ -88,7 +90,7 @@ func start_dash() -> void:
 	var elapsed = 0.0
 	while elapsed < dash_duration:
 		trail.add_point(global_position)
-		if trail.get_point_count() > 15:
+		if trail.get_point_count() > GameConfig.dash_trail_max_points:
 			trail.remove_point(0)
 		await get_tree().process_frame
 		elapsed += get_process_delta_time()
@@ -100,7 +102,7 @@ func start_dash() -> void:
 
 	if is_instance_valid(trail):
 		var fade = create_tween()
-		fade.tween_property(trail, "default_color:a", 0, 0.15)
+		fade.tween_property(trail, "default_color:a", 0, GameConfig.dash_trail_fade_duration)
 		await fade.finished
 		trail.queue_free()
 
@@ -124,10 +126,10 @@ func _process(_delta: float) -> void:
 func play_footstep() -> void:
 	var player = AudioStreamPlayer2D.new()
 	var gen = AudioStreamGenerator.new()
-	gen.mix_rate = 22050
+	gen.mix_rate = GameConfig.footstep_mix_rate
 	player.stream = gen
-	player.max_distance = 400
-	player.volume_db = -12 + randf_range(-3, 3)
+	player.max_distance = GameConfig.footstep_max_distance
+	player.volume_db = GameConfig.footstep_base_volume + randf_range(-GameConfig.footstep_volume_variation, GameConfig.footstep_volume_variation)
 	get_tree().root.add_child(player)
 	player.play()
 	var playback = player.get_stream_playback()
@@ -135,7 +137,7 @@ func play_footstep() -> void:
 	var buf = PackedVector2Array()
 	for i in frames:
 		var t = float(i) / frames
-		var amp = max(0, 1.0 - t * 5.0) * 0.15
+		var amp = max(0, 1.0 - t * 5.0) * GameConfig.footstep_envelope_strength
 		buf.append(Vector2(randf_range(-amp, amp), randf_range(-amp, amp)))
 	playback.push_buffer(buf)
 	await get_tree().create_timer(0.05).timeout
@@ -152,31 +154,31 @@ func use_ability() -> void:
 			adrenaline_rush()
 
 func adrenaline_rush() -> void:
-	ability_cooldown = 10.0
-	ability_max_cooldown = 10.0
-	move_speed *= 1.2
-	fire_rate_mod += 0.2
-	await get_tree().create_timer(3.0).timeout
+	ability_cooldown = GameConfig.adrenaline_cooldown
+	ability_max_cooldown = GameConfig.adrenaline_cooldown
+	move_speed *= GameConfig.adrenaline_speed_mult
+	fire_rate_mod += GameConfig.adrenaline_fire_rate_boost
+	await get_tree().create_timer(GameConfig.adrenaline_duration).timeout
 	if is_instance_valid(self):
-		move_speed /= 1.2
-		fire_rate_mod -= 0.2
+		move_speed /= GameConfig.adrenaline_speed_mult
+		fire_rate_mod -= GameConfig.adrenaline_fire_rate_boost
 
 func ground_slam() -> void:
-	ability_cooldown = 6.0
-	ability_max_cooldown = 6.0
+	ability_cooldown = GameConfig.ground_slam_cooldown
+	ability_max_cooldown = GameConfig.ground_slam_cooldown
 	anim_sprite.material = GameManager.HIT_MATERIAL
-	GameManager.on_shake_request.emit(3.0)
+	GameManager.on_shake_request.emit(GameConfig.ground_slam_shake)
 
 	var ring = Sprite2D.new()
 	ring.texture = preload("res://Assets/Sprites/light.png")
 	ring.position = global_position
 	ring.modulate = Color(1, 0.6, 0.2, 0.8)
-	ring.scale = Vector2(0.1, 0.1)
+	ring.scale = Vector2(GameConfig.ground_slam_ring_initial_scale, GameConfig.ground_slam_ring_initial_scale)
 	ring.z_index = 10
 	get_tree().root.add_child(ring)
 	var ring_tween = create_tween()
-	ring_tween.tween_property(ring, "scale", Vector2(6, 6), 0.3)
-	ring_tween.parallel().tween_property(ring, "modulate:a", 0, 0.3)
+	ring_tween.tween_property(ring, "scale", Vector2(GameConfig.ground_slam_ring_final_scale, GameConfig.ground_slam_ring_final_scale), GameConfig.ground_slam_ring_anim_duration)
+	ring_tween.parallel().tween_property(ring, "modulate:a", 0, GameConfig.ground_slam_ring_anim_duration)
 	ring_tween.tween_callback(ring.queue_free)
 
 	var enemies = get_tree().get_nodes_in_group("enemies")
@@ -185,23 +187,23 @@ func ground_slam() -> void:
 		if not enemy or not is_instance_valid(enemy):
 			continue
 		var dist = global_position.distance_to(enemy.global_position)
-		if dist <= 300:
-			enemy.health_component.take_damage(3)
-			GameManager.play_damage_text(enemy.global_position, 3)
+		if dist <= GameConfig.ground_slam_range:
+			enemy.health_component.take_damage(GameConfig.ground_slam_damage)
+			GameManager.play_damage_text(enemy.global_position, GameConfig.ground_slam_damage as int)
 			var dir = (enemy.global_position - global_position).normalized()
-			enemy.velocity = dir * 800
-	await get_tree().create_timer(0.3).timeout
+			enemy.velocity = dir * GameConfig.ground_slam_knockback
+	await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
 	if is_instance_valid(anim_sprite):
 		anim_sprite.material = null
 
 func quick_dash() -> void:
-	ability_cooldown = 2.0
-	ability_max_cooldown = 2.0
+	ability_cooldown = GameConfig.quick_dash_cooldown
+	ability_max_cooldown = GameConfig.quick_dash_cooldown
 	var dir = Input.get_vector("Move_Left", "Move_Right", "Move_Up", "Move_Down")
 	if dir == Vector2.ZERO:
 		dir = Vector2.RIGHT if anim_sprite.flip_h else Vector2.LEFT
 	health_component.invulnerable = true
-	velocity = dir.normalized() * dash_speed * 1.5
+	velocity = dir.normalized() * dash_speed * GameConfig.quick_dash_speed_mult
 	anim_sprite.material = GameManager.HIT_MATERIAL
 
 	var trail = Line2D.new()
@@ -210,9 +212,9 @@ func quick_dash() -> void:
 	trail.z_index = -1
 	get_tree().root.add_child(trail)
 	var elapsed = 0.0
-	while elapsed < 0.15:
+	while elapsed < GameConfig.quick_dash_duration:
 		trail.add_point(global_position)
-		if trail.get_point_count() > 10:
+		if trail.get_point_count() > GameConfig.quick_dash_trail_max_points:
 			trail.remove_point(0)
 		await get_tree().process_frame
 		elapsed += get_process_delta_time()
@@ -223,7 +225,7 @@ func quick_dash() -> void:
 		anim_sprite.material = null
 	if is_instance_valid(trail):
 		var fade = create_tween()
-		fade.tween_property(trail, "default_color:a", 0, 0.1)
+		fade.tween_property(trail, "default_color:a", 0, GameConfig.quick_dash_trail_fade_duration)
 		await fade.finished
 		trail.queue_free()
 
@@ -244,9 +246,9 @@ func _on_health_component_on_damaged() -> void:
 	var health_value := health_component.current_health / health_component.max_health
 	health_bar.set_value(health_value)
 	anim_sprite.material = GameManager.HIT_MATERIAL
-	GameManager.on_shake_request.emit(2.0)
+	GameManager.on_shake_request.emit(GameConfig.shake_player_hit)
 	GameManager.on_player_hit.emit()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
 	anim_sprite.material = null
 
 func heal(amount: float) -> void:
@@ -272,8 +274,8 @@ func _on_health_component_on_defeated() -> void:
 	can_move = false
 	health_bar.hide()
 
-	Engine.time_scale = 0.2
-	await get_tree().create_timer(1.0, false, false, true).timeout
+	Engine.time_scale = GameConfig.player_death_time_scale
+	await get_tree().create_timer(GameConfig.player_death_duration, false, false, true).timeout
 	Engine.time_scale = 1.0
 
 	GameManager.is_game_over = true

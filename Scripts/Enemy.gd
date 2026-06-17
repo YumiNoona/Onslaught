@@ -39,7 +39,7 @@ func _ready() -> void:
 	if is_boss:
 		var timer = Timer.new()
 		timer.name = "BossAttackTimer"
-		timer.wait_time = 2.0
+		timer.wait_time = GameConfig.boss_attack_cooldown_base
 		timer.timeout.connect(_on_boss_attack)
 		add_child(timer)
 		timer.start()
@@ -47,7 +47,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	var player_direction = GameManager.player.global_position - global_position
 	
-	if player_direction.length() <= 120 or not can_move:
+	if player_direction.length() <= GameConfig.enemy_stop_distance or not can_move:
 		velocity = Vector2.ZERO
 		return
 	
@@ -61,29 +61,37 @@ func _on_health_component_on_damaged() -> void:
 	var health_value := health_component.current_health / health_component.max_health
 	health_bar.set_value(health_value)
 	anim_sprite.material = GameManager.HIT_MATERIAL
-	if is_boss and not enraged and health_component.current_health <= health_component.max_health * 0.5:
+	if is_boss and not enraged and health_component.current_health <= health_component.max_health * GameConfig.boss_enrage_threshold:
 		enraged = true
-		move_speed *= 1.3
+		move_speed *= GameConfig.boss_enrage_speed_mult
 		var t = get_node_or_null("BossAttackTimer")
 		if t:
-			t.wait_time = 1.0
-	await get_tree().create_timer(0.3).timeout
+			t.wait_time = GameConfig.boss_enraged_attack_cooldown
+	await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
 	anim_sprite.material = null
 
 func _on_health_component_on_defeated() -> void:
 	can_move = false
 	anim_sprite.play("Death")
 	collision_shape_2d.set_deferred("disabled", true)
-	GameManager.create_coin(global_position)
-	if not is_healer and randf() < 0.15:
+	if is_boss:
+		for i in range(GameConfig.boss_coin_drop_min + randi() % GameConfig.boss_coin_drop_max):
+			GameManager.create_coin(global_position)
+	else:
+		GameManager.create_coin(global_position)
+	if not is_healer and randf() < GameConfig.powerup_drop_chance:
 		spawn_powerup()
-	GameManager.add_score(100 * max(GameManager.current_wave, 1))
-	GameManager.add_xp(10 * max(GameManager.current_wave, 1))
+	GameManager.add_score(int(GameConfig.score_per_kill_base * max(GameManager.current_wave, 1)))
+	GameManager.add_xp(int(GameConfig.xp_per_kill_base * max(GameManager.current_wave, 1)))
 	GameManager.increment_combo()
 	GameManager.total_enemies_killed += 1
 	spawn_death_particles()
 	GameManager.play_explosion_anim(global_position)
-	GameManager.on_shake_request.emit(1.5 if is_boss else 0.5)
+	GameManager.on_shake_request.emit(GameConfig.shake_boss_death if is_boss else GameConfig.shake_enemy_death)
+	if is_boss:
+		Engine.time_scale = GameConfig.boss_death_time_scale
+		await get_tree().create_timer(GameConfig.boss_death_duration, false, false, true).timeout
+		Engine.time_scale = 1.0
 	health_bar.hide()
 	
 	# Clean up all damage timers
@@ -102,17 +110,17 @@ func spawn_death_particles() -> void:
 	particles.emitting = false
 	particles.one_shot = true
 	particles.explosiveness = 1.0
-	particles.amount = 12
-	particles.lifetime = 0.4
+	particles.amount = GameConfig.death_particles_amount
+	particles.lifetime = GameConfig.death_particles_lifetime
 	particles.direction = Vector2(0, -1)
 	particles.spread = 180.0
-	particles.initial_velocity_min = 80.0
-	particles.initial_velocity_max = 200.0
-	particles.scale_amount_min = 2.0
-	particles.scale_amount_max = 4.0
+	particles.initial_velocity_min = GameConfig.death_particles_velocity_min
+	particles.initial_velocity_max = GameConfig.death_particles_velocity_max
+	particles.scale_amount_min = GameConfig.death_particles_scale_min
+	particles.scale_amount_max = GameConfig.death_particles_scale_max
 	particles.color = Color(0.8, 0.1, 0.1, 0.8) if not is_boss else Color(1, 0.5, 0, 0.9)
 	particles.color_ramp = null
-	particles.gravity = Vector2(0, 200)
+	particles.gravity = Vector2(0, GameConfig.death_particles_gravity_y)
 	particles.z_index = 15
 	add_child(particles)
 	particles.emitting = true
@@ -200,7 +208,7 @@ func _on_heal_pulse() -> void:
 					affected.append(e)
 
 	if not affected.is_empty():
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
 		for e in affected:
 			if is_instance_valid(e) and is_instance_valid(e.anim_sprite):
 				e.anim_sprite.material = null

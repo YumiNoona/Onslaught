@@ -9,14 +9,17 @@ var bounce_velocity: Vector2
 
 
 func _ready() -> void:
-	bounce_velocity = Vector2(randf_range(-300, 300), randf_range(-400, -100))
+	coin_value = GameConfig.coin_value
+	magnet_radius = GameConfig.magnet_radius
+	magnet_speed = GameConfig.magnet_speed
+	bounce_velocity = Vector2(randf_range(GameConfig.coin_bounce_velocity_x_min, GameConfig.coin_bounce_velocity_x_max), randf_range(GameConfig.coin_bounce_velocity_y_min, GameConfig.coin_bounce_velocity_y_max))
 
 func _process(delta: float) -> void:
 	if not GameManager.player:
 		return
 	if bounce_velocity.length_squared() > 1.0:
 		global_position += bounce_velocity * delta
-		bounce_velocity *= 0.92
+		bounce_velocity *= GameConfig.coin_friction
 		return
 	var dist = global_position.distance_to(GameManager.player.global_position)
 	if dist < magnet_radius:

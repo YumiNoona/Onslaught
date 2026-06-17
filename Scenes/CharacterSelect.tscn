@@ -7,6 +7,54 @@
 [ext_resource type="Texture2D" path="res://Assets/Sprites/Entities/Char 3/idle_0.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://ubm1eqcoxtwx" path="res://Assets/Sprites/Environment/ground2_white.png" id="6_bg"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diff_normal"]
+bg_color = Color(0.15, 0.15, 0.15, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.4, 0.4, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diff_hover"]
+bg_color = Color(0.25, 0.25, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.7, 0.7, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diff_pressed"]
+bg_color = Color(0.35, 0.35, 0.35, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.9, 0.9, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diff_disabled"]
+bg_color = Color(0.08, 0.08, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.2, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [node name="CharacterSelect" type="Control" unique_id=1364068169]
 layout_mode = 3
 anchors_preset = 15
@@ -58,6 +106,51 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
+
+[node name="DiffRow" type="HBoxContainer" parent="VBox" unique_id=915152270]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="DiffLabel" type="Label" parent="VBox/DiffRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 28
+text = "DIFFICULTY:"
+horizontal_alignment = 2
+
+[node name="BtnEasy" type="Button" parent="VBox/DiffRow" unique_id=915152271]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_diff_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_diff_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_diff_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_diff_disabled")
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 22
+text = "EASY"
+
+[node name="BtnNormal" type="Button" parent="VBox/DiffRow" unique_id=915152272]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_diff_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_diff_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_diff_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_diff_disabled")
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 22
+text = "NORMAL"
+
+[node name="BtnHard" type="Button" parent="VBox/DiffRow" unique_id=915152273]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_diff_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_diff_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_diff_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_diff_disabled")
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 22
+text = "HARD"
 
 [node name="Card0" type="VBoxContainer" parent="VBox/Cards" unique_id=743366854]
 unique_name_in_owner = true

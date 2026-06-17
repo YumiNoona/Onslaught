@@ -60,17 +60,31 @@ var active_powerups: Array[Dictionary] = []
 
 # Stats tracking for game over screen
 var total_enemies_killed: int = 0
+var game_start_time: int = 0
+
+# Difficulty multiplier
+var difficulty_multiplier: float = 1.0
+
+# Hit freeze cooldown
+var hit_freeze_cooldown: float = 0.0
+
+# Tracked perks for pause display
+var perks_log: Array[String] = []
 
 const SAVE_PATH = "user://highscore.json"
 
 func _ready():
 	var combo_timer = Timer.new()
 	combo_timer.name = "ComboTimer"
-	combo_timer.wait_time = 2.0
+	combo_timer.wait_time = GameConfig.combo_timer_timeout
 	combo_timer.one_shot = true
 	combo_timer.timeout.connect(_on_combo_timeout)
 	add_child(combo_timer)
 	load_highscore()
+
+func _process(delta: float) -> void:
+	if hit_freeze_cooldown > 0:
+		hit_freeze_cooldown -= delta
 
 func load_highscore() -> void:
 	if FileAccess.file_exists(SAVE_PATH):
@@ -93,16 +107,20 @@ func check_highscore() -> bool:
 
 func reset_game_state():
 	is_game_over = false
-	coins = 200
+	coins = GameConfig.starting_coins
 	score = 0
 	current_wave = 0
 	kill_streak = 0
 	last_kill_time = 0.0
 	xp = 0
 	level = 1
-	xp_to_next = 100
+	xp_to_next = GameConfig.base_xp_to_next
 	active_powerups.clear()
 	total_enemies_killed = 0
+	perks_log.clear()
+	game_start_time = Time.get_ticks_msec()
+	difficulty_multiplier = 1.0
+	hit_freeze_cooldown = 0.0
 	Engine.time_scale = 1.0
 	var ct = get_node_or_null("ComboTimer")
 	if ct:
@@ -139,7 +157,7 @@ func play_damage_text(pos: Vector2, value: int) -> void:
 	damage.setup(value)
 
 func create_coin(pos: Vector2) -> void:
-	if randf_range(0, 100) <= 50:
+	if randf_range(0, 100) <= GameConfig.coin_drop_chance * 100:
 		var coin := COIN.instantiate() as Coin
 		coin.global_position = pos
 		get_tree().current_scene.call_deferred("add_child", coin)
@@ -154,5 +172,5 @@ func add_xp(amount: int) -> void:
 	if xp >= xp_to_next:
 		xp -= xp_to_next
 		level += 1
-		xp_to_next = level * 80
+		xp_to_next = level * GameConfig.xp_curve_multiplier
 		on_level_up.emit()

@@ -12,6 +12,7 @@ func _ready() -> void:
 	skip_btn.pressed.connect(_on_skip)
 
 func show_perks() -> void:
+	Input.flush_buffered_events()
 	get_tree().paused = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	show()
@@ -26,7 +27,7 @@ func show_perks() -> void:
 
 	var pool = perk_pool.duplicate()
 	pool.shuffle()
-	selected_perks = pool.slice(0, 3)
+	selected_perks = pool.slice(0, GameConfig.perk_choice_count)
 
 	populate_cards()
 
@@ -43,6 +44,7 @@ func populate_cards() -> void:
 
 func _on_perk_chosen(perk: Dictionary) -> void:
 	perk["apply"].call(GameManager.player)
+	GameManager.perks_log.append(perk["name"])
 	hide()
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN

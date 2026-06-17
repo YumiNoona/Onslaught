@@ -28,6 +28,7 @@ func load_all_weapons() -> void:
 
 func show_shop() -> void:
 	show()
+	Input.flush_buffered_events()
 	get_tree().paused = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	bought_any = false

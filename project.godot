@@ -25,6 +25,7 @@ buses/default_bus_layout="res://Audio.tres"
 
 [autoload]
 
+GameConfig="*res://AutoLoad/GameConfig.gd"
 GameManager="*res://AutoLoad/GameManager.gd"
 
 [display]
