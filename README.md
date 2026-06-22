@@ -193,39 +193,22 @@ Onslaught/
 │   ├── W_ShotGun.tres
 │   └── W_UZI.tres
 ├── Material/                  # Shader materials (hit flash, heal)
-├── Scenes/                    # 36 .tscn scene files
-│   ├── MainMenu.tscn          # Title screen
-│   ├── CharacterSelect.tscn   # Character & difficulty selection
-│   ├── Game.tscn              # Main gameplay scene
-│   ├── Player.tscn            # Shooter character
-│   ├── Player_Rocky.tscn      # Rocky character
-│   ├── Player_Simon.tscn      # Simon character
-│   ├── Enemy.tscn             # Base enemy
-│   ├── Enemy_Boss.tscn        # Boss variant
-│   ├── Enemy_Fly.tscn         # Flying enemy
-│   ├── Enemy_Healer.tscn      # Healer support enemy
-│   ├── Enemy_Mob.tscn         # Standard mob
-│   ├── Enemy_Mutant.tscn      # Mutant heavy enemy
-│   ├── Enemy_Zombie.tscn      # Zombie enemy
-│   ├── WeaponShop.tscn        # Between-wave weapon shop UI
-│   ├── LevelUpUI.tscn         # Perk selection screen
-│   ├── AchievementsPanel.tscn # Achievement viewer
-│   ├── AchievementToast.tscn  # Achievement unlock popup
-│   ├── SettingsPanel.tscn     # Audio & display settings
-│   └── ...                    # Bullets, coins, VFX, HUD elements
-├── Scripts/                   # 25 GDScript files
-│   ├── Game.gd                # Main game loop, HUD, wave management
-│   ├── Player.gd              # Movement, abilities, dash, footsteps
-│   ├── Enemy.gd               # Enemy AI, death, loot drops
-│   ├── EnemySpawner.gd        # Wave system, tier scaling, boss logic
-│   ├── Weapon.gd              # Firing, spread, recoil, ammo, reload
-│   ├── WeaponData.gd          # Weapon resource class definition
-│   ├── WeaponShop.gd          # Shop UI, buying, seen-weapon tracking
-│   ├── Bullet.gd              # Projectile physics, pierce, trails
-│   ├── LevelUpUI.gd           # Perk selection system
-│   ├── CharacterSelect.gd     # Character picker, threading, web fallback
-│   ├── MainMenu.gd            # Main menu, fullscreen toggle
-│   └── ...                    # Camera, Coin, PowerUp, Health, UI scripts
+├── Scenes/                    # Categorized .tscn scene files
+│   ├── Core/                  # Game, Minimap, Overlays
+│   ├── UI/                    # Menus, HUD, Settings, Achievements
+│   ├── Player/                # Playable character scenes
+│   ├── Enemy/                 # Mobs, Bosses, Spawners
+│   ├── Weapon/                # Guns, Bullets, Shop
+│   ├── Effect/                # VFX, Damage Text, Particles
+│   └── Pickup/                # Coins, Health, Powerups
+├── Scripts/                   # Categorized GDScript files
+│   ├── Core/                  # Main loop, Camera, etc.
+│   ├── UI/                    # UI logic, Menu handling
+│   ├── Player/                # Movement, Health, Abilities
+│   ├── Enemy/                 # AI, Spawning logic
+│   ├── Weapon/                # Firing logic, Data resources
+│   ├── Effect/                # Animation handling
+│   └── Pickup/                # Collectible logic
 └── project.godot              # Godot project configuration
 ```
 
