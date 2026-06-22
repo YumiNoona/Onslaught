@@ -24,6 +24,8 @@ func _ready() -> void:
 	
 	if OS.get_name() == "Web":
 		btn_quit.hide()
+	
+	TransitionManager.fade_in(0.4)
 
 
 func _process(delta: float) -> void:
@@ -31,7 +33,7 @@ func _process(delta: float) -> void:
 
 
 func _on_start_pressed() -> void:
-	get_tree().change_scene_to_file("res://Scenes/CharacterSelect.tscn")
+	TransitionManager.transition_to(preload("res://Scenes/CharacterSelect.tscn"), 0.3)
 
 
 func _on_quit_pressed() -> void:

@@ -15,10 +15,10 @@ var player: Player
 @onready var wave_timer: Timer = $WaveTimer
 @onready var xp_bar: ProgressBar = %XpBar
 @onready var powerup_indicator: VBoxContainer = %PowerUpIndicator
-@onready var ability_bar: ProgressBar = %AbilityBar
+@onready var ability_bar: ColorRect = %AbilityCooldown
 @onready var reload_bar: ProgressBar = %ReloadBar
 @onready var ammo_label: Label = %AmmoLabel
-@onready var boss_health_bar: ProgressBar = %BossHealthBar
+@onready var boss_health_bar: HealthBar = %BossHealthBar
 @onready var boss_health_label: Label = %BossHealthLabel
 
 @onready var stats_speed: Label = $CanvasLayer/PauseMenu/VBoxContainer/StatsSpeed
@@ -81,6 +81,8 @@ var crosshair_recoil: Vector2 = Vector2.ZERO
 var tracked_boss: Enemy = null
 var health_pulse_time: float = 0.0
 var hud_update_counter: int = 0
+var curse_offer_ui: Control
+var boss_search_counter: int = 0
 
 
 func _ready() -> void:
@@ -124,6 +126,15 @@ func _ready() -> void:
 
 	# Wire achievement unlocks
 	GameManager.on_achievement_unlocked.connect(_on_achievement_unlocked)
+
+	# Wire streak announcer
+	GameManager.on_combo_milestone.connect(_on_combo_milestone)
+
+	# Create curse offer UI
+	curse_offer_ui = preload("res://Scenes/CurseOfferUI.tscn").instantiate()
+	$CanvasLayer.add_child(curse_offer_ui)
+	curse_offer_ui.accepted.connect(_on_curse_accepted)
+	curse_offer_ui.declined.connect(_on_curse_declined)
 
 	# Screen fade in
 	fade_overlay.color = Color.BLACK
@@ -242,8 +253,7 @@ func _on_main_menu() -> void:
 	print("🏠 Main Menu triggered")
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	await get_tree().create_timer(0.1).timeout
-	get_tree().change_scene_to_packed(main_menu_scene)
+	TransitionManager.transition_to(main_menu_scene, 0.4)
 
 
 func _on_wave_timer_timeout() -> void:
@@ -263,6 +273,10 @@ func _on_wave_timer_timeout() -> void:
 		var cheapest = weapon_shop.get_cheapest_weapon()
 		if cheapest:
 			GameManager.player.setup_weapon(cheapest)
+	
+	if GameManager.current_wave >= 1 and GameManager.active_curse.is_empty():
+		_offer_curse()
+		return
 			
 	show_wave_announcement()
 
@@ -277,6 +291,44 @@ func _start_first_wave() -> void:
 func _on_shop_skipped() -> void:
 	wave_timer.stop()
 	_on_wave_timer_timeout()
+
+func _offer_curse() -> void:
+	get_tree().paused = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	var curses = GameManager.curse_defs.duplicate()
+	curses.shuffle()
+	curse_offer_ui.offer(curses[0])
+	curse_offer_ui.show()
+
+func _on_curse_accepted(curse: Dictionary) -> void:
+	SoundManager.play_click()
+	GameManager.active_curse = curse
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	get_tree().paused = false
+	# Apply immediate curse effects
+	if curse.has("fire_rate_bonus"):
+		GameManager.player.fire_rate_mod += curse["fire_rate_bonus"]
+	if curse.has("bonus_coins"):
+		GameManager.add_coins(curse["bonus_coins"])
+	show_wave_announcement()
+
+func _on_curse_declined() -> void:
+	SoundManager.play_click()
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	get_tree().paused = false
+	show_wave_announcement()
+
+func _on_combo_milestone(streak: int, label: String) -> void:
+	var lbl = preload("res://Scenes/FloatingText.tscn").instantiate()
+	lbl.text = label
+	lbl.theme_override_font_sizes/font_size = 48
+	lbl.modulate = Color(1, 0.8, 0.2, 1)
+	lbl.position = get_viewport_rect().size * Vector2(0.5, 0.3) - lbl.size / 2
+	$CanvasLayer.add_child(lbl)
+	var t = create_tween()
+	t.tween_property(lbl, "position", lbl.position + Vector2(0, -60), 0.6)
+	t.parallel().tween_property(lbl, "modulate:a", 0, 0.5)
+	t.tween_callback(lbl.queue_free)
 
 func show_wave_announcement() -> void:
 	var is_boss = GameManager.current_wave > 0 and GameManager.current_wave % GameConfig.boss_wave_interval == 0
@@ -317,7 +369,9 @@ func update_ability_cooldown() -> void:
 		ability_bar.value = ability_bar.max_value - player.ability_cooldown
 		ability_bar.show()
 	else:
-		ability_bar.value = ability_bar.max_value
+		if player:
+			ability_bar.max_value = player.ability_max_cooldown
+			ability_bar.value = ability_bar.max_value
 		ability_bar.hide()
 
 func update_powerup_indicator() -> void:
@@ -356,9 +410,11 @@ func update_powerup_indicator() -> void:
 func update_boss_health_bar() -> void:
 	if tracked_boss and is_instance_valid(tracked_boss):
 		var hc = tracked_boss.health_component
-		boss_health_bar.max_value = hc.max_health
-		boss_health_bar.value = hc.current_health
-		boss_health_bar.show()
+		if not boss_health_bar.visible:
+			boss_health_bar.setup(hc.max_health, hc.current_health)
+			boss_health_bar.show()
+		else:
+			boss_health_bar.set_health(hc.current_health)
 		boss_health_label.show()
 		if hc.current_health <= 0:
 			tracked_boss = null
@@ -368,6 +424,9 @@ func update_boss_health_bar() -> void:
 		boss_health_bar.hide()
 		boss_health_label.hide()
 	elif not tracked_boss:
+		boss_search_counter += 1
+		if boss_search_counter % 30 != 0:
+			return
 		var enemies = get_tree().get_nodes_in_group("enemies")
 		for e in enemies:
 			var enemy = e as Enemy
@@ -386,11 +445,11 @@ func update_ammo_label() -> void:
 		ammo_label.hide()
 
 func update_reload_bar() -> void:
-	if player and player.weapon.is_reloading:
-		reload_bar.max_value = player.weapon.equipped_weapon.reload_time
-		reload_bar.value = player.weapon.equipped_weapon.reload_time - player.weapon.delay_btw_shots
+	if player.weapon.is_reloading:
+		reload_bar.max_value = 1.0
+		reload_bar.value = player.weapon.get_reload_progress()
 		reload_bar.show()
-	elif player and player.weapon.equipped_weapon and player.weapon.equipped_weapon.max_ammo > 0:
+	else:
 		reload_bar.hide()
 
 func update_low_health_vignette(_delta: float) -> void:
@@ -448,8 +507,14 @@ func _on_achievement_unlocked(ach_id: String) -> void:
 
 func _on_player_hit() -> void:
 	hit_flash.color = GameConfig.hit_flash_color
+	var ca_mat = hit_flash.material as ShaderMaterial
+	ca_mat.set_shader_parameter("intensity", 0.02)
+	ca_mat.set_shader_parameter("alpha", 0.35)
 	var tween = create_tween()
+	tween.set_parallel(true)
 	tween.tween_property(hit_flash, "color", Color(1, 0, 0, 0), GameConfig.hit_flash_fade_duration)
+	tween.tween_method(func(v): ca_mat.set_shader_parameter("intensity", v), 0.02, 0.0, GameConfig.hit_flash_fade_duration)
+	tween.tween_method(func(v): ca_mat.set_shader_parameter("alpha", v), 0.35, 0.0, GameConfig.hit_flash_fade_duration)
 
 
 func _on_enemy_spawner_on_wave_completed() -> void:

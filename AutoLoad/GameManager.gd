@@ -33,7 +33,11 @@ signal on_powerup_ended(type: int)
 @warning_ignore("unused_signal")
 signal on_achievement_unlocked(achievement_id: String)
 
+@warning_ignore("unused_signal")
+signal on_combo_milestone(streak: int, label: String)
+
 const EXLPOSION_ANIM = preload("res://Scenes/Exlposion_Anim.tscn")
+const BIG_EXPLOSION = preload("res://Scenes/BigExplosion.tscn")
 const COIN = preload("res://Scenes/Coin.tscn")
 const HIT_MATERIAL = preload("res://Material/HitMaterial.tres")
 const HEAL_MATERIAL = preload("res://Material/HealMaterial.tres")
@@ -78,6 +82,19 @@ var hit_freeze_cooldown: float = 0.0
 
 # Tracked perks for pause display
 var perks_log: Array[String] = []
+
+# Curse system
+var active_curse: Dictionary = {}
+var curse_defs := [
+	{"id": "greed", "name": "Greed", "desc": "Enemies are 30%% faster\nCoins are worth 2x", "enemy_speed_mult": 1.3, "coin_mult": 2.0},
+	{"id": "bulk", "name": "Bulk", "desc": "Enemies have 50%% more HP\nXP is doubled", "enemy_hp_mult": 1.5, "xp_mult": 2.0},
+	{"id": "swarm", "name": "Swarm", "desc": "40%% more enemies per wave\n+15%% fire rate", "enemy_count_mult": 1.4, "fire_rate_bonus": 0.15},
+	{"id": "twilight", "name": "Twilight", "desc": "Bullets deal 20%% less damage\nScore is 3x", "damage_mult": 0.8, "score_mult": 3.0},
+	{"id": "haste", "name": "Haste", "desc": "Enemies spawn 30%% faster\nStart with 50 bonus coins", "spawn_speed_mult": 0.7, "bonus_coins": 50},
+]
+
+# Streak announcer thresholds
+var streak_labels := {5: "RAMPAGE!", 10: "UNSTOPPABLE!", 20: "GODLIKE!"}
 
 const SAVE_PATH = "user://highscore.json"
 
@@ -231,13 +248,15 @@ func reset_game_state():
 	difficulty_multiplier = 1.0
 	hit_freeze_cooldown = 0.0
 	Engine.time_scale = 1.0
+	active_curse = {}
 	var ct = get_node_or_null("ComboTimer")
 	if ct:
 		ct.stop()
 	print("Game state reset")
 
 func add_score(amount: int) -> void:
-	score += amount
+	var mult = active_curse.get("score_mult", 1.0)
+	score += int(amount * mult)
 
 func increment_combo() -> void:
 	kill_streak += 1
@@ -246,6 +265,8 @@ func increment_combo() -> void:
 	if ct:
 		ct.stop()
 		ct.start()
+	if streak_labels.has(kill_streak):
+		on_combo_milestone.emit(kill_streak, streak_labels[kill_streak])
 	check_achievements()
 
 func _on_combo_timeout() -> void:
@@ -266,6 +287,21 @@ func play_explosion_anim(pos: Vector2) -> void:
 	if is_instance_valid(anim):
 		anim.queue_free()
 
+func play_big_explosion(pos: Vector2) -> void:
+	var scene = get_tree().current_scene
+	if not scene:
+		return
+	var cam = scene.get_node_or_null("Camera2D") as Camera2D
+	if not cam:
+		return
+	var explosion = BIG_EXPLOSION.instantiate()
+	var canvas = scene.get_node_or_null("CanvasLayer")
+	if canvas:
+		canvas.add_child(explosion)
+	else:
+		scene.add_child(explosion)
+	explosion.trigger(pos, cam)
+
 func play_damage_text(pos: Vector2, value: int, is_crit: bool = false) -> void:
 	var damage = DAMAGE_TEXT.instantiate() as DamageText
 	get_tree().current_scene.add_child(damage)
@@ -279,8 +315,10 @@ func create_coin(pos: Vector2) -> void:
 		get_tree().current_scene.call_deferred("add_child", coin)
 
 func add_coins(amount: int) -> void:
-	coins += amount
-	persistent_coins_collected += amount
+	var mult = active_curse.get("coin_mult", 1.0)
+	var final_amount = int(amount * mult)
+	coins += final_amount
+	persistent_coins_collected += final_amount
 
 
 func remove_coin(amount: int) -> void:
@@ -289,8 +327,9 @@ func remove_coin(amount: int) -> void:
 		coins = 0
 
 func add_xp(amount: int) -> void:
-	xp += amount
-	if xp >= xp_to_next:
+	var mult = active_curse.get("xp_mult", 1.0)
+	xp += int(amount * mult)
+	while xp >= xp_to_next:
 		xp -= xp_to_next
 		level += 1
 		xp_to_next = level * GameConfig.xp_curve_multiplier

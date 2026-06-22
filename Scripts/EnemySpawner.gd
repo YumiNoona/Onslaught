@@ -33,6 +33,7 @@ func _ready() -> void:
 	GameManager.on_enemy_died.connect(_on_enemy_died)
 	enemies_per_wave = GameConfig.base_enemies_per_wave
 	hp_per_wave = GameConfig.hp_per_wave
+	scale_difficulty()
 	enemies_remainig = enemies_per_wave
 	wave_active = true
 
@@ -50,7 +51,8 @@ func scale_difficulty() -> void:
 		else:
 			enemies_per_wave += 1
 			
-	enemies_per_wave = max(1, ceil(enemies_per_wave * GameManager.difficulty_multiplier))
+	var curse_count_mult = GameManager.active_curse.get("enemy_count_mult", 1.0)
+	enemies_per_wave = max(1, ceil(enemies_per_wave * GameManager.difficulty_multiplier * curse_count_mult))
 	min_random = max(min_random - 0.1, GameConfig.spawn_timer_min_floor)
 	max_random = max(max_random - 0.2, GameConfig.spawn_timer_max_floor)
 
@@ -66,7 +68,7 @@ func get_spawn_position() -> Vector2:
 
 func spawn_enemy() -> void:
 	var spawn_anim: SpawnAnim = SPAWN_ANIM.instantiate()
-	var is_boss_wave = wave_number > 0 and wave_number % 5 == 0
+	var is_boss_wave = wave_number > 0 and wave_number % GameConfig.boss_wave_interval == 0
 	var spawn_pos = get_spawn_position() if not is_boss_wave else get_boss_spawn_position()
 	spawn_anim.global_position = spawn_pos
 	add_child(spawn_anim)
@@ -84,6 +86,12 @@ func spawn_enemy() -> void:
 	else:
 		GameManager.on_shake_request.emit(GameConfig.shake_normal_spawn)
 	enemy.health_component.current_health += wave_number * hp_per_wave
+	enemy.health_component.max_health = enemy.health_component.current_health
+	var curse_speed_mult = GameManager.active_curse.get("enemy_speed_mult", 1.0)
+	enemy.move_speed *= curse_speed_mult
+	var curse_hp_mult = GameManager.active_curse.get("enemy_hp_mult", 1.0)
+	var hp = enemy.health_component.current_health
+	enemy.health_component.current_health = hp * curse_hp_mult
 	enemy.health_component.max_health = enemy.health_component.current_health
 	if is_boss_wave:
 		enemy.move_speed += wave_number * GameConfig.boss_speed_per_wave
@@ -125,6 +133,8 @@ func get_tiered_enemy() -> PackedScene:
 func start_enemy_timer() -> void:
 	wave_active = true
 	spawn_timer.wait_time = get_new_time()
+	var curse_spawn_mult = GameManager.active_curse.get("spawn_speed_mult", 1.0)
+	spawn_timer.wait_time *= curse_spawn_mult
 	spawn_timer.start()
 	
 	

@@ -1,6 +1,7 @@
 extends MarginContainer
 
 var desc_text: String
+var rainbow_mat: ShaderMaterial
 
 func setup(data: Dictionary) -> void:
 	var icon_rect = $VBox/IconRect as TextureRect
@@ -17,10 +18,19 @@ func setup(data: Dictionary) -> void:
 		icon_rect.modulate = Color(1, 1, 1, 1)
 		name_lbl.modulate = Color(1, 1, 1, 1)
 		modulate = Color(1, 1, 1, 1)
+		_apply_rainbow_border()
 	else:
 		icon_rect.modulate = Color(0.3, 0.3, 0.3, 0.4)
 		name_lbl.modulate = Color(0.5, 0.5, 0.5, 0.5)
 		modulate = Color(1, 1, 1, 0.5)
+		material = null
+
+func _apply_rainbow_border():
+	if not rainbow_mat:
+		rainbow_mat = ShaderMaterial.new()
+		rainbow_mat.shader = preload("res://Material/RainbowBorder.gdshader")
+	rainbow_mat.set_shader_parameter("node_size", size)
+	material = rainbow_mat
 
 func _make_custom_tooltip(for_text: String) -> Object:
 	var lbl = Label.new()

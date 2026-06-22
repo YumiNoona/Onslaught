@@ -29,6 +29,7 @@ var damage_timers: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("enemies")
+	_setup_outline_size()
 	if is_healer:
 		var timer = Timer.new()
 		timer.name = "HealPulseTimer"
@@ -60,6 +61,7 @@ func _physics_process(_delta: float) -> void:
 func _on_health_component_on_damaged() -> void:
 	var health_value := health_component.current_health / health_component.max_health
 	health_bar.set_value(health_value)
+	var prev_mat = anim_sprite.material
 	anim_sprite.material = GameManager.HIT_MATERIAL
 	if is_boss and not enraged and health_component.current_health <= health_component.max_health * GameConfig.boss_enrage_threshold:
 		enraged = true
@@ -68,12 +70,14 @@ func _on_health_component_on_damaged() -> void:
 		if t:
 			t.wait_time = GameConfig.boss_enraged_attack_cooldown
 	await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
-	anim_sprite.material = null
+	if is_instance_valid(anim_sprite):
+		anim_sprite.material = prev_mat
 
 func _on_health_component_on_defeated() -> void:
 	can_move = false
 	anim_sprite.play("Death")
 	collision_shape_2d.set_deferred("disabled", true)
+	_start_dissolve()
 	if is_boss:
 		for i in range(GameConfig.boss_coin_drop_min + randi() % GameConfig.boss_coin_drop_max):
 			GameManager.create_coin(global_position)
@@ -87,6 +91,8 @@ func _on_health_component_on_defeated() -> void:
 	GameManager.increment_combo()
 	spawn_death_particles()
 	GameManager.play_explosion_anim(global_position)
+	if is_boss:
+		GameManager.play_big_explosion(global_position)
 	GameManager.on_shake_request.emit(GameConfig.shake_boss_death if is_boss else GameConfig.shake_enemy_death)
 	if is_boss:
 		Engine.time_scale = GameConfig.boss_death_time_scale
@@ -192,7 +198,7 @@ func _on_heal_pulse() -> void:
 		return
 	is_healing = true
 
-	var affected: Array[Node] = []
+	var affected: Array[Dictionary] = []
 	var enemies = get_tree().get_nodes_in_group("enemies")
 	for enemy in enemies:
 		if enemy == self:
@@ -206,13 +212,32 @@ func _on_heal_pulse() -> void:
 					e.health_component.max_health
 				)
 				if is_instance_valid(e.anim_sprite):
+					affected.append({"node": e, "prev_mat": e.anim_sprite.material})
 					e.anim_sprite.material = GameManager.HEAL_MATERIAL
-					affected.append(e)
 
 	if not affected.is_empty():
 		await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
-		for e in affected:
+		for entry in affected:
+			var e = entry["node"] as Enemy
 			if is_instance_valid(e) and is_instance_valid(e.anim_sprite):
-				e.anim_sprite.material = null
+				e.anim_sprite.material = entry["prev_mat"]
 
 	is_healing = false
+
+func _setup_outline_size():
+	var mat = anim_sprite.material as ShaderMaterial
+	if not mat:
+		return
+	if not anim_sprite.sprite_frames:
+		return
+	var tex = anim_sprite.sprite_frames.get_frame_texture("Move", 0)
+	if tex:
+		mat.set_shader_parameter("texture_size", tex.get_size())
+
+func _start_dissolve():
+	var dissolve_mat = ShaderMaterial.new()
+	dissolve_mat.shader = preload("res://Material/PixelDissolve.gdshader")
+	dissolve_mat.set_shader_parameter("hit_uv", Vector2(0.5, 0.5))
+	anim_sprite.material = dissolve_mat
+	var tw = create_tween()
+	tw.tween_method(func(v): dissolve_mat.set_shader_parameter("threshold", v), 0.0, 1.0, 0.4)

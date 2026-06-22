@@ -125,16 +125,24 @@ func _process(_delta: float) -> void:
 	update_rotation()
 	update_weapon_rotation()
 
+var footstep_pool: Array[AudioStreamPlayer2D] = []
+var footstep_idx: int = 0
+
 func play_footstep() -> void:
 	if OS.get_name() == "Web":
 		return
-	var player = AudioStreamPlayer2D.new()
+	if footstep_pool.is_empty():
+		for i in 2:
+			var p = AudioStreamPlayer2D.new()
+			p.max_distance = GameConfig.footstep_max_distance
+			get_tree().current_scene.add_child(p)
+			footstep_pool.append(p)
+	var player = footstep_pool[footstep_idx]
+	footstep_idx = (footstep_idx + 1) % footstep_pool.size()
 	var gen = AudioStreamGenerator.new()
 	gen.mix_rate = GameConfig.footstep_mix_rate
 	player.stream = gen
-	player.max_distance = GameConfig.footstep_max_distance
 	player.volume_db = GameConfig.footstep_base_volume + randf_range(-GameConfig.footstep_volume_variation, GameConfig.footstep_volume_variation)
-	get_tree().current_scene.add_child(player)
 	player.play()
 	var playback = player.get_stream_playback()
 	var frames = 400
@@ -144,9 +152,6 @@ func play_footstep() -> void:
 		var amp = max(0, 1.0 - t * 5.0) * GameConfig.footstep_envelope_strength
 		buf.append(Vector2(randf_range(-amp, amp), randf_range(-amp, amp)))
 	playback.push_buffer(buf)
-	await get_tree().create_timer(0.05).timeout
-	if is_instance_valid(player):
-		player.queue_free()
 
 func use_ability() -> void:
 	match character_type:

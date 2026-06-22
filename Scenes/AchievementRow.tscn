@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/AchievementRow.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://c4x0jidjvbcs3" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="2"]
+[ext_resource type="Shader" path="res://Material/RainbowBorder.gdshader" id="3_rainbow"]
 
 [node name="AchievementRow" type="MarginContainer"]
 custom_minimum_size = Vector2(100, 120)

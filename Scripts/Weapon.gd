@@ -12,6 +12,8 @@ var delay_btw_shots: float
 var original_fire_pos: Vector2
 var current_ammo: int = -1
 var is_reloading: bool = false
+var reload_elapsed: float = 0.0
+var reload_bar_visible: bool = false
 
 func _process(delta: float) -> void:
 	if not equipped_weapon:
@@ -20,7 +22,13 @@ func _process(delta: float) -> void:
 	if delay_btw_shots > 0:
 		return
 	if is_reloading:
+		reload_elapsed += delta
+		if reload_elapsed >= equipped_weapon.reload_time:
+			current_ammo = equipped_weapon.max_ammo
+			is_reloading = false
+			reload_bar_visible = false
 		return
+	reload_bar_visible = false
 	if equipped_weapon.max_ammo > 0 and current_ammo <= 0:
 		start_reload()
 		return
@@ -28,6 +36,11 @@ func _process(delta: float) -> void:
 		shoot_weapon()
 	if Input.is_action_just_pressed("Reload"):
 		start_reload()
+
+func get_reload_progress() -> float:
+	if not is_reloading or equipped_weapon.reload_time <= 0:
+		return 0.0
+	return clamp(reload_elapsed / equipped_weapon.reload_time, 0.0, 1.0)
 
 func setup(weapon_data: WeaponData) -> void:
 	equipped_weapon = weapon_data
@@ -38,6 +51,8 @@ func setup(weapon_data: WeaponData) -> void:
 	original_fire_pos = weapon_data.fire_pos
 	current_ammo = weapon_data.max_ammo
 	is_reloading = false
+	reload_elapsed = 0.0
+	reload_bar_visible = false
 
 func start_reload() -> void:
 	if is_reloading or equipped_weapon.max_ammo <= 0:
@@ -45,12 +60,8 @@ func start_reload() -> void:
 	if current_ammo == equipped_weapon.max_ammo:
 		return
 	is_reloading = true
-	get_tree().create_timer(equipped_weapon.reload_time).timeout.connect(_finish_reload)
-
-func _finish_reload() -> void:
-	if is_instance_valid(self):
-		current_ammo = equipped_weapon.max_ammo
-		is_reloading = false
+	reload_elapsed = 0.0
+	reload_bar_visible = true
 
 func shoot_weapon() -> void:
 	if equipped_weapon.max_ammo > 0:
@@ -61,7 +72,8 @@ func shoot_weapon() -> void:
 	for i in b_count:
 		var bullet: Bullet = equipped_weapon.bullet_scene.instantiate()
 		bullet.global_position = fire_pos.global_position
-		bullet.damage = equipped_weapon.damage + GameManager.player.damage_bonus
+		var curse_damage_mult = GameManager.active_curse.get("damage_mult", 1.0)
+		bullet.damage = (equipped_weapon.damage + GameManager.player.damage_bonus) * curse_damage_mult
 		bullet.pierce = equipped_weapon.pierce + GameManager.player.pierce_bonus
 		bullet.crit_chance = equipped_weapon.crit_chance + GameManager.player.crit_bonus
 		

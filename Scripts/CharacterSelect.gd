@@ -35,6 +35,7 @@ var characters := [
 ]
 
 func _ready() -> void:
+	TransitionManager.fade_in(0.4)
 	if OS.has_feature("web"):
 		game_scene = load("res://Scenes/Game.tscn")
 		game_loaded = true
@@ -80,7 +81,6 @@ func _process(_delta: float) -> void:
 func _on_select(c: Dictionary) -> void:
 	GameManager.selected_character_scene = c["scene"]
 	if game_loaded:
-		get_tree().change_scene_to_packed(game_scene)
+		TransitionManager.transition_to(game_scene, 0.3)
 	else:
-		# fallback for web where threading may not work
-		get_tree().change_scene_to_file("res://Scenes/Game.tscn")
+		TransitionManager.transition_to(load("res://Scenes/Game.tscn") as PackedScene, 0.3)
