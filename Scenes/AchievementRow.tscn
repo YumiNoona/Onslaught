@@ -1,32 +1,33 @@
 [gd_scene format=3 uid="uid://ckup02edd8hwa"]
 
-[ext_resource type="Script" path="res://Scripts/AchievementRow.gd" id="1"]
+[ext_resource type="Script" uid="uid://yut0tyqi15r5" path="res://Scripts/AchievementRow.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://c4x0jidjvbcs3" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="2"]
-[ext_resource type="Shader" path="res://Material/RainbowBorder.gdshader" id="3_rainbow"]
 
-[node name="AchievementRow" type="MarginContainer"]
+[node name="AchievementRow" type="MarginContainer" unique_id=54254617]
 custom_minimum_size = Vector2(100, 120)
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource("1")
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
+script = ExtResource("1")
 
-[node name="VBox" type="VBoxContainer" parent="."]
+[node name="VBox" type="VBoxContainer" parent="." unique_id=335811847]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 1
 
-[node name="IconRect" type="TextureRect" parent="VBox"]
+[node name="IconRect" type="TextureRect" parent="VBox" unique_id=254966575]
 custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 stretch_mode = 5
 
-[node name="NameLabel" type="Label" parent="VBox"]
+[node name="NameLabel" type="Label" parent="VBox" unique_id=1992214493]
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2")

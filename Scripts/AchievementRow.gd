@@ -2,6 +2,7 @@ extends MarginContainer
 
 var desc_text: String
 var rainbow_mat: ShaderMaterial
+var _resized_connected: bool = false
 
 func setup(data: Dictionary) -> void:
 	var icon_rect = $VBox/IconRect as TextureRect
@@ -18,6 +19,9 @@ func setup(data: Dictionary) -> void:
 		icon_rect.modulate = Color(1, 1, 1, 1)
 		name_lbl.modulate = Color(1, 1, 1, 1)
 		modulate = Color(1, 1, 1, 1)
+		if not _resized_connected:
+			resized.connect(_update_rainbow_node_size)
+			_resized_connected = true
 		_apply_rainbow_border()
 	else:
 		icon_rect.modulate = Color(0.3, 0.3, 0.3, 0.4)
@@ -29,10 +33,17 @@ func _apply_rainbow_border():
 	if not rainbow_mat:
 		rainbow_mat = ShaderMaterial.new()
 		rainbow_mat.shader = preload("res://Material/RainbowBorder.gdshader")
+		rainbow_mat.set_shader_parameter("border_px", 8.0)
+		rainbow_mat.set_shader_parameter("speed", 0.9)
+		rainbow_mat.set_shader_parameter("glow_intensity", 2.5)
 	rainbow_mat.set_shader_parameter("node_size", size)
 	material = rainbow_mat
 
-func _make_custom_tooltip(for_text: String) -> Object:
+func _update_rainbow_node_size():
+	if rainbow_mat:
+		rainbow_mat.set_shader_parameter("node_size", size)
+
+func _make_custom_tooltip(_for_text: String) -> Object:
 	var lbl = Label.new()
 	lbl.text = "%s\n%s" % [$VBox/NameLabel.text, desc_text]
 	lbl.add_theme_font_override("font", load("res://Assets/Fonts/kenpixel_mini_square.ttf"))

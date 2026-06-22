@@ -24,7 +24,7 @@ func set_health(current_hp: float):
 		mat.set_shader_parameter("trail", _hp)
 		_last_was_heal = is_heal
 	_hp = new_frac
-	_delay_expiration = Time.get_ticks_msec() + delay * 1000.0
+	_delay_expiration = int(Time.get_ticks_msec() + delay * 1000.0)
 	_update_shader()
 
 func _ready():

@@ -11,6 +11,9 @@ signal declined
 var offered_curse: Dictionary = {}
 
 func _ready() -> void:
+	process_mode = PROCESS_MODE_WHEN_PAUSED
+	accept_btn.process_mode = PROCESS_MODE_WHEN_PAUSED
+	decline_btn.process_mode = PROCESS_MODE_WHEN_PAUSED
 	accept_btn.pressed.connect(_on_accept)
 	decline_btn.pressed.connect(_on_decline)
 

@@ -1,6 +1,15 @@
 extends CharacterBody2D
 class_name Enemy
 
+enum BossType { TELEPORTER, DASHER, SUMMONER, BARRAGE }
+
+const BOSS_NAMES = {
+	BossType.TELEPORTER: "The Marauder",
+	BossType.DASHER: "The Juggernaut",
+	BossType.SUMMONER: "The Archon",
+	BossType.BARRAGE: "The Artillery",
+}
+
 @export var move_speed := 400.0
 
 @onready var collision_shape_2d: CollisionShape2D = %CollisionShape2D
@@ -8,6 +17,7 @@ class_name Enemy
 @onready var health_bar: HealthBar = $HealthBar
 @onready var anim_sprite: AnimatedSprite2D = $AnimSprite
 @onready var area_2d: Area2D = $Area2D
+@onready var shadow_sprite: Sprite2D = $Shadow
 
 @export var contact_damage: float = 1.0
 @export var damage_cooldown: float = 1.5
@@ -16,20 +26,27 @@ class_name Enemy
 @export var is_healer: bool = false
 # Boss enemy
 @export var is_boss: bool = false
+@export var boss_type: BossType = BossType.TELEPORTER
 var enraged: bool = false
 const BOSS_BULLET = preload("res://Scenes/Bullet.tscn")
+const HEALTH_PICKUP = preload("res://Scenes/HealthPickup.tscn")
+const MINION_ENEMY = preload("res://Scenes/Enemy_Mob.tscn")
 @export var heal_range: float = 200.0
 @export var heal_amount: float = 3.0
 @export var heal_cooldown: float = 4.0
 var is_healing: bool = false
 
+var _is_dead := false
 var can_move := true
 var players_in_contact: Array[Player] = []
 var damage_timers: Dictionary = {}
+var _boss_ability_timer: Timer
 
 func _ready() -> void:
 	add_to_group("enemies")
 	_setup_outline_size()
+	if is_boss:
+		health_bar.hide()
 	if is_healer:
 		var timer = Timer.new()
 		timer.name = "HealPulseTimer"
@@ -38,12 +55,18 @@ func _ready() -> void:
 		add_child(timer)
 		timer.start()
 	if is_boss:
-		var timer = Timer.new()
-		timer.name = "BossAttackTimer"
-		timer.wait_time = GameConfig.boss_attack_cooldown_base
-		timer.timeout.connect(_on_boss_attack)
-		add_child(timer)
-		timer.start()
+		_boss_ability_timer = Timer.new()
+		_boss_ability_timer.name = "BossAbilityTimer"
+		_boss_ability_timer.wait_time = _get_ability_cooldown()
+		_boss_ability_timer.timeout.connect(_on_boss_ability)
+		add_child(_boss_ability_timer)
+		_boss_ability_timer.start()
+		var atk_timer = Timer.new()
+		atk_timer.name = "BossAttackTimer"
+		atk_timer.wait_time = GameConfig.boss_attack_cooldown_base
+		atk_timer.timeout.connect(_on_boss_attack)
+		add_child(atk_timer)
+		atk_timer.start()
 
 func _physics_process(_delta: float) -> void:
 	var player_direction = GameManager.player.global_position - global_position
@@ -70,14 +93,27 @@ func _on_health_component_on_damaged() -> void:
 		if t:
 			t.wait_time = GameConfig.boss_enraged_attack_cooldown
 	await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
-	if is_instance_valid(anim_sprite):
+	if is_instance_valid(anim_sprite) and not _is_dead:
 		anim_sprite.material = prev_mat
 
 func _on_health_component_on_defeated() -> void:
+	_is_dead = true
 	can_move = false
 	anim_sprite.play("Death")
+	# Hide sprite when "Death" animation finishes
+	if anim_sprite.sprite_frames and anim_sprite.sprite_frames.has_animation("Death"):
+		var death_len = anim_sprite.sprite_frames.get_frame_count("Death") / max(anim_sprite.sprite_frames.get_animation_speed("Death"), 0.001)
+		if not anim_sprite.animation_finished.is_connected(_on_death_anim_finished):
+			anim_sprite.animation_finished.connect(_on_death_anim_finished)
+		# Fallback timer in case animation is not looping but signal doesn't fire
+		if death_len > 0:
+			get_tree().create_timer(death_len, false, false, true).timeout.connect(_on_death_timer_timeout)
+	else:
+		anim_sprite.hide()
 	collision_shape_2d.set_deferred("disabled", true)
-	_start_dissolve()
+	area_2d.set_deferred("monitoring", false)
+	if is_instance_valid(shadow_sprite):
+		shadow_sprite.hide()
 	if is_boss:
 		for i in range(GameConfig.boss_coin_drop_min + randi() % GameConfig.boss_coin_drop_max):
 			GameManager.create_coin(global_position)
@@ -85,19 +121,24 @@ func _on_health_component_on_defeated() -> void:
 		GameManager.create_coin(global_position)
 	if not is_healer and randf() < GameConfig.powerup_drop_chance:
 		spawn_powerup()
+	if not is_healer and randf() < GameConfig.health_pickup_drop_chance:
+		spawn_health_pickup()
 	GameManager.add_score(int(GameConfig.score_per_kill_base * max(GameManager.current_wave, 1)))
 	GameManager.add_xp(int(GameConfig.xp_per_kill_base * max(GameManager.current_wave, 1)))
 	GameManager.total_enemies_killed += 1
 	GameManager.increment_combo()
 	spawn_death_particles()
 	GameManager.play_explosion_anim(global_position)
+	var big_explosion: Node = null
 	if is_boss:
-		GameManager.play_big_explosion(global_position)
+		big_explosion = GameManager.play_big_explosion(global_position)
 	GameManager.on_shake_request.emit(GameConfig.shake_boss_death if is_boss else GameConfig.shake_enemy_death)
 	if is_boss:
 		Engine.time_scale = GameConfig.boss_death_time_scale
 		await get_tree().create_timer(GameConfig.boss_death_duration, false, false, true).timeout
 		Engine.time_scale = 1.0
+		if big_explosion and is_instance_valid(big_explosion):
+			await big_explosion.finished
 	health_bar.hide()
 	
 	# Clean up all damage timers
@@ -107,9 +148,16 @@ func _on_health_component_on_defeated() -> void:
 	damage_timers.clear()
 	players_in_contact.clear()
 	
-	await anim_sprite.animation_finished
 	GameManager.on_enemy_died.emit()
 	queue_free()
+
+func _on_death_anim_finished() -> void:
+	if anim_sprite.animation == "Death":
+		anim_sprite.hide()
+
+func _on_death_timer_timeout() -> void:
+	if is_instance_valid(anim_sprite) and anim_sprite.visible:
+		anim_sprite.hide()
 
 func spawn_death_particles() -> void:
 	var particles = CPUParticles2D.new()
@@ -182,16 +230,97 @@ func spawn_powerup() -> void:
 	power.power_type = randi() % PowerUp.Type.size()
 	get_parent().call_deferred("add_child", power)
 
+func spawn_health_pickup() -> void:
+	var hp = HEALTH_PICKUP.instantiate()
+	hp.global_position = global_position
+	get_parent().call_deferred("add_child", hp)
+
+func _get_ability_cooldown() -> float:
+	match boss_type:
+		BossType.TELEPORTER: return 3.0
+		BossType.DASHER: return 4.0
+		BossType.SUMMONER: return 6.0
+		BossType.BARRAGE: return 5.0
+	return 4.0
+
 func _on_boss_attack() -> void:
 	if not can_move or GameManager.is_game_over:
 		return
-	var bullet = BOSS_BULLET.instantiate()
-	bullet.global_position = global_position
-	bullet.damage = contact_damage
-	bullet.pierce = 0
-	bullet.is_enemy_bullet = true
-	bullet.move_direction = (GameManager.player.global_position - global_position).normalized()
-	get_parent().add_child(bullet)
+	if boss_type == BossType.BARRAGE:
+		for i in 5:
+			var angle = randf_range(-0.3, 0.3)
+			var dir = (GameManager.player.global_position - global_position).normalized().rotated(angle)
+			var b = BOSS_BULLET.instantiate()
+			b.global_position = global_position
+			b.damage = contact_damage * 0.6
+			b.pierce = 0
+			b.is_enemy_bullet = true
+			b.move_direction = dir
+			get_parent().add_child(b)
+	else:
+		var bullet = BOSS_BULLET.instantiate()
+		bullet.global_position = global_position
+		bullet.damage = contact_damage
+		bullet.pierce = 0
+		bullet.is_enemy_bullet = true
+		bullet.move_direction = (GameManager.player.global_position - global_position).normalized()
+		get_parent().add_child(bullet)
+
+func _on_boss_ability() -> void:
+	if not can_move or GameManager.is_game_over or not is_instance_valid(GameManager.player):
+		return
+	match boss_type:
+		BossType.TELEPORTER:
+			_do_teleport()
+		BossType.DASHER:
+			_do_dash()
+		BossType.SUMMONER:
+			_do_summon()
+		BossType.BARRAGE:
+			pass
+	_boss_ability_timer.wait_time = _get_ability_cooldown()
+	_boss_ability_timer.start()
+
+func _do_teleport() -> void:
+	var player = GameManager.player
+	var angle = randf_range(0, TAU)
+	var dist = randf_range(200, 400)
+	var target = player.global_position + Vector2(cos(angle), sin(angle)) * dist
+	target.x = clamp(target.x, -GameConfig.world_bound, GameConfig.world_bound)
+	target.y = clamp(target.y, -GameConfig.world_bound, GameConfig.world_bound)
+	global_position = target
+	anim_sprite.material = GameManager.HIT_MATERIAL
+	await get_tree().create_timer(0.15).timeout
+	if is_instance_valid(anim_sprite):
+		anim_sprite.material = null
+
+func _do_dash() -> void:
+	if not is_instance_valid(GameManager.player):
+		return
+	var dir = (GameManager.player.global_position - global_position).normalized()
+	var target = global_position + dir * 500
+	target.x = clamp(target.x, -GameConfig.world_bound, GameConfig.world_bound)
+	target.y = clamp(target.y, -GameConfig.world_bound, GameConfig.world_bound)
+	var tw = create_tween()
+	tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_property(self, "global_position", target, 0.3)
+	can_move = false
+	await tw.finished
+	can_move = true
+
+func _do_summon() -> void:
+	var count = 2 + randi() % 2
+	for i in count:
+		var minion = MINION_ENEMY.instantiate()
+		var angle = randf_range(0, TAU)
+		var dist = randf_range(100, 200)
+		minion.global_position = global_position + Vector2(cos(angle), sin(angle)) * dist
+		minion.move_speed *= 0.6
+		minion.scale *= 0.7
+		var hp = 1 + GameManager.current_wave
+		minion.health_component.max_health = hp
+		minion.health_component.current_health = hp
+		get_parent().add_child(minion)
 
 func _on_heal_pulse() -> void:
 	if is_healing or not is_healer:
@@ -219,7 +348,7 @@ func _on_heal_pulse() -> void:
 		await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
 		for entry in affected:
 			var e = entry["node"] as Enemy
-			if is_instance_valid(e) and is_instance_valid(e.anim_sprite):
+			if is_instance_valid(e) and is_instance_valid(e.anim_sprite) and not e._is_dead:
 				e.anim_sprite.material = entry["prev_mat"]
 
 	is_healing = false
@@ -233,11 +362,3 @@ func _setup_outline_size():
 	var tex = anim_sprite.sprite_frames.get_frame_texture("Move", 0)
 	if tex:
 		mat.set_shader_parameter("texture_size", tex.get_size())
-
-func _start_dissolve():
-	var dissolve_mat = ShaderMaterial.new()
-	dissolve_mat.shader = preload("res://Material/PixelDissolve.gdshader")
-	dissolve_mat.set_shader_parameter("hit_uv", Vector2(0.5, 0.5))
-	anim_sprite.material = dissolve_mat
-	var tw = create_tween()
-	tw.tween_method(func(v): dissolve_mat.set_shader_parameter("threshold", v), 0.0, 1.0, 0.4)

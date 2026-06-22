@@ -6,7 +6,7 @@ var game_loaded := false
 var characters := [
 	{
 		"name": "SHOOTER",
-		"scene": "res://Scenes/Player.tscn",
+		"scene": "res://Scenes/Player_Veneca.tscn",
 		"desc": "Balanced all-rounder",
 		"ability": "Adrenaline Rush: +20% speed & fire rate for 3s (10s CD)",
 		"pros": "No weaknesses",

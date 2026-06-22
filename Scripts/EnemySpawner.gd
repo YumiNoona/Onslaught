@@ -79,6 +79,10 @@ func spawn_enemy() -> void:
 	
 	var random_enemy: PackedScene = BOSS_ENEMY if is_boss_wave else get_tiered_enemy()
 	var enemy = random_enemy.instantiate() as Enemy
+	if is_boss_wave:
+		var boss_types = Enemy.BossType.values()
+		var idx = (int(float(wave_number) / GameConfig.boss_wave_interval) - 1) % boss_types.size()
+		enemy.boss_type = boss_types[idx]
 	enemy.global_position = spawn_pos
 	get_parent().add_child(enemy)
 	if is_boss_wave:

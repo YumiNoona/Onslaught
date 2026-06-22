@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://d3uriq6x1mniy"]
+[gd_scene format=3 uid="uid://d3uriq6x1mniy"]
 
 [ext_resource type="Texture2D" uid="uid://ttwsgmsodoav" path="res://Assets/Sprites/Dead anim/death_0.png" id="1_2sg7c"]
 [ext_resource type="Texture2D" uid="uid://dd0aq5umrxj22" path="res://Assets/Sprites/Dead anim/death_1.png" id="2_ctdyc"]
@@ -24,10 +24,8 @@ animations = [{
 "speed": 20.0
 }]
 
-[node name="ExplosionAnim" type="AnimatedSprite2D"]
+[node name="ExplosionAnim" type="AnimatedSprite2D" unique_id=1140026731]
 scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_81rws")
 animation = &"Idle"
 autoplay = "Idle"
-frame = 3
-frame_progress = 1.0

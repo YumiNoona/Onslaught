@@ -44,7 +44,7 @@ const HEAL_MATERIAL = preload("res://Material/HealMaterial.tres")
 const DAMAGE_TEXT = preload("res://Scenes/DamageText.tscn")
 
 var player: Player
-var selected_character_scene: String = "res://Scenes/Player.tscn"
+var selected_character_scene: String = "res://Scenes/Player_Veneca.tscn"
 var coins: int = 500
 var is_game_over: bool = false
 var highscore: int = 0
@@ -287,13 +287,13 @@ func play_explosion_anim(pos: Vector2) -> void:
 	if is_instance_valid(anim):
 		anim.queue_free()
 
-func play_big_explosion(pos: Vector2) -> void:
+func play_big_explosion(pos: Vector2) -> Node:
 	var scene = get_tree().current_scene
 	if not scene:
-		return
+		return null
 	var cam = scene.get_node_or_null("Camera2D") as Camera2D
 	if not cam:
-		return
+		return null
 	var explosion = BIG_EXPLOSION.instantiate()
 	var canvas = scene.get_node_or_null("CanvasLayer")
 	if canvas:
@@ -301,6 +301,7 @@ func play_big_explosion(pos: Vector2) -> void:
 	else:
 		scene.add_child(explosion)
 	explosion.trigger(pos, cam)
+	return explosion
 
 func play_damage_text(pos: Vector2, value: int, is_crit: bool = false) -> void:
 	var damage = DAMAGE_TEXT.instantiate() as DamageText

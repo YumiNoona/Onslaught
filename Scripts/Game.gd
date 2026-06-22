@@ -57,7 +57,7 @@ var main_menu_scene := preload("res://Scenes/MainMenu.tscn")
 const POWERUP_LABEL = preload("res://Scenes/PowerUpLabel.tscn")
 
 const PRELOADED_CHARACTERS = {
-	"res://Scenes/Player.tscn": preload("res://Scenes/Player.tscn"),
+	"res://Scenes/Player_Veneca.tscn": preload("res://Scenes/Player_Veneca.tscn"),
 	"res://Scenes/Player_Rocky.tscn": preload("res://Scenes/Player_Rocky.tscn"),
 	"res://Scenes/Player_Simon.tscn": preload("res://Scenes/Player_Simon.tscn")
 }
@@ -280,10 +280,15 @@ func _on_wave_timer_timeout() -> void:
 
 func _start_first_wave() -> void:
 	weapons.hide()
-	weapon_shop.show_shop()
 	wave_label.hide()
 	enemy_count_label.hide()
-	wave_timer.wait_time = GameConfig.first_wave_timer
+	GameManager.current_wave = 5
+	enemy_spawner.wave_number = 5
+	enemy_spawner.enemies_per_wave = 1
+	enemy_spawner.enemies_remainig = 1
+	enemy_spawner.spawned_enemies = 0
+	GameManager.active_curse = {"id": "debug"}
+	wave_timer.wait_time = 0.1
 	wave_timer.start()
 
 func _on_shop_skipped() -> void:
@@ -316,10 +321,10 @@ func _on_curse_declined() -> void:
 	get_tree().paused = false
 	show_wave_announcement()
 
-func _on_combo_milestone(streak: int, label: String) -> void:
+func _on_combo_milestone(_streak: int, label: String) -> void:
 	var lbl = preload("res://Scenes/FloatingText.tscn").instantiate()
 	lbl.text = label
-	lbl.theme_override_font_sizes/font_size = 48
+	lbl.add_theme_font_size_override("font_size", 48)
 	lbl.modulate = Color(1, 0.8, 0.2, 1)
 	lbl.position = get_viewport_rect().size * Vector2(0.5, 0.3) - lbl.size / 2
 	$CanvasLayer.add_child(lbl)
@@ -411,6 +416,8 @@ func update_boss_health_bar() -> void:
 		if not boss_health_bar.visible:
 			boss_health_bar.setup(hc.max_health, hc.current_health)
 			boss_health_bar.show()
+			var boss_display_name = Enemy.BOSS_NAMES.get(tracked_boss.boss_type, "BOSS")
+			boss_health_label.text = boss_display_name
 		else:
 			boss_health_bar.set_health(hc.current_health)
 		boss_health_label.show()

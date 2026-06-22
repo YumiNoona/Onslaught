@@ -16,8 +16,9 @@ enum CharacterType { VENECA, ROCKY, SIMON }
 @onready var anim_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var weapon: Weapon = $Weapon
 @onready var health_component: HealthComponent = $HealthComponent
-@onready var health_bar: HealthBar = $HealthBar
+@onready var health_bar = $HealthBar
 @onready var collision: CollisionShape2D = $CollisionShape2D
+@onready var shadow_sprite: Sprite2D = $Shadow
 
 var can_move: bool = true
 var mouse_pos: Vector2
@@ -279,6 +280,8 @@ func _on_health_component_on_defeated() -> void:
 	anim_sprite.play("Death")
 	can_move = false
 	health_bar.hide()
+	if is_instance_valid(shadow_sprite):
+		shadow_sprite.hide()
 
 	Engine.time_scale = GameConfig.player_death_time_scale
 	await get_tree().create_timer(GameConfig.player_death_duration, false, false, true).timeout

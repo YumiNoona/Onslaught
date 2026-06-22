@@ -349,6 +349,8 @@ extends Node
 @export var health_pickup_collision_radius: float = 15.0
 ## Duration of health pickup fade-out animation in seconds
 @export var health_pickup_fade_duration: float = 0.5
+## Chance for enemy to drop a health pickup on death (0.0 to 1.0)
+@export var health_pickup_drop_chance: float = 0.2
 
 @export_category("Wave Intermission")
 ## Wait time between waves shown on the wave label in seconds
