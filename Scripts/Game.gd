@@ -18,7 +18,7 @@ var player: Player
 @onready var ability_bar: ColorRect = %AbilityCooldown
 @onready var reload_bar: ProgressBar = %ReloadBar
 @onready var ammo_label: Label = %AmmoLabel
-@onready var boss_health_bar: HealthBar = %BossHealthBar
+@onready var boss_health_bar = %BossHealthBar
 @onready var boss_health_label: Label = %BossHealthLabel
 
 @onready var stats_speed: Label = $CanvasLayer/PauseMenu/VBoxContainer/StatsSpeed
@@ -136,11 +136,9 @@ func _ready() -> void:
 	curse_offer_ui.accepted.connect(_on_curse_accepted)
 	curse_offer_ui.declined.connect(_on_curse_declined)
 
-	# Screen fade in
-	fade_overlay.color = Color.BLACK
-	var fade_tween = create_tween()
-	fade_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	fade_tween.tween_property(fade_overlay, "color:a", 0.0, GameConfig.fade_in_duration).set_delay(GameConfig.fade_in_delay)
+	# Screen reveal via TransitionManager (circle wipe from previous scene)
+	fade_overlay.color = Color.TRANSPARENT
+	TransitionManager.fade_in(GameConfig.fade_in_duration)
 
 	# Pause Menu UI setup
 	pause_menu.visible = false

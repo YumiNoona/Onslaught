@@ -17,30 +17,29 @@ void fragment() {
 
 	if (UV.x < half_border.x || UV.x > 1.0 - half_border.x || UV.y < half_border.y || UV.y > 1.0 - half_border.y) {
 		COLOR = vec4(1.0, 1.0, 1.0, 1.0);
-		return;
+	} else {
+		vec2 inner_uv = vec2(
+			(UV.x - half_border.x) / (1.0 - 2.0 * half_border.x),
+			(UV.y - half_border.y) / (1.0 - 2.0 * half_border.y)
+		);
+
+		float x = inner_uv.x;
+		vec4 col = bg_color;
+
+		if (x <= trail) {
+			col = trail_color;
+		}
+		if (x <= health) {
+			col = fill_color;
+		}
+
+		float border_alpha = 1.0;
+		if (inner_uv.y < 0.05) {
+			border_alpha = inner_uv.y / 0.05;
+		} else if (inner_uv.y > 0.95) {
+			border_alpha = (1.0 - inner_uv.y) / 0.05;
+		}
+
+		COLOR = vec4(col.rgb, col.a * border_alpha);
 	}
-
-	vec2 inner_uv = vec2(
-		(UV.x - half_border.x) / (1.0 - 2.0 * half_border.x),
-		(UV.y - half_border.y) / (1.0 - 2.0 * half_border.y)
-	);
-
-	float x = inner_uv.x;
-	vec4 col = bg_color;
-
-	if (x <= trail) {
-		col = trail_color;
-	}
-	if (x <= health) {
-		col = fill_color;
-	}
-
-	float border_alpha = 1.0;
-	if (inner_uv.y < 0.05) {
-		border_alpha = inner_uv.y / 0.05;
-	} else if (inner_uv.y > 0.95) {
-		border_alpha = (1.0 - inner_uv.y) / 0.05;
-	}
-
-	COLOR = vec4(col.rgb, col.a * border_alpha);
 }
