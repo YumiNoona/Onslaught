@@ -14,8 +14,7 @@ damage = 5.0
 delay_between_shots = 0.7
 fire_pos = Vector2(740, -60)
 bullet_scene = ExtResource("1_tm26y")
-bullet_count = 8
-spread_angle = 20.0
-metadata/_custom_type_script = "uid://b07a6gnc1a03x"
-
+bullet_count = 2
+spread_angle = 40.0
 description = "Double-barrel. High spread."
+metadata/_custom_type_script = "uid://b07a6gnc1a03x"

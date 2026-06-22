@@ -1,6 +1,6 @@
 extends Control
 
-@onready var container: VBoxContainer = %AchievementList
+@onready var container: GridContainer = %AchievementList
 @onready var back_btn: Button = %BackBtn
 
 const ROW_SCENE = preload("res://Scenes/AchievementRow.tscn")
@@ -13,5 +13,5 @@ func populate() -> void:
 		c.queue_free()
 	for a in GameManager.achievement_defs:
 		var row = ROW_SCENE.instantiate()
-		row.setup(a)
 		container.add_child(row)
+		row.setup(a)

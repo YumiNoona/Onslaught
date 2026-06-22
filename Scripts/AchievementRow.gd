@@ -1,19 +1,32 @@
-extends HBoxContainer
+extends MarginContainer
 
-@onready var icon_rect: TextureRect = %IconRect
-@onready var name_lbl: Label = %NameLabel
-@onready var desc_lbl: Label = %DescLabel
-@onready var status_lbl: Label = %StatusLabel
+var desc_text: String
 
 func setup(data: Dictionary) -> void:
+	var icon_rect = $VBox/IconRect as TextureRect
+	var name_lbl = $VBox/NameLabel as Label
 	if data["icon"] and ResourceLoader.exists(data["icon"]):
 		icon_rect.texture = load(data["icon"])
-		icon_rect.modulate = Color(1, 1, 1, 1) if data["unlocked"] else Color(0.3, 0.3, 0.3, 0.5)
 		icon_rect.visible = true
 	else:
 		icon_rect.visible = false
 	name_lbl.text = data["name"]
-	desc_lbl.text = data["desc"]
-	name_lbl.modulate = Color(1, 1, 1, 1) if data["unlocked"] else Color(0.5, 0.5, 0.5, 1)
-	status_lbl.text = "✓" if data["unlocked"] else "✗"
-	status_lbl.modulate = Color(0, 1, 0, 1) if data["unlocked"] else Color(0.5, 0.1, 0.1, 1)
+	desc_text = data["desc"]
+	tooltip_text = data["desc"]
+	if data["unlocked"]:
+		icon_rect.modulate = Color(1, 1, 1, 1)
+		name_lbl.modulate = Color(1, 1, 1, 1)
+		modulate = Color(1, 1, 1, 1)
+	else:
+		icon_rect.modulate = Color(0.3, 0.3, 0.3, 0.4)
+		name_lbl.modulate = Color(0.5, 0.5, 0.5, 0.5)
+		modulate = Color(1, 1, 1, 0.5)
+
+func _make_custom_tooltip(for_text: String) -> Object:
+	var lbl = Label.new()
+	lbl.text = "%s\n%s" % [$VBox/NameLabel.text, desc_text]
+	lbl.add_theme_font_override("font", load("res://Assets/Fonts/kenpixel_mini_square.ttf"))
+	lbl.add_theme_font_size_override("font_size", 14)
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.modulate = Color(1, 1, 0.8, 1)
+	return lbl

@@ -16,6 +16,5 @@ fire_pos = Vector2(740, -60)
 bullet_scene = ExtResource("1_lr2ew")
 bullet_count = 5
 spread_angle = 15.0
-metadata/_custom_type_script = "uid://b07a6gnc1a03x"
-
 description = "Spread fire. Lethal up close."
+metadata/_custom_type_script = "uid://b07a6gnc1a03x"

@@ -14,7 +14,6 @@ damage = 4.5
 delay_between_shots = 0.18
 fire_pos = Vector2(590, -12)
 bullet_scene = ExtResource("1_2rn4i")
-metadata/_custom_type_script = "uid://b07a6gnc1a03x"
 spread_angle = 1.5
-
 description = "Modern assault rifle. Fast fire rate."
+metadata/_custom_type_script = "uid://b07a6gnc1a03x"
