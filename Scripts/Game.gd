@@ -130,6 +130,9 @@ func _ready() -> void:
 	# Wire streak announcer
 	GameManager.on_combo_milestone.connect(_on_combo_milestone)
 
+	# Wire boss spawn
+	GameManager.on_boss_spawned.connect(_on_boss_spawned)
+
 	# Create curse offer UI
 	curse_offer_ui = preload("res://Scenes/CurseOfferUI.tscn").instantiate()
 	$CanvasLayer.add_child(curse_offer_ui)
@@ -286,12 +289,6 @@ func _start_first_wave() -> void:
 	weapons.hide()
 	wave_label.hide()
 	enemy_count_label.hide()
-	GameManager.current_wave = 5
-	enemy_spawner.wave_number = 5
-	enemy_spawner.enemies_per_wave = 1
-	enemy_spawner.enemies_remainig = 1
-	enemy_spawner.spawned_enemies = 0
-	GameManager.active_curse = {"id": "debug"}
 	wave_timer.wait_time = 0.1
 	wave_timer.start()
 
@@ -313,10 +310,7 @@ func _on_curse_accepted(curse: Dictionary) -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	get_tree().paused = false
 	# Apply immediate curse effects
-	if curse.has("fire_rate_bonus"):
-		GameManager.player.fire_rate_mod += curse["fire_rate_bonus"]
-	if curse.has("bonus_coins"):
-		GameManager.add_coins(curse["bonus_coins"])
+	GameManager.add_coins(curse.get("bonus_coins", 0))
 	show_wave_announcement()
 
 func _on_curse_declined() -> void:
@@ -324,6 +318,9 @@ func _on_curse_declined() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	get_tree().paused = false
 	show_wave_announcement()
+
+func _on_boss_spawned(boss: Node) -> void:
+	tracked_boss = boss as Enemy
 
 func _on_combo_milestone(_streak: int, label: String) -> void:
 	var lbl = preload("res://Scenes/FloatingText.tscn").instantiate()
@@ -432,16 +429,6 @@ func update_boss_health_bar() -> void:
 	elif boss_health_bar.visible:
 		boss_health_bar.hide()
 		boss_health_label.hide()
-	elif not tracked_boss:
-		boss_search_counter += 1
-		if boss_search_counter % 30 != 0:
-			return
-		var enemies = get_tree().get_nodes_in_group("enemies")
-		for e in enemies:
-			var enemy = e as Enemy
-			if enemy and enemy.is_boss and is_instance_valid(enemy):
-				tracked_boss = enemy
-				break
 
 func update_ammo_label() -> void:
 	if not player:

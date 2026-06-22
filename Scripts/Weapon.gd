@@ -19,8 +19,7 @@ func _process(delta: float) -> void:
 	if not equipped_weapon:
 		return
 	delay_btw_shots = max(delay_btw_shots - delta, 0)
-	if delay_btw_shots > 0:
-		return
+
 	if is_reloading:
 		reload_elapsed += delta
 		if reload_elapsed >= equipped_weapon.reload_time:
@@ -28,10 +27,15 @@ func _process(delta: float) -> void:
 			is_reloading = false
 			reload_bar_visible = false
 		return
+
 	reload_bar_visible = false
 	if equipped_weapon.max_ammo > 0 and current_ammo <= 0:
 		start_reload()
 		return
+
+	if delay_btw_shots > 0:
+		return
+
 	if Input.is_action_pressed("Shoot"):
 		shoot_weapon()
 	if Input.is_action_just_pressed("Reload"):
@@ -85,7 +89,8 @@ func shoot_weapon() -> void:
 	anim_player.play("Shoot")
 	GameManager.on_shake_request.emit(equipped_weapon.damage / 3.0)
 	GameManager.on_weapon_fired.emit(dir)
-	delay_btw_shots = max(equipped_weapon.delay_between_shots / GameManager.player.fire_rate_mod, 0.05)
+	var curse_fr = GameManager.active_curse.get("fire_rate_bonus", 0.0)
+	delay_btw_shots = max(equipped_weapon.delay_between_shots / (GameManager.player.fire_rate_mod + curse_fr), 0.05)
 
 	call_deferred("_play_muzzle_flash")
 

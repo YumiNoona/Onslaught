@@ -22,8 +22,10 @@ var _waiting_for_key: String = ""
 
 func _ready() -> void:
 	load_settings()
-	volume_slider.drag_ended.connect(func(_v): _on_volume_changed())
-	volume_slider.value_changed.connect(func(v): volume_label.text = "Volume: %d%%" % (v * 100))
+	volume_slider.value_changed.connect(func(v): 
+		volume_label.text = "Volume: %d%%" % (v * 100)
+		_on_volume_changed()
+	)
 	fullscreen_on_btn.pressed.connect(_on_fullscreen_on)
 	fullscreen_off_btn.pressed.connect(_on_fullscreen_off)
 	apply_btn.pressed.connect(_on_apply)
@@ -78,6 +80,12 @@ func _get_key_display(action: String) -> String:
 	for e in events:
 		if e is InputEventKey:
 			return OS.get_keycode_string(e.physical_keycode)
+		elif e is InputEventMouseButton:
+			match e.button_index:
+				MOUSE_BUTTON_LEFT: return "Left Click"
+				MOUSE_BUTTON_RIGHT: return "Right Click"
+				MOUSE_BUTTON_MIDDLE: return "Middle Click"
+				_: return "Mouse " + str(e.button_index)
 	return "?"
 
 
@@ -93,7 +101,7 @@ func _on_rebind_pressed(action: String, btn: Button) -> void:
 func _input(event: InputEvent) -> void:
 	if not visible or _waiting_for_key.is_empty():
 		return
-	if event is InputEventKey and event.pressed and not event.echo:
+	if (event is InputEventKey and event.pressed and not event.echo) or (event is InputEventMouseButton and event.pressed):
 		var action = _waiting_for_key
 		_waiting_for_key = ""
 		var btn = _rebind_buttons.get(action)
@@ -104,7 +112,7 @@ func _input(event: InputEvent) -> void:
 		InputMap.action_erase_events(action)
 		InputMap.action_add_event(action, event)
 
-		btn.text = OS.get_keycode_string(event.physical_keycode)
+		btn.text = _get_key_display(action)
 		btn.modulate = Color(1, 1, 1, 1)
 		get_viewport().set_input_as_handled()
 		save_settings()
@@ -154,18 +162,32 @@ func _save_keybinds() -> Dictionary:
 			if e is InputEventKey:
 				binds[action] = e.physical_keycode
 				break
+			elif e is InputEventMouseButton:
+				binds[action] = "M_" + str(e.button_index)
+				break
 	return binds
 
 func _load_keybinds(data: Dictionary) -> void:
 	var binds = data.get("keybinds", {})
 	for action in KEYBIND_ACTIONS:
-		var code = binds.get(action, 0)
-		if code == 0:
+		if not binds.has(action):
 			continue
-		InputMap.action_erase_events(action)
-		var ev = InputEventKey.new()
-		ev.physical_keycode = code
-		InputMap.action_add_event(action, ev)
+		var val = binds[action]
+		if typeof(val) == TYPE_INT or typeof(val) == TYPE_FLOAT:
+			if int(val) == 0:
+				continue
+			InputMap.action_erase_events(action)
+			var ev = InputEventKey.new()
+			ev.physical_keycode = int(val)
+			InputMap.action_add_event(action, ev)
+		elif typeof(val) == TYPE_STRING and val.begins_with("M_"):
+			var idx = val.substr(2).to_int()
+			if idx == 0:
+				continue
+			InputMap.action_erase_events(action)
+			var ev = InputEventMouseButton.new()
+			ev.button_index = idx
+			InputMap.action_add_event(action, ev)
 
 
 func save_settings() -> void:

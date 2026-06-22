@@ -35,7 +35,7 @@ func _ready() -> void:
 	hp_per_wave = GameConfig.hp_per_wave
 	scale_difficulty()
 	enemies_remainig = enemies_per_wave
-	wave_active = true
+	wave_active = false
 
 func scale_difficulty() -> void:
 	wave_number += 1
@@ -87,6 +87,7 @@ func spawn_enemy() -> void:
 	get_parent().add_child(enemy)
 	if is_boss_wave:
 		GameManager.on_shake_request.emit(GameConfig.shake_boss_spawn)
+		GameManager.on_boss_spawned.emit(enemy)
 	else:
 		GameManager.on_shake_request.emit(GameConfig.shake_normal_spawn)
 	enemy.health_component.current_health += wave_number * hp_per_wave

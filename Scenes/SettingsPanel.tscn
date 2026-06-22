@@ -14,7 +14,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1")
 
-[node name="Panel" type="Panel" parent="." unique_id=1361330167]
+[node name="Panel" type="ColorRect" parent="." unique_id=1361330167]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -22,11 +22,12 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -250.0
-offset_top = -240.0
+offset_top = -441.5
 offset_right = 250.0
-offset_bottom = 260.0
+offset_bottom = 337.5
 grow_horizontal = 2
 grow_vertical = 2
+color = Color(0.71621126, 0.25584722, 0.0556435, 0.69803923)
 
 [node name="Title" type="Label" parent="Panel" unique_id=617231586]
 layout_mode = 0
@@ -41,18 +42,19 @@ horizontal_alignment = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.05
-anchor_top = 0.3
+anchor_top = 0.13900001
 anchor_right = 0.95000005
-anchor_bottom = 0.85
-offset_top = 0.099998474
+anchor_bottom = 0.96700007
+offset_top = -0.28102112
 offset_right = -3.0517578e-05
-offset_bottom = -2.9999084
+offset_bottom = 0.043945313
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="Panel/Scroll"]
-layout_mode = 2
+[node name="VBox" type="VBoxContainer" parent="Panel/Scroll" unique_id=96594832]
 unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 30
 
 [node name="VolumeRow" type="HBoxContainer" parent="Panel/Scroll/VBox" unique_id=1122505364]
 layout_mode = 2
@@ -82,21 +84,21 @@ theme_override_constants/separation = 50
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 22
-text = "Fullscreen:"
+text = "Fullscreen:             "
 
 [node name="FullscreenOnBtn" type="Button" parent="Panel/Scroll/VBox/FullscreenRow" unique_id=562131547]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 22
-text = "ON"
+text = "  ON  "
 
 [node name="FullscreenOffBtn" type="Button" parent="Panel/Scroll/VBox/FullscreenRow" unique_id=840164029]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 22
-text = "OFF"
+text = "  OFF  "
 
 [node name="ApplyBtn" type="Button" parent="Panel" unique_id=1181680972]
 unique_name_in_owner = true
@@ -106,10 +108,9 @@ anchors_preset = -1
 anchor_left = 0.060000002
 anchor_top = 1.0960001
 anchor_right = 0.46
-anchor_bottom = 1.281
-offset_top = 4.0799866
-offset_right = -6.1035156e-05
-offset_bottom = 0.13000488
+anchor_bottom = 1.222
+offset_top = 4.079956
+offset_bottom = -34.073975
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("2")
@@ -124,10 +125,10 @@ anchors_preset = -1
 anchor_left = 0.54
 anchor_top = 1.0960001
 anchor_right = 0.94000006
-anchor_bottom = 1.281
-offset_top = 4.0799866
+anchor_bottom = 1.222
+offset_top = 4.079956
 offset_right = -3.0517578e-05
-offset_bottom = 0.13000488
+offset_bottom = -34.073975
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("2")
