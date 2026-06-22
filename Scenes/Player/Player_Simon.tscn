@@ -1,0 +1,231 @@
+[gd_scene format=3 uid="uid://bmgmvy7t03ca4"]
+
+[ext_resource type="Script" uid="uid://b8qkevkgf58mk" path="res://Scripts/Player/Player.gd" id="1_smn"]
+[ext_resource type="Texture2D" uid="uid://xephxoa57hu8" path="res://Assets/Sprites/Entities/Char 3/death_0.png" id="2_smn"]
+[ext_resource type="Material" uid="uid://c4wqhw78ikpaw" path="res://Material/HitMaterial.tres" id="3_smn"]
+[ext_resource type="Texture2D" uid="uid://ycmyj878nfuh" path="res://Assets/Sprites/Entities/Char 3/death_1.png" id="4_smn"]
+[ext_resource type="Texture2D" uid="uid://cjv0c5utm2cff" path="res://Assets/Sprites/Entities/Char 3/death_2.png" id="5_smn"]
+[ext_resource type="Texture2D" uid="uid://bugcklqr18kb8" path="res://Assets/Sprites/Entities/Char 3/death_3.png" id="6_smn"]
+[ext_resource type="Texture2D" uid="uid://6jwumih6gdqw" path="res://Assets/Sprites/Entities/Char 3/death_4.png" id="7_smn"]
+[ext_resource type="Texture2D" uid="uid://du52xx8tvmqcj" path="res://Assets/Sprites/Entities/Char 3/death_5.png" id="8_smn"]
+[ext_resource type="Texture2D" uid="uid://cdqbygcfwuv7w" path="res://Assets/Sprites/Entities/Char 3/death_6.png" id="9_smn"]
+[ext_resource type="Texture2D" uid="uid://bqwh4vh3na0rq" path="res://Assets/Sprites/Entities/Char 3/death_7.png" id="10_smn"]
+[ext_resource type="Texture2D" uid="uid://blghm1fplpngy" path="res://Assets/Sprites/Entities/Char 3/death_8.png" id="11_smn"]
+[ext_resource type="Texture2D" uid="uid://dg3cjq0jmfl0v" path="res://Assets/Sprites/Entities/Char 3/death_9.png" id="12_smn"]
+[ext_resource type="Texture2D" uid="uid://dy01s8ccxencg" path="res://Assets/Sprites/Entities/Char 3/idle_0.png" id="13_smn"]
+[ext_resource type="Texture2D" uid="uid://c73w8dfe3iy5g" path="res://Assets/Sprites/Entities/Char 3/idle_1.png" id="14_smn"]
+[ext_resource type="Texture2D" uid="uid://cmll5cdgvfyj8" path="res://Assets/Sprites/Entities/Char 3/idle_2.png" id="15_smn"]
+[ext_resource type="Texture2D" uid="uid://fkd21d1jqxxs" path="res://Assets/Sprites/Entities/Char 3/idle_3.png" id="16_smn"]
+[ext_resource type="Texture2D" uid="uid://daodk6j6kdfo5" path="res://Assets/Sprites/Entities/Char 3/idle_4.png" id="17_smn"]
+[ext_resource type="Texture2D" uid="uid://cgiayyftmy5yb" path="res://Assets/Sprites/Entities/Char 3/idle_5.png" id="18_smn"]
+[ext_resource type="Texture2D" uid="uid://boktt84wglodp" path="res://Assets/Sprites/Entities/Char 3/walk_0.png" id="19_smn"]
+[ext_resource type="Texture2D" uid="uid://cle4xq5lqt25r" path="res://Assets/Sprites/Entities/Char 3/walk_1.png" id="20_smn"]
+[ext_resource type="Texture2D" uid="uid://bkact6f08cjnh" path="res://Assets/Sprites/Entities/Char 3/walk_2.png" id="21_smn"]
+[ext_resource type="Texture2D" uid="uid://cm3b85783lax5" path="res://Assets/Sprites/Entities/Char 3/walk_3.png" id="22_smn"]
+[ext_resource type="Texture2D" uid="uid://bw5hopj8kl7iv" path="res://Assets/Sprites/Entities/Char 3/walk_4.png" id="23_smn"]
+[ext_resource type="Texture2D" uid="uid://hq1prkjc4oej" path="res://Assets/Sprites/Entities/Char 3/walk_5.png" id="24_smn"]
+[ext_resource type="Texture2D" uid="uid://dokrkklum7dwg" path="res://Assets/Sprites/Entities/Char 3/walk_6.png" id="25_smn"]
+[ext_resource type="Texture2D" uid="uid://dwcov6motbogc" path="res://Assets/Sprites/Entities/Char 3/walk_7.png" id="26_smn"]
+[ext_resource type="Texture2D" uid="uid://b0d6xe0sreis5" path="res://Assets/Sprites/Shadow.png" id="27_smn"]
+[ext_resource type="Texture2D" uid="uid://k1o2nroluihr" path="res://Assets/Sprites/Weapons/weapon_1_pistol.png" id="28_smn"]
+[ext_resource type="Script" uid="uid://bdbsgayx275b8" path="res://Scripts/Weapon/Weapon.gd" id="29_smn"]
+[ext_resource type="Texture2D" uid="uid://b1kuiookowv35" path="res://Assets/Sprites/Extras/muzzle.png" id="30_smn"]
+[ext_resource type="AudioStream" uid="uid://dqndjkx5dws8j" path="res://Assets/Sound/FireSound.wav" id="31_smn"]
+[ext_resource type="PackedScene" uid="uid://b82uce2oyfcb5" path="res://Components/Health.tscn" id="32_smn"]
+[ext_resource type="PackedScene" uid="uid://cf6l2pmh80gr4" path="res://Scenes/UI/HealthBar.tscn" id="33_smn"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_smn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_smn")
+}],
+"loop": false,
+"name": &"Death",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_smn")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("19_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_smn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_smn")
+}],
+"loop": true,
+"name": &"Move",
+"speed": 16.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_smn"]
+radius = 184.0
+height = 632.0
+
+[sub_resource type="Animation" id="Animation_smn_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Weapon/WeaponSprite/Muzzle:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_smn_shoot"]
+resource_name = "Shoot"
+length = 0.1
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Weapon/WeaponSprite/Muzzle:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_smn"]
+_data = {
+&"RESET": SubResource("Animation_smn_reset"),
+&"Shoot": SubResource("Animation_smn_shoot")
+}
+
+[node name="PlayerSimon" type="CharacterBody2D" unique_id=683127839]
+material = ExtResource("3_smn")
+scale = Vector2(0.25, 0.25)
+collision_layer = 2
+script = ExtResource("1_smn")
+character_type = 2
+move_speed = 875.0
+max_health = 7.0
+fire_rate_mod = 1.15
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1273498306]
+position = Vector2(0, -760)
+sprite_frames = SubResource("SpriteFrames_smn")
+animation = &"Idle"
+autoplay = "Idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1948263799]
+position = Vector2(0, -316)
+shape = SubResource("CapsuleShape2D_smn")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=1660598337]
+modulate = Color(1, 1, 1, 0.588235)
+z_index = -1
+texture = ExtResource("27_smn")
+
+[node name="Weapon" type="Node2D" parent="." unique_id=1003012808]
+visible = false
+position = Vector2(0, -128)
+script = ExtResource("29_smn")
+
+[node name="WeaponSprite" type="Sprite2D" parent="Weapon" unique_id=574129730]
+position = Vector2(300, 4)
+texture = ExtResource("28_smn")
+
+[node name="Muzzle" type="Sprite2D" parent="Weapon/WeaponSprite" unique_id=137473911]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(352, -60)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("30_smn")
+
+[node name="FirePos" type="Marker2D" parent="Weapon" unique_id=481918197]
+position = Vector2(740, -60)
+
+[node name="FireAudio" type="AudioStreamPlayer" parent="Weapon" unique_id=1908634431]
+stream = ExtResource("31_smn")
+volume_db = -10.0
+bus = &"SFX"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=635553717]
+libraries/ = SubResource("AnimationLibrary_smn")
+
+[node name="HealthComponent" parent="." unique_id=596909094 instance=ExtResource("32_smn")]
+max_health = 7.0
+
+[node name="HealthBar" parent="." unique_id=1089987823 instance=ExtResource("33_smn")]
+offset_left = -256.0
+offset_top = -812.0
+offset_right = -256.0
+offset_bottom = -812.0
+scale = Vector2(3, 3)
+
+[connection signal="on_damaged" from="HealthComponent" to="." method="_on_health_component_on_damaged"]
+[connection signal="on_defeated" from="HealthComponent" to="." method="_on_health_component_on_defeated"]

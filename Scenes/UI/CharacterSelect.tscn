@@ -1,0 +1,326 @@
+[gd_scene format=3 uid="uid://66eq82sj8a6"]
+
+[ext_resource type="Script" uid="uid://dhir8j3ttin8c" path="res://Scripts/UI/CharacterSelect.gd" id="1"]
+[ext_resource type="FontFile" uid="uid://c4x0jidjvbcs3" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="2"]
+[ext_resource type="Texture2D" uid="uid://0rv5ntr0wyjr" path="res://Assets/Sprites/Entities/Char 2/idle_0.png" id="3"]
+[ext_resource type="Texture2D" path="res://Assets/Sprites/Entities/Char 1/idle_0.png" id="4"]
+[ext_resource type="Texture2D" path="res://Assets/Sprites/Entities/Char 3/idle_0.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://ubm1eqcoxtwx" path="res://Assets/Sprites/Environment/ground2_white.png" id="6_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diff_normal"]
+bg_color = Color(0.15, 0.15, 0.15, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.4, 0.4, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diff_hover"]
+bg_color = Color(0.25, 0.25, 0.25, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.7, 0.7, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diff_pressed"]
+bg_color = Color(0.35, 0.35, 0.35, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.9, 0.9, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_diff_disabled"]
+bg_color = Color(0.08, 0.08, 0.08, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.2, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="CharacterSelect" type="Control" unique_id=1364068169]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="BgTiles" type="TextureRect" parent="."]
+modulate = Color(0.3, 0.3, 0.3, 1)
+texture = ExtResource("6_bg")
+expand_mode = 1
+stretch_mode = 6
+mouse_filter = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Overlay" type="ColorRect" parent="."]
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1280668722]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -324.0
+offset_top = -274.0
+offset_right = 324.0
+offset_bottom = 274.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 40
+
+[node name="Title" type="Label" parent="VBox" unique_id=2069028193]
+custom_minimum_size = Vector2(600, 80)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 70
+text = "SELECT CHARACTER"
+horizontal_alignment = 1
+
+[node name="Cards" type="HBoxContainer" parent="VBox" unique_id=915152269]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="DiffRow" type="HBoxContainer" parent="VBox" unique_id=915152270]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="DiffLabel" type="Label" parent="VBox/DiffRow"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 28
+text = "DIFFICULTY:"
+horizontal_alignment = 2
+
+[node name="BtnEasy" type="Button" parent="VBox/DiffRow" unique_id=915152271]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_diff_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_diff_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_diff_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_diff_disabled")
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 22
+text = "EASY"
+
+[node name="BtnNormal" type="Button" parent="VBox/DiffRow" unique_id=915152272]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_diff_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_diff_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_diff_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_diff_disabled")
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 22
+text = "NORMAL"
+
+[node name="BtnHard" type="Button" parent="VBox/DiffRow" unique_id=915152273]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_diff_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_diff_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_diff_pressed")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_diff_disabled")
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 22
+text = "HARD"
+
+[node name="Card0" type="VBoxContainer" parent="VBox/Cards" unique_id=743366854]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 420)
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="CharSprite" type="TextureRect" parent="VBox/Cards/Card0" unique_id=774554823]
+unique_name_in_owner = true
+modulate = Color(0.6, 0.6, 0.8, 1)
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="VBox/Cards/Card0" unique_id=1263948114]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="VBox/Cards/Card0" unique_id=1569699475]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="AbilityLabel" type="Label" parent="VBox/Cards/Card0" unique_id=1337129474]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ProsLabel" type="Label" parent="VBox/Cards/Card0" unique_id=1780543346]
+unique_name_in_owner = true
+modulate = Color(0.4, 1, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ConsLabel" type="Label" parent="VBox/Cards/Card0" unique_id=646247461]
+unique_name_in_owner = true
+modulate = Color(1, 0.4, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="SelectBtn" type="Button" parent="VBox/Cards/Card0" unique_id=170066938]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 24
+text = "SELECT"
+
+[node name="Card1" type="VBoxContainer" parent="VBox/Cards"]
+unique_name_in_owner = true
+alignment = 1
+custom_minimum_size = Vector2(380, 420)
+theme_override_constants/separation = 8
+
+[node name="CharSprite" type="TextureRect" parent="VBox/Cards/Card1"]
+custom_minimum_size = Vector2(120, 120)
+texture = ExtResource("4")
+modulate = Color(0.8, 0.6, 0.6, 1)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="VBox/Cards/Card1"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="VBox/Cards/Card1"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="AbilityLabel" type="Label" parent="VBox/Cards/Card1"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ProsLabel" type="Label" parent="VBox/Cards/Card1"]
+modulate = Color(0.4, 1, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ConsLabel" type="Label" parent="VBox/Cards/Card1"]
+modulate = Color(1, 0.4, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="SelectBtn" type="Button" parent="VBox/Cards/Card1"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 24
+text = "SELECT"
+
+[node name="Card2" type="VBoxContainer" parent="VBox/Cards"]
+unique_name_in_owner = true
+alignment = 1
+custom_minimum_size = Vector2(380, 420)
+theme_override_constants/separation = 8
+
+[node name="CharSprite" type="TextureRect" parent="VBox/Cards/Card2"]
+custom_minimum_size = Vector2(120, 120)
+texture = ExtResource("5")
+modulate = Color(0.6, 0.8, 0.8, 1)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="VBox/Cards/Card2"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="DescLabel" type="Label" parent="VBox/Cards/Card2"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="AbilityLabel" type="Label" parent="VBox/Cards/Card2"]
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ProsLabel" type="Label" parent="VBox/Cards/Card2"]
+modulate = Color(0.4, 1, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="ConsLabel" type="Label" parent="VBox/Cards/Card2"]
+modulate = Color(1, 0.4, 0.4, 1)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="SelectBtn" type="Button" parent="VBox/Cards/Card2"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 24
+text = "SELECT"
+
+[node name="LoadingLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 48
+text = "LOADING..."
+horizontal_alignment = 1
+vertical_alignment = 1

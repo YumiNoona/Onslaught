@@ -1,0 +1,68 @@
+extends Node2D
+class_name  Bullet
+
+@export var speed: = 1000.0
+@onready var explosion_sound: AudioStreamPlayer = $ExplosionSound
+@onready var trail: Line2D = $Trail
+
+var move_direction: Vector2
+var damage: float
+var pierce: int = 0
+var crit_chance: float = 0.0
+var trail_positions: Array[Vector2] = []
+var is_enemy_bullet: bool = false
+
+func _ready() -> void:
+	$Area2D.collision_mask = 2 if is_enemy_bullet else 4
+	speed = GameConfig.bullet_speed
+
+func _process(delta: float) -> void:
+	if move_direction == Vector2.ZERO:
+		return
+	position += move_direction * speed * delta
+	trail_positions.append(global_position)
+	if trail_positions.size() > GameConfig.bullet_trail_length:
+		trail_positions.pop_front()
+	trail.points = trail_positions
+
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	if not is_enemy_bullet:
+		var enemy = body as Enemy
+		if enemy:
+			var is_crit = randf() < crit_chance
+			var final_damage = damage * (2.0 if is_crit else 1.0)
+			enemy.health_component.take_damage(final_damage)
+			GameManager.play_damage_text(global_position, int(final_damage), is_crit)
+			spawn_hit_spark()
+			if pierce > 0:
+				pierce -= 1
+				return
+	else:
+		var player = body as Player
+		if player:
+			var is_crit = randf() < crit_chance
+			var final_damage = damage * (2.0 if is_crit else 1.0)
+			player.health_component.take_damage(final_damage)
+			GameManager.play_damage_text(global_position, int(final_damage), is_crit)
+			queue_free()
+			return
+
+	GameManager.play_explosion_anim(global_position)
+	explosion_sound.play()
+	await get_tree().create_timer(GameConfig.bullet_hit_explosion_delay).timeout
+	queue_free()
+
+func spawn_hit_spark() -> void:
+	var spark = preload("res://Scenes/Effect/HitSpark.tscn").instantiate()
+	spark.global_position = global_position
+	spark.scale = Vector2(GameConfig.hit_spark_initial_scale, GameConfig.hit_spark_initial_scale)
+	get_tree().current_scene.add_child(spark)
+	var t = create_tween()
+	t.tween_property(spark, "modulate:a", 0, GameConfig.hit_spark_fade_duration)
+	t.tween_property(spark, "scale", Vector2(GameConfig.hit_spark_grow_target, GameConfig.hit_spark_grow_target), GameConfig.hit_spark_grow_duration)
+	t.tween_callback(spark.queue_free)
+
+
+func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
+	queue_free()

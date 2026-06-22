@@ -39,15 +39,15 @@ signal on_combo_milestone(streak: int, label: String)
 @warning_ignore("unused_signal")
 signal on_boss_spawned(boss_node: Node)
 
-const EXLPOSION_ANIM = preload("res://Scenes/Exlposion_Anim.tscn")
-const BIG_EXPLOSION = preload("res://Scenes/BigExplosion.tscn")
-const COIN = preload("res://Scenes/Coin.tscn")
+const EXLPOSION_ANIM = preload("res://Scenes/Effect/Exlposion_Anim.tscn")
+const BIG_EXPLOSION = preload("res://Scenes/Effect/BigExplosion.tscn")
+const COIN = preload("res://Scenes/Pickup/Coin.tscn")
 const HIT_MATERIAL = preload("res://Material/HitMaterial.tres")
 const HEAL_MATERIAL = preload("res://Material/HealMaterial.tres")
-const DAMAGE_TEXT = preload("res://Scenes/DamageText.tscn")
+const DAMAGE_TEXT = preload("res://Scenes/Effect/DamageText.tscn")
 
 var player: Player
-var selected_character_scene: String = "res://Scenes/Player_Veneca.tscn"
+var selected_character_scene: String = "res://Scenes/Player/Player_Veneca.tscn"
 var coins: int = 500
 var is_game_over: bool = false
 var highscore: int = 0

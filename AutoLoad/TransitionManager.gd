@@ -4,7 +4,7 @@ var overlay: ColorRect
 var _circle_mat: ShaderMaterial
 var _slash_mat: ShaderMaterial
 
-const OVERLAY_SCENE = preload("res://Scenes/TransitionOverlay.tscn")
+const OVERLAY_SCENE = preload("res://Scenes/Core/TransitionOverlay.tscn")
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
