@@ -1,4 +1,4 @@
-# 🔫 Onslaught
+<p align="center"><b>  🔫 Onslaught </b></p>
 
 A fast-paced, highly-polished top-down rogue-lite shooter built with **Godot 4.6**. Survive endless waves of enemies, manage your arsenal, upgrade your abilities, and conquer the battlefield!
 
