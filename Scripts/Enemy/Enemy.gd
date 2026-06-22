@@ -326,6 +326,7 @@ func _do_summon() -> void:
 		minion.health_component.max_health = hp
 		minion.health_component.current_health = hp
 		get_parent().add_child(minion)
+		GameManager.on_minion_spawned.emit()
 
 func _on_heal_pulse() -> void:
 	if is_healing or not is_healer:

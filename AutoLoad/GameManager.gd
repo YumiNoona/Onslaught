@@ -39,6 +39,9 @@ signal on_combo_milestone(streak: int, label: String)
 @warning_ignore("unused_signal")
 signal on_boss_spawned(boss_node: Node)
 
+@warning_ignore("unused_signal")
+signal on_minion_spawned
+
 const EXLPOSION_ANIM = preload("res://Scenes/Effect/Exlposion_Anim.tscn")
 const BIG_EXPLOSION = preload("res://Scenes/Effect/BigExplosion.tscn")
 const COIN = preload("res://Scenes/Pickup/Coin.tscn")
@@ -323,6 +326,10 @@ func add_coins(amount: int) -> void:
 	var final_amount = int(amount * mult)
 	coins += final_amount
 	persistent_coins_collected += final_amount
+
+func add_coins_raw(amount: int) -> void:
+	coins += amount
+	persistent_coins_collected += amount
 
 
 func remove_coin(amount: int) -> void:

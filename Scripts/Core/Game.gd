@@ -83,6 +83,8 @@ var health_pulse_time: float = 0.0
 var hud_update_counter: int = 0
 var curse_offer_ui: Control
 var boss_search_counter: int = 0
+var curse_declined: bool = false
+var boss_explosion_overlay: ColorRect
 
 
 func _ready() -> void:
@@ -154,6 +156,18 @@ func _ready() -> void:
 	pause_btn_main_menu.pressed.connect(_on_main_menu)
 
 
+
+
+	# Boss explosion overlay (CartoonExplosion shader)
+	boss_explosion_overlay = ColorRect.new()
+	boss_explosion_overlay.anchors_preset = Control.PRESET_FULL_RECT
+	boss_explosion_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var shader = load("res://Material/CartoonExplosion.gdshader") as Shader
+	var mat = ShaderMaterial.new()
+	mat.shader = shader
+	boss_explosion_overlay.material = mat
+	boss_explosion_overlay.visible = false
+	$CanvasLayer.add_child(boss_explosion_overlay)
 
 	# Start first wave last — this pauses the tree for the shop
 	_start_first_wave()
@@ -279,7 +293,7 @@ func _on_wave_timer_timeout() -> void:
 		if cheapest:
 			GameManager.player.setup_weapon(cheapest)
 	
-	if GameManager.current_wave >= 1 and GameManager.active_curse.is_empty():
+	if GameManager.current_wave >= 1 and GameManager.active_curse.is_empty() and not curse_declined:
 		_offer_curse()
 		return
 			
@@ -309,12 +323,13 @@ func _on_curse_accepted(curse: Dictionary) -> void:
 	GameManager.active_curse = curse
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	get_tree().paused = false
-	# Apply immediate curse effects
-	GameManager.add_coins(curse.get("bonus_coins", 0))
+	# Apply immediate curse effects (bypass multiplier)
+	GameManager.add_coins_raw(curse.get("bonus_coins", 0))
 	show_wave_announcement()
 
 func _on_curse_declined() -> void:
 	SoundManager.play_click()
+	curse_declined = true
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	get_tree().paused = false
 	show_wave_announcement()
@@ -429,6 +444,22 @@ func update_boss_health_bar() -> void:
 	elif boss_health_bar.visible:
 		boss_health_bar.hide()
 		boss_health_label.hide()
+		_play_boss_explosion_overlay()
+
+func _play_boss_explosion_overlay() -> void:
+	boss_explosion_overlay.visible = true
+	boss_explosion_overlay.modulate = Color(1, 1, 1, 1)
+	# Reset shader TIME by toggling material
+	var mat = boss_explosion_overlay.material as ShaderMaterial
+	boss_explosion_overlay.material = null
+	boss_explosion_overlay.material = mat
+	await get_tree().create_timer(2.5, false, false, true).timeout
+	if is_instance_valid(boss_explosion_overlay):
+		var tw = create_tween()
+		tw.tween_property(boss_explosion_overlay, "modulate:a", 0.0, 0.5)
+		await tw.finished
+		if is_instance_valid(boss_explosion_overlay):
+			boss_explosion_overlay.visible = false
 
 func update_ammo_label() -> void:
 	if not player:

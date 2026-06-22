@@ -31,6 +31,7 @@ var wave_active: bool = false
 
 func _ready() -> void:
 	GameManager.on_enemy_died.connect(_on_enemy_died)
+	GameManager.on_minion_spawned.connect(_on_minion_spawned)
 	enemies_per_wave = GameConfig.base_enemies_per_wave
 	hp_per_wave = GameConfig.hp_per_wave
 	scale_difficulty()
@@ -46,7 +47,7 @@ func scale_difficulty() -> void:
 		enemies_per_wave = 1
 	else:
 		if pre_boss_count > 0:
-			enemies_per_wave = pre_boss_count + 1
+			enemies_per_wave = pre_boss_count
 			pre_boss_count = 0
 		else:
 			enemies_per_wave += 1
@@ -175,3 +176,7 @@ func _on_enemy_died() -> void:
 		on_wave_completed.emit()
 		enemies_remainig = enemies_per_wave
 		spawned_enemies = 0
+
+func _on_minion_spawned() -> void:
+	if wave_active:
+		enemies_remainig += 1
