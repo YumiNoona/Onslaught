@@ -2,7 +2,6 @@ extends ColorRect
 
 func _ready():
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	material = material.duplicate()
 
 func play_transition(duration: float = 0.6, target_scene: PackedScene = null):
 	var mat = material as ShaderMaterial

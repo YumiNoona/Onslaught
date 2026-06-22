@@ -1,4 +1,4 @@
-# 🔫 Shooter
+# 🔫 Onslaught
 
 A fast-paced, highly-polished top-down rogue-lite shooter built with **Godot 4.6**. Survive endless waves of enemies, manage your arsenal, upgrade your abilities, and conquer the battlefield!
 
@@ -12,7 +12,7 @@ A fast-paced, highly-polished top-down rogue-lite shooter built with **Godot 4.6
 
 ## 📘 Overview
 
-**Shooter** is a thrilling top-down action rogue-lite arcade game where the player fights progressively difficult waves of enemies using multiple weapons while managing health, movement, and positioning.
+**Onslaught** is a thrilling top-down action rogue-lite arcade game where the player fights progressively difficult waves of enemies using multiple weapons while managing health, movement, and positioning.
 
 The project features a highly modular architecture, a robust data-driven weapon configuration system, and follows modern Godot 4 best practices. Whether you're looking for an arcade shooter to play or a polished open-source codebase to learn from, this project has it all.
 
@@ -171,7 +171,7 @@ Main Menu
 ### Directory Structure
 
 ```
-Shooter/
+Onslaught/
 ├── Assets/                    # Sprites, fonts, audio, shaders
 │   ├── Fonts/                 # kenpixel_mini_square.ttf
 │   ├── Sprites/               # Player, Enemy, UI, Achievement icons
@@ -258,7 +258,7 @@ This project is fully compatible with Godot 4 HTML5 web exports. The following w
 1. **Download Godot:** Ensure you have [Godot Engine 4.6+](https://godotengine.org/download/) installed.
 2. **Clone the Repository:**
    ```bash
-   git clone https://github.com/YumiNoona/Shooter.git
+    git clone https://github.com/YumiNoona/Onslaught.git
    ```
 3. **Import Project:** Open Godot → **Import** → select the `project.godot` file.
 4. **Play:** Press `F5` to run the game!

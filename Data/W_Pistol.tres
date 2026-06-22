@@ -14,5 +14,7 @@ damage = 2.0
 delay_between_shots = 0.35
 fire_pos = Vector2(580, -50)
 bullet_scene = ExtResource("1_8erfv")
+max_ammo = 12
+reload_time = 1.0
 description = "Reliable sidearm. Good starter."
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"

@@ -127,11 +127,16 @@ func _on_health_component_on_defeated() -> void:
 	GameManager.add_xp(int(GameConfig.xp_per_kill_base * max(GameManager.current_wave, 1)))
 	GameManager.total_enemies_killed += 1
 	GameManager.increment_combo()
+	# Refill weapon magazine on kill
+	var p_weapon = GameManager.player.weapon
+	if p_weapon and p_weapon.equipped_weapon and p_weapon.equipped_weapon.max_ammo > 0:
+		p_weapon.current_ammo = p_weapon.equipped_weapon.max_ammo
 	spawn_death_particles()
-	GameManager.play_explosion_anim(global_position)
 	var big_explosion: Node = null
 	if is_boss:
 		big_explosion = GameManager.play_big_explosion(global_position)
+	else:
+		GameManager.play_explosion_anim(global_position)
 	GameManager.on_shake_request.emit(GameConfig.shake_boss_death if is_boss else GameConfig.shake_enemy_death)
 	if is_boss:
 		Engine.time_scale = GameConfig.boss_death_time_scale

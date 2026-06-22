@@ -22,9 +22,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -250.0
-offset_top = -180.0
+offset_top = -240.0
 offset_right = 250.0
-offset_bottom = 90.0
+offset_bottom = 260.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -37,31 +37,35 @@ theme_override_font_sizes/font_size = 50
 text = "SETTINGS"
 horizontal_alignment = 1
 
-[node name="VBox" type="VBoxContainer" parent="Panel" unique_id=1701077687]
+[node name="Scroll" type="ScrollContainer" parent="Panel" unique_id=361011841]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.05
-anchor_top = 0.37
+anchor_top = 0.3
 anchor_right = 0.95000005
-anchor_bottom = 0.5
+anchor_bottom = 0.85
 offset_top = 0.099998474
 offset_right = -3.0517578e-05
 offset_bottom = -2.9999084
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VolumeRow" type="HBoxContainer" parent="Panel/VBox" unique_id=1122505364]
+[node name="VBox" type="VBoxContainer" parent="Panel/Scroll"]
+layout_mode = 2
+unique_name_in_owner = true
+
+[node name="VolumeRow" type="HBoxContainer" parent="Panel/Scroll/VBox" unique_id=1122505364]
 layout_mode = 2
 theme_override_constants/separation = 50
 
-[node name="VolumeLabel" type="Label" parent="Panel/VBox/VolumeRow" unique_id=255543030]
+[node name="VolumeLabel" type="Label" parent="Panel/Scroll/VBox/VolumeRow" unique_id=255543030]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 22
 text = "Volume: 100%"
 
-[node name="VolumeSlider" type="HSlider" parent="Panel/VBox/VolumeRow" unique_id=1484587985]
+[node name="VolumeSlider" type="HSlider" parent="Panel/Scroll/VBox/VolumeRow" unique_id=1484587985]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -70,24 +74,24 @@ max_value = 1.0
 step = 0.01
 value = 1.0
 
-[node name="FullscreenRow" type="HBoxContainer" parent="Panel/VBox" unique_id=361011840]
+[node name="FullscreenRow" type="HBoxContainer" parent="Panel/Scroll/VBox" unique_id=361011840]
 layout_mode = 2
 theme_override_constants/separation = 50
 
-[node name="Label" type="Label" parent="Panel/VBox/FullscreenRow" unique_id=1378824350]
+[node name="Label" type="Label" parent="Panel/Scroll/VBox/FullscreenRow" unique_id=1378824350]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 22
 text = "Fullscreen:"
 
-[node name="FullscreenOnBtn" type="Button" parent="Panel/VBox/FullscreenRow" unique_id=562131547]
+[node name="FullscreenOnBtn" type="Button" parent="Panel/Scroll/VBox/FullscreenRow" unique_id=562131547]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")
 theme_override_font_sizes/font_size = 22
 text = "ON"
 
-[node name="FullscreenOffBtn" type="Button" parent="Panel/VBox/FullscreenRow" unique_id=840164029]
+[node name="FullscreenOffBtn" type="Button" parent="Panel/Scroll/VBox/FullscreenRow" unique_id=840164029]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2")

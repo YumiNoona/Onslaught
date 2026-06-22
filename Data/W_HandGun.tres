@@ -14,5 +14,7 @@ damage = 5.0
 delay_between_shots = 0.5
 fire_pos = Vector2(550, -5)
 bullet_scene = ExtResource("1_8uy77")
+max_ammo = 8
+reload_time = 1.2
 description = "Basic handgun. Reliable."
 metadata/_custom_type_script = "uid://b07a6gnc1a03x"

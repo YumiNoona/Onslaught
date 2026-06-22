@@ -164,7 +164,11 @@ func _process(_delta: float) -> void:
 		wave_label.text = "NEXT WAVE IN\n%s" % int(wave_timer.time_left)
 		coins_label.text = str(GameManager.coins)
 		score_label.text = "Score: %s" % GameManager.score
-		enemy_count_label.text = "Enemy: %s" % str(enemy_spawner.enemies_remainig)
+		if boss_health_bar.visible:
+			enemy_count_label.hide()
+		else:
+			enemy_count_label.show()
+			enemy_count_label.text = "Enemy: %s" % str(enemy_spawner.enemies_remainig)
 		update_combo_display()
 		update_xp_bar()
 		update_ability_cooldown()

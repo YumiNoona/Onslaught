@@ -12,9 +12,7 @@ var frame_count: int = 0
 
 
 func _ready() -> void:
-	player_dot.z_index = 1
-	await get_tree().process_frame
-	player_dot.position = size / 2 - player_dot.size / 2
+	player_dot.hide()
 	queue_redraw()
 
 
