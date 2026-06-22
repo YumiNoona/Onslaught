@@ -22,17 +22,13 @@
 [ext_resource type="Texture2D" uid="uid://d0ioacy2yuqsg" path="res://Assets/Sprites/tile_coin.png" id="16_alh3a"]
 [ext_resource type="PackedScene" uid="uid://c0eh2bfuwtm7i" path="res://Scenes/Core/Minimap.tscn" id="17_ny8n0"]
 [ext_resource type="Shader" uid="uid://c6lstk4g36acj" path="res://Material/Vignette.gdshader" id="18_x3xnh"]
-[ext_resource type="Shader" path="res://Material/AngularCooldown.gdshader" id="19_acooldown"]
-[ext_resource type="Shader" path="res://Material/HealthBarTrail.gdshader" id="20_htrail"]
-[ext_resource type="Shader" path="res://Material/AnimatedStripes.gdshader" id="21_stripes"]
-[ext_resource type="Script" path="res://Scripts/Player/AbilityCooldown.gd" id="22_acooldown_script"]
-[ext_resource type="Script" path="res://Scripts/Enemy/BossHealthBar.gd" id="23_htrail_script"]
-[ext_resource type="Shader" path="res://Material/ChromaticAberration.gdshader" id="24_ca"]
-[ext_resource type="Shader" path="res://Material/Outline.gdshader" id="25_outline"]
-[ext_resource type="Shader" path="res://Material/CircleWipe.gdshader" id="26_circlewipe"]
-[ext_resource type="Shader" path="res://Material/PixelDissolve.gdshader" id="27_dissolve"]
+[ext_resource type="Shader" uid="uid://s77hdbw8wx0v" path="res://Material/AngularCooldown.gdshader" id="19_acooldown"]
 [ext_resource type="PackedScene" uid="uid://jf4pjism4f6w" path="res://Scenes/Weapon/WeaponShop.tscn" id="19_ws"]
+[ext_resource type="Shader" uid="uid://b42g8q6omv03n" path="res://Material/HealthBarTrail.gdshader" id="20_htrail"]
 [ext_resource type="PackedScene" uid="uid://cdrcvt121oe7i" path="res://Scenes/UI/LevelUpUI.tscn" id="20_lvui"]
+[ext_resource type="Script" uid="uid://b2k6pmna7y3io" path="res://Scripts/Player/AbilityCooldown.gd" id="22_acooldown_script"]
+[ext_resource type="Script" uid="uid://brylx1a8llwtl" path="res://Scripts/Enemy/BossHealthBar.gd" id="23_htrail_script"]
+[ext_resource type="Shader" uid="uid://dx6uw8awytq2e" path="res://Material/ChromaticAberration.gdshader" id="24_ca"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kldst"]
 size = Vector2(6144, 20)
@@ -48,23 +44,19 @@ font_size = 30
 outline_size = 5
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8r6kd"]
-shader = ExtResource("18_x3xnh")
-shader_parameter/outerRadius = 1.7
-shader_parameter/MainAlpha = 0.8
-shader_parameter/tint_color = Color(0, 0, 0, 1)
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_acooldown"]
 shader = ExtResource("19_acooldown")
+shader_parameter/border_width = Vector2(2, 2)
 shader_parameter/panel_size = Vector2(200, 20)
-shader_parameter/fill_progress = 0.0
-shader_parameter/solid_colour = Color(0.278, 0.675, 0.949, 1.0)
-shader_parameter/smooth_colour = Color(0.278, 0.675, 0.949, 0.5)
-shader_parameter/empty_colour = Color(1.0, 1.0, 1.0, 0.196)
-shader_parameter/change_colour_with_progress = true
-shader_parameter/solid_low_colour = Color(1.0, 0.247, 0.349, 1.0)
-shader_parameter/smooth_low_colour = Color(1.0, 0.247, 0.349, 0.5)
 shader_parameter/flip_h = false
+shader_parameter/fill_progress = 0.0
+shader_parameter/edge_smooth = 0.1
+shader_parameter/solid_colour = Color(0.278, 0.675, 0.949, 1)
+shader_parameter/smooth_colour = Color(0.278, 0.675, 0.949, 0.5)
+shader_parameter/empty_colour = Color(1, 1, 1, 0.196)
+shader_parameter/change_colour_with_progress = true
+shader_parameter/solid_low_colour = Color(1, 0.247, 0.349, 1)
+shader_parameter/smooth_low_colour = Color(1, 0.247, 0.349, 0.5)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_htrail"]
 shader = ExtResource("20_htrail")
@@ -72,7 +64,7 @@ shader_parameter/health = 1.0
 shader_parameter/trail = 1.0
 shader_parameter/width = 1000.0
 shader_parameter/height = 35.0
-shader_parameter/fill_color = Color(0.2, 0.8, 0.2, 1.0)
+shader_parameter/fill_color = Color(0.2, 0.8, 0.2, 1)
 shader_parameter/trail_color = Color(0.8, 0.2, 0.2, 0.6)
 shader_parameter/bg_color = Color(0.1, 0.1, 0.1, 0.8)
 shader_parameter/border_px = 2.0
@@ -81,7 +73,14 @@ shader_parameter/border_px = 2.0
 shader = ExtResource("24_ca")
 shader_parameter/intensity = 0.0
 shader_parameter/alpha = 0.0
-shader_parameter/tint_color = Color(1.0, 0.0, 0.0, 0.35)
+shader_parameter/tint_color = Color(1, 0, 0, 0.35)
+shader_parameter/center = Vector2(0.5, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8r6kd"]
+shader = ExtResource("18_x3xnh")
+shader_parameter/outerRadius = 1.7
+shader_parameter/MainAlpha = 0.8
+shader_parameter/tint_color = Color(0, 0, 0, 1)
 
 [node name="Game" type="Node2D" unique_id=1983110018]
 script = ExtResource("1_j5yw3")
@@ -368,13 +367,13 @@ mouse_filter = 2
 [node name="AbilityCooldown" type="ColorRect" parent="CanvasLayer/GameUI" unique_id=340015636]
 unique_name_in_owner = true
 modulate = Color(0.4, 0.6, 1, 0.8)
+material = SubResource("ShaderMaterial_acooldown")
 layout_mode = 0
 offset_left = 850.0
 offset_top = 960.0
 offset_right = 1050.0
 offset_bottom = 980.0
 mouse_filter = 2
-material = SubResource("ShaderMaterial_acooldown")
 script = ExtResource("22_acooldown_script")
 
 [node name="ReloadBar" type="ProgressBar" parent="CanvasLayer/GameUI" unique_id=340015637]
@@ -404,13 +403,13 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 visible = false
 modulate = Color(1, 0.2, 0.2, 0.9)
+material = SubResource("ShaderMaterial_htrail")
 layout_mode = 0
 offset_left = 460.0
 offset_top = 40.0
 offset_right = 1460.0
 offset_bottom = 75.0
 mouse_filter = 2
-material = SubResource("ShaderMaterial_htrail")
 script = ExtResource("23_htrail_script")
 
 [node name="BossHealthLabel" type="Label" parent="CanvasLayer/GameUI" unique_id=1806521095]
@@ -453,6 +452,7 @@ color = Color(0, 0, 0, 1)
 
 [node name="HitFlash" type="ColorRect" parent="CanvasLayer" unique_id=1986813639]
 z_index = 2
+material = SubResource("ShaderMaterial_ca")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -460,7 +460,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0, 0, 0)
-material = SubResource("ShaderMaterial_ca")
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=99984878]
 material = SubResource("ShaderMaterial_8r6kd")
