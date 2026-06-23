@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://jf4pjism4f6w"]
 
-[ext_resource type="Script" uid="uid://b3lw4m2rjt4wg" path="res://Scripts/Weapon/WeaponShop.gd" id="1"]
+[ext_resource type="Script" uid="uid://h4rshrluhad" path="res://Scripts/UI/WeaponShop.gd" id="1"]
 [ext_resource type="FontFile" uid="uid://c4x0jidjvbcs3" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="2"]
 
 [node name="WeaponShop" type="Control" unique_id=1546086193]
@@ -56,7 +56,7 @@ theme_override_font_sizes/font_size = 30
 text = "Coins: 0"
 horizontal_alignment = 1
 
-[node name="TimerLabel" type="Label" parent="Margin/VBox"]
+[node name="TimerLabel" type="Label" parent="Margin/VBox" unique_id=966716484]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)

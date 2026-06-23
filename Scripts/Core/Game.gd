@@ -63,17 +63,17 @@ const PRELOADED_CHARACTERS = {
 }
 
 const PRELOADED_WEAPONS = [
-	preload("res://Data/W_AKM.tres"),
-	preload("res://Data/W_AR.tres"),
-	preload("res://Data/W_Auto_Pistol.tres"),
-	preload("res://Data/W_DoubleShotGun.tres"),
-	preload("res://Data/W_HandGun.tres"),
-	preload("res://Data/W_M24.tres"),
-	preload("res://Data/W_M4.tres"),
-	preload("res://Data/W_M416.tres"),
-	preload("res://Data/W_Pistol.tres"),
-	preload("res://Data/W_ShotGun.tres"),
-	preload("res://Data/W_UZI.tres")
+	preload("res://Data/Guns/W_AKM.tres"),
+	preload("res://Data/Guns/W_AR.tres"),
+	preload("res://Data/Guns/W_Auto_Pistol.tres"),
+	preload("res://Data/Guns/W_DoubleShotGun.tres"),
+	preload("res://Data/Guns/W_HandGun.tres"),
+	preload("res://Data/Guns/W_M24.tres"),
+	preload("res://Data/Guns/W_M4.tres"),
+	preload("res://Data/Guns/W_M416.tres"),
+	preload("res://Data/Guns/W_Pistol.tres"),
+	preload("res://Data/Guns/W_ShotGun.tres"),
+	preload("res://Data/Guns/W_UZI.tres")
 ]
 
 var combo_tween: Tween
@@ -305,7 +305,7 @@ func _on_main_menu() -> void:
 
 	get_tree().paused = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	TransitionManager.transition_to(main_menu_scene, 0.4)
+	TransitionManager.transition_to(main_menu_scene)
 
 
 func _on_wave_timer_timeout() -> void:

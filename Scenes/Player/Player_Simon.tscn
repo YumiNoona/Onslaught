@@ -31,7 +31,7 @@
 [ext_resource type="Script" uid="uid://bdbsgayx275b8" path="res://Scripts/Weapon/Weapon.gd" id="29_smn"]
 [ext_resource type="Texture2D" uid="uid://b1kuiookowv35" path="res://Assets/Sprites/Extras/muzzle.png" id="30_smn"]
 [ext_resource type="AudioStream" uid="uid://dqndjkx5dws8j" path="res://Assets/Sound/FireSound.wav" id="31_smn"]
-[ext_resource type="PackedScene" uid="uid://b82uce2oyfcb5" path="res://Components/Health.tscn" id="32_smn"]
+[ext_resource type="PackedScene" uid="uid://b82uce2oyfcb5" path="res://Scenes/Components/Health.tscn" id="32_smn"]
 [ext_resource type="PackedScene" uid="uid://cf6l2pmh80gr4" path="res://Scenes/UI/HealthBar.tscn" id="33_smn"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_smn"]

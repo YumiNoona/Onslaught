@@ -42,7 +42,7 @@ signal on_boss_spawned(boss_node: Node)
 @warning_ignore("unused_signal")
 signal on_minion_spawned
 
-const EXLPOSION_ANIM = preload("res://Scenes/Effect/Exlposion_Anim.tscn")
+const EXLPOSION_ANIM = preload("res://Scenes/Effect/Explosion_Anim.tscn")
 const BIG_EXPLOSION = preload("res://Scenes/Effect/BigExplosion.tscn")
 const COIN = preload("res://Scenes/Pickup/Coin.tscn")
 const HIT_MATERIAL = preload("res://Material/HitMaterial.tres")

@@ -1,14 +1,12 @@
-[gd_resource type="Resource" script_class="PowerUpData" format=3]
+[gd_resource type="Resource" script_class="PowerUpData" format=3 uid="uid://d1cwgnp36nspk"]
 
-[ext_resource type="Script" uid="uid://cxabcf21jk3w" path="res://Scripts/Pickup/PowerUpData.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://bxi0odh2ho0fg" path="res://Assets/Sprites/Environment/rock1.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://phcq85qevs3h" path="res://Assets/Icons/Damage.png" id="1_i66jt"]
+[ext_resource type="Script" uid="uid://xk6a38gexjru" path="res://Scripts/Pickup/PowerUpData.gd" id="2_8xadf"]
 
 [resource]
-script = ExtResource("1_script")
+script = ExtResource("2_8xadf")
 powerup_name = "DAMAGE"
-icon = ExtResource("2_icon")
-color = Color(1, 0.2, 0.2, 1)
+icon = ExtResource("1_i66jt")
+color = Color(0.9372549, 0.26666668, 0.26666668, 1)
 effect_type = 1
 effect_value = 2.0
-effect_duration = 5.0
-lifetime = 8.0

@@ -27,7 +27,7 @@ func _ready() -> void:
 
 
 func _on_start_pressed() -> void:
-	TransitionManager.transition_to(preload("res://Scenes/UI/CharacterSelect.tscn"), 0.3)
+	TransitionManager.transition_to(preload("res://Scenes/UI/CharacterSelect.tscn"))
 
 
 func _on_quit_pressed() -> void:

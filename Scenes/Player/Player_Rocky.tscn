@@ -31,7 +31,7 @@
 [ext_resource type="Script" path="res://Scripts/Weapon/Weapon.gd" id="29_rky"]
 [ext_resource type="Texture2D" path="res://Assets/Sprites/Extras/muzzle.png" id="30_rky"]
 [ext_resource type="AudioStream" path="res://Assets/Sound/FireSound.wav" id="31_rky"]
-[ext_resource type="PackedScene" path="res://Components/Health.tscn" id="32_rky"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Health.tscn" id="32_rky"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/HealthBar.tscn" id="33_rky"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_rky"]

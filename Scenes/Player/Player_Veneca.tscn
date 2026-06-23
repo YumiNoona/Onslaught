@@ -30,7 +30,7 @@
 [ext_resource type="Texture2D" uid="uid://k1o2nroluihr" path="res://Assets/Sprites/Weapons/weapon_1_pistol.png" id="28_gg7qm"]
 [ext_resource type="Texture2D" uid="uid://b1kuiookowv35" path="res://Assets/Sprites/Extras/muzzle.png" id="29_d3tnl"]
 [ext_resource type="AudioStream" uid="uid://dqndjkx5dws8j" path="res://Assets/Sound/FireSound.wav" id="30_acsfy"]
-[ext_resource type="PackedScene" uid="uid://b82uce2oyfcb5" path="res://Components/Health.tscn" id="31_ydigp"]
+[ext_resource type="PackedScene" uid="uid://b82uce2oyfcb5" path="res://Scenes/Components/Health.tscn" id="31_ydigp"]
 [ext_resource type="PackedScene" uid="uid://cf6l2pmh80gr4" path="res://Scenes/UI/HealthBar.tscn" id="32_ln601"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_8p516"]

@@ -29,7 +29,6 @@ const BOSS_NAMES = {
 @export var boss_type: BossType = BossType.TELEPORTER
 var enraged: bool = false
 const BOSS_BULLET = preload("res://Scenes/Weapon/Bullet.tscn")
-const HEALTH_PICKUP = preload("res://Scenes/Pickup/HealthPickup.tscn")
 const MINION_ENEMY = preload("res://Scenes/Enemy/Enemy_Mob.tscn")
 @export var heal_range: float = 200.0
 @export var heal_amount: float = 3.0
@@ -232,9 +231,9 @@ func deal_contact_damage(player: Player) -> void:
 
 func spawn_powerup() -> void:
 	var power_datas = [
-		preload("res://Data/P_Speed.tres"),
-		preload("res://Data/P_Damage.tres"),
-		preload("res://Data/P_Invuln.tres")
+		preload("res://Data/Pickups/P_Speed.tres"),
+		preload("res://Data/Pickups/P_Damage.tres"),
+		preload("res://Data/Pickups/P_Invuln.tres")
 	]
 	var chosen_data = power_datas[randi() % power_datas.size()]
 	var power = preload("res://Scenes/Pickup/PowerUp.tscn").instantiate()
@@ -245,7 +244,7 @@ func spawn_powerup() -> void:
 func spawn_health_pickup() -> void:
 	var power = preload("res://Scenes/Pickup/PowerUp.tscn").instantiate()
 	power.global_position = global_position
-	power.power_data = preload("res://Data/P_Health.tres")
+	power.power_data = preload("res://Data/Pickups/P_Health.tres")
 	get_parent().call_deferred("add_child", power)
 
 func _get_ability_cooldown() -> float:

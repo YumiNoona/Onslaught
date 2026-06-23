@@ -1,10 +1,9 @@
 [gd_scene format=3 uid="uid://b2gop7mdm2mv6"]
 
-[ext_resource type="Script" uid="uid://drhwny7j7433g" path="res://Scripts/Core/TransitionOverlay.gd" id="1"]
-[ext_resource type="Shader" uid="uid://d33b6dl5inv1y" path="res://Material/TransitionSlash.gdshader" id="2"]
+[ext_resource type="Shader" uid="uid://d33b6dl5inv1y" path="res://Material/TransitionSlash.gdshader" id="1"]
 
 [sub_resource type="ShaderMaterial" id="SM_Transition"]
-shader = ExtResource("2")
+shader = ExtResource("1")
 shader_parameter/t = 0.0
 shader_parameter/power = 8.0
 shader_parameter/mask_color = Color(0, 0, 0, 1)
@@ -21,4 +20,3 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
-script = ExtResource("1")

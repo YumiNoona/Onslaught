@@ -1,14 +1,11 @@
-[gd_resource type="Resource" script_class="PowerUpData" format=3]
+[gd_resource type="Resource" script_class="PowerUpData" format=3 uid="uid://da1sx3ft43y73"]
 
-[ext_resource type="Script" uid="uid://cxabcf21jk3w" path="res://Scripts/Pickup/PowerUpData.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://bxi0odh2ho0fg" path="res://Assets/Sprites/Environment/rock1.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://bx1vthyd8vv0j" path="res://Assets/Icons/Invincible.png" id="1_6ilb4"]
+[ext_resource type="Script" uid="uid://xk6a38gexjru" path="res://Scripts/Pickup/PowerUpData.gd" id="1_script"]
 
 [resource]
 script = ExtResource("1_script")
 powerup_name = "INVULN"
-icon = ExtResource("2_icon")
-color = Color(0.2, 0.5, 1, 1)
+icon = ExtResource("1_6ilb4")
+color = Color(0.98039216, 0.8, 0.08235294, 1)
 effect_type = 2
-effect_value = 1.0
-effect_duration = 5.0
-lifetime = 8.0

@@ -16,18 +16,26 @@ func _ready() -> void:
 		
 	sprite.texture = power_data.icon
 	sprite.modulate = power_data.color
+	var tex_size = power_data.icon.get_size()
+	var target_width = 100.0
+	sprite.scale = Vector2(target_width / tex_size.x, target_width / tex_size.x)
 	name_label.modulate = power_data.color
 	name_label.text = power_data.powerup_name
+	name_label.add_theme_font_size_override("font_size", 24)
+	var label_y = -sprite.scale.y * tex_size.y / 2 - 22
+	name_label.position = Vector2(-60, label_y)
+	name_label.size = Vector2(120, 30)
 	body_entered.connect(_on_body_entered)
-	
-	var _start_y = sprite.position.y
-	var bob_tween = create_tween().set_loops()
-	bob_tween.tween_property(sprite, "position:y", _start_y - 10.0, 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	bob_tween.tween_property(sprite, "position:y", _start_y, 1.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
-	var tween = create_tween().set_loops()
-	tween.tween_property(sprite, "modulate:a", GameConfig.powerup_blink_alpha_min, GameConfig.powerup_blink_duration)
-	tween.tween_property(sprite, "modulate:a", GameConfig.powerup_blink_alpha_max, GameConfig.powerup_blink_duration)
+	var float_tween = create_tween().set_loops()
+	float_tween.tween_property(sprite, "position:y", -10.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	float_tween.parallel().tween_property(name_label, "position:y", label_y - 10.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	float_tween.tween_property(sprite, "position:y", 0.0, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	float_tween.parallel().tween_property(name_label, "position:y", label_y, 1.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	var blink_tween = create_tween().set_loops()
+	blink_tween.tween_property(sprite, "modulate:a", GameConfig.powerup_blink_alpha_min, GameConfig.powerup_blink_duration)
+	blink_tween.tween_property(sprite, "modulate:a", GameConfig.powerup_blink_alpha_max, GameConfig.powerup_blink_duration)
 	get_tree().create_timer(power_data.lifetime).timeout.connect(queue_free)
 
 func _physics_process(delta: float) -> void:

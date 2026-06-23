@@ -1,17 +1,15 @@
-[gd_resource type="Resource" script_class="PowerUpData" format=3]
+[gd_resource type="Resource" script_class="PowerUpData" format=3 uid="uid://cltokbsgf3j0w"]
 
-[ext_resource type="Script" uid="uid://cxabcf21jk3w" path="res://Scripts/Pickup/PowerUpData.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://b1anbsrbn3fac" path="res://Assets/Sprites/Heal.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://on88idh1nvmx" path="res://Assets/Icons/Health.png" id="1_btk62"]
+[ext_resource type="Script" uid="uid://xk6a38gexjru" path="res://Scripts/Pickup/PowerUpData.gd" id="1_script"]
 
 [resource]
 script = ExtResource("1_script")
 powerup_name = "HEALTH"
-icon = ExtResource("2_icon")
-color = Color(1, 1, 1, 1)
+icon = ExtResource("1_btk62")
+color = Color(0.13333334, 0.77254903, 0.36862746, 1)
 effect_type = 3
 effect_value = 10.0
 effect_duration = 0.0
 lifetime = 10.0
 is_magnetic = true
-magnet_distance = 200.0
-magnet_speed = 150.0

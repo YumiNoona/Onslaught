@@ -7,12 +7,14 @@ const KEYBIND_ACTIONS = [
 	"Shoot", "Dash", "Reload", "Interact",
 ]
 
-@onready var volume_slider: HSlider = %VolumeSlider
+@onready var bg_slider: HSlider = %BgSlider
+@onready var bg_label: Label = %BgLabel
+@onready var sfx_slider: HSlider = %SfxSlider
+@onready var sfx_label: Label = %SfxLabel
 @onready var fullscreen_on_btn: Button = %FullscreenOnBtn
 @onready var fullscreen_off_btn: Button = %FullscreenOffBtn
 @onready var back_btn: Button = %BackBtn
 @onready var apply_btn: Button = %ApplyBtn
-@onready var volume_label: Label = %VolumeLabel
 @onready var vbox: VBoxContainer = %VBox
 
 var is_fullscreen: bool = false
@@ -22,9 +24,13 @@ var _waiting_for_key: String = ""
 
 func _ready() -> void:
 	load_settings()
-	volume_slider.value_changed.connect(func(v): 
-		volume_label.text = "Volume: %d%%" % (v * 100)
-		_on_volume_changed()
+	bg_slider.value_changed.connect(func(v):
+		bg_label.text = "BG: %d%%" % (v * 100)
+		_update_bus_volume()
+	)
+	sfx_slider.value_changed.connect(func(v):
+		sfx_label.text = "SFX: %d%%" % (v * 100)
+		_update_bus_volume()
 	)
 	fullscreen_on_btn.pressed.connect(_on_fullscreen_on)
 	fullscreen_off_btn.pressed.connect(_on_fullscreen_off)
@@ -125,9 +131,9 @@ func _cancel_rebind(action: String, btn: Button) -> void:
 		btn.modulate = Color(1, 1, 1, 1)
 
 
-func _on_volume_changed() -> void:
-	var bus_idx = AudioServer.get_bus_index("Master")
-	AudioServer.set_bus_volume_db(bus_idx, linear_to_db(volume_slider.value))
+func _update_bus_volume() -> void:
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), linear_to_db(bg_slider.value))
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("SFX"), linear_to_db(sfx_slider.value))
 
 
 func _on_fullscreen_on() -> void:
@@ -150,7 +156,7 @@ func _on_apply() -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-	AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), linear_to_db(volume_slider.value))
+	_update_bus_volume()
 	save_settings()
 
 
@@ -193,7 +199,8 @@ func _load_keybinds(data: Dictionary) -> void:
 func save_settings() -> void:
 	var f = FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
 	f.store_string(JSON.stringify({
-		"volume": volume_slider.value,
+		"bg_volume": bg_slider.value,
+		"sfx_volume": sfx_slider.value,
 		"fullscreen": is_fullscreen,
 		"keybinds": _save_keybinds(),
 	}))
@@ -202,21 +209,26 @@ func save_settings() -> void:
 
 func load_settings() -> void:
 	if not FileAccess.file_exists(SETTINGS_PATH):
-		volume_slider.value = 1.0
-		volume_label.text = "Volume: 100%"
+		bg_slider.value = 1.0
+		bg_label.text = "BG: 100%"
+		sfx_slider.value = 1.0
+		sfx_label.text = "SFX: 100%"
 		is_fullscreen = false
 		update_fullscreen_ui()
+		_update_bus_volume()
 		return
 	var f = FileAccess.open(SETTINGS_PATH, FileAccess.READ)
 	var data = JSON.parse_string(f.get_as_text())
 	f.close()
 	if data:
-		var vol = data.get("volume", 1.0)
+		var bg_vol = data.get("bg_volume", 1.0)
+		var sfx_vol = data.get("sfx_volume", 1.0)
 		is_fullscreen = data.get("fullscreen", false)
-		volume_slider.value = vol
-		volume_label.text = "Volume: %d%%" % (vol * 100)
-		var bus_idx = AudioServer.get_bus_index("Master")
-		AudioServer.set_bus_volume_db(bus_idx, linear_to_db(vol))
+		bg_slider.value = bg_vol
+		bg_label.text = "BG: %d%%" % (bg_vol * 100)
+		sfx_slider.value = sfx_vol
+		sfx_label.text = "SFX: %d%%" % (sfx_vol * 100)
+		_update_bus_volume()
 		update_fullscreen_ui()
 		_load_keybinds(data)
 

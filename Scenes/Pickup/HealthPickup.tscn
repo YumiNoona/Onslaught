@@ -1,6 +1,5 @@
-[gd_scene format=3 uid="uid://d2qtvaugexn2p"]
+[gd_scene format=3 uid="uid://swfl3gx2v0p0"]
 
-[ext_resource type="Script" uid="uid://bwog1w4gybod2" path="res://Scripts/Pickup/HealthPickup.gd" id="1_cx9q8"]
 [ext_resource type="Texture2D" uid="uid://b1anbsrbn3fac" path="res://Assets/Sprites/Heal.png" id="2_i2lef"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5vx4k"]
@@ -31,7 +30,6 @@ _data = {
 collision_layer = 0
 collision_mask = 2
 monitorable = false
-script = ExtResource("1_cx9q8")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1168375809]
 scale = Vector2(0.01, 0.01)

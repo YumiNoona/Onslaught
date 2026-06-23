@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cf6l2pmh80gr4"]
 
-[ext_resource type="Script" uid="uid://dh8crgeu8d1ch" path="res://Scripts/Player/HealthBar.gd" id="1_1f0m8"]
+[ext_resource type="Script" path="res://Scripts/UI/HealthBar.gd" id="1_1f0m8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3qkbr"]
 bg_color = Color(0.779937, 0.406394, 0.403144, 1)

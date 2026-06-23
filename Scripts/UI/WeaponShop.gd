@@ -21,17 +21,17 @@ func _ready() -> void:
 func load_all_weapons() -> void:
 	all_weapons.clear()
 	var weapons = [
-		preload("res://Data/W_AKM.tres"),
-		preload("res://Data/W_AR.tres"),
-		preload("res://Data/W_Auto_Pistol.tres"),
-		preload("res://Data/W_DoubleShotGun.tres"),
-		preload("res://Data/W_HandGun.tres"),
-		preload("res://Data/W_M24.tres"),
-		preload("res://Data/W_M4.tres"),
-		preload("res://Data/W_M416.tres"),
-		preload("res://Data/W_Pistol.tres"),
-		preload("res://Data/W_ShotGun.tres"),
-		preload("res://Data/W_UZI.tres"),
+		preload("res://Data/Guns/W_AKM.tres"),
+		preload("res://Data/Guns/W_AR.tres"),
+		preload("res://Data/Guns/W_Auto_Pistol.tres"),
+		preload("res://Data/Guns/W_DoubleShotGun.tres"),
+		preload("res://Data/Guns/W_HandGun.tres"),
+		preload("res://Data/Guns/W_M24.tres"),
+		preload("res://Data/Guns/W_M4.tres"),
+		preload("res://Data/Guns/W_M416.tres"),
+		preload("res://Data/Guns/W_Pistol.tres"),
+		preload("res://Data/Guns/W_ShotGun.tres"),
+		preload("res://Data/Guns/W_UZI.tres"),
 	]
 	for w in weapons:
 		if w:
