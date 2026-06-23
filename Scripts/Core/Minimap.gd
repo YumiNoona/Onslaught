@@ -1,6 +1,6 @@
 extends Control
 
-@export var map_size: float = 1000.0
+@export var map_size: float = 3072.0
 @export var radar_radius: float = 80.0
 @export var update_interval: int = 3
 
@@ -12,7 +12,8 @@ var frame_count: int = 0
 
 
 func _ready() -> void:
-	player_dot.hide()
+	player_dot.show()
+	player_dot.position = size / 2 - player_dot.size / 2
 	queue_redraw()
 
 
@@ -24,7 +25,16 @@ func _draw() -> void:
 
 func _process(_delta: float) -> void:
 	if not GameManager.player:
+		player_dot.hide()
 		return
+	if not player_dot.visible:
+		player_dot.show()
+	
+	var center = size / 2
+	var player_offset = (GameManager.player.global_position / map_size) * radar_radius
+	player_offset = player_offset.clamp(Vector2(-radar_radius + 4, -radar_radius + 4), Vector2(radar_radius - 4, radar_radius - 4))
+	player_dot.position = center + player_offset - player_dot.size / 2
+
 	frame_count += 1
 	if frame_count % update_interval != 0:
 		return
@@ -33,7 +43,7 @@ func _process(_delta: float) -> void:
 	for enemy in enemies:
 		if not is_instance_valid(enemy):
 			continue
-		var offset = (enemy.global_position - GameManager.player.global_position) / map_size * radar_radius
+		var offset = (enemy.global_position / map_size) * radar_radius
 		offset = offset.clamp(Vector2(-radar_radius + 4, -radar_radius + 4), Vector2(radar_radius - 4, radar_radius - 4))
 		var dot: ColorRect
 		if visible_count < enemy_dots.size():

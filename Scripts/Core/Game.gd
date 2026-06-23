@@ -86,6 +86,31 @@ var boss_search_counter: int = 0
 var curse_declined: bool = false
 var boss_explosion_overlay: ColorRect
 
+var popup_queue: Array[Callable] = []
+var is_popup_active: bool = false
+
+func queue_popup(callable: Callable) -> void:
+	popup_queue.append(callable)
+	if not is_popup_active:
+		_process_next_popup()
+
+func _process_next_popup() -> void:
+	if popup_queue.is_empty():
+		is_popup_active = false
+		get_tree().paused = false
+		Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+		return
+	
+	is_popup_active = true
+	get_tree().paused = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	Input.flush_buffered_events()
+	var fn = popup_queue.pop_front()
+	fn.call()
+
+func _on_popup_closed() -> void:
+	_process_next_popup()
+
 
 func _ready() -> void:
 	GameManager.reset_game_state()
@@ -119,9 +144,11 @@ func _ready() -> void:
 
 	# Wire level up
 	GameManager.on_level_up.connect(_on_level_up)
+	level_up_ui.closed.connect(_on_popup_closed)
 
 	# Wire shop skip
 	weapon_shop.skipped.connect(_on_shop_skipped)
+	weapon_shop.closed.connect(_on_popup_closed)
 
 	# Wire weapon fired for crosshair recoil
 	GameManager.on_weapon_fired.connect(_on_weapon_fired)
@@ -183,9 +210,15 @@ func _process(_delta: float) -> void:
 		score_label.text = "Score: %s" % GameManager.score
 		if boss_health_bar.visible:
 			enemy_count_label.hide()
+			wave_label.hide()
 		else:
-			enemy_count_label.show()
-			enemy_count_label.text = "Enemy: %s" % str(enemy_spawner.enemies_remainig)
+			if not wave_timer.is_stopped():
+				wave_label.show()
+				enemy_count_label.hide()
+			else:
+				wave_label.hide()
+				enemy_count_label.show()
+				enemy_count_label.text = "Enemy: %s" % str(enemy_spawner.enemies_remainig)
 		update_combo_display()
 		update_xp_bar()
 		update_ability_cooldown()
@@ -277,16 +310,11 @@ func _on_main_menu() -> void:
 
 func _on_wave_timer_timeout() -> void:
 	wave_timer.wait_time = GameConfig.wave_timer_wait_time
-	if weapon_shop.visible or level_up_ui.visible:
-		wave_timer.start()
-		return
 	weapons.hide()
 	wave_label.hide()
 	enemy_count_label.show()
 	weapon_shop.hide()
 	level_up_ui.hide()
-	get_tree().paused = false
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 	
 	if GameManager.player.weapon.equipped_weapon == null:
 		var cheapest = weapon_shop.get_cheapest_weapon()
@@ -311,27 +339,25 @@ func _on_shop_skipped() -> void:
 	_on_wave_timer_timeout()
 
 func _offer_curse() -> void:
-	get_tree().paused = true
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	var curses = GameManager.curse_defs.duplicate()
-	curses.shuffle()
-	curse_offer_ui.offer(curses[0])
-	curse_offer_ui.show()
+	queue_popup(func():
+		var curses = GameManager.curse_defs.duplicate()
+		curses.shuffle()
+		curse_offer_ui.offer(curses[0])
+		curse_offer_ui.show()
+	)
 
 func _on_curse_accepted(curse: Dictionary) -> void:
 	SoundManager.play_click()
 	GameManager.active_curse = curse
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
-	get_tree().paused = false
 	# Apply immediate curse effects (bypass multiplier)
 	GameManager.add_coins_raw(curse.get("bonus_coins", 0))
+	_on_popup_closed()
 	show_wave_announcement()
 
 func _on_curse_declined() -> void:
 	SoundManager.play_click()
 	curse_declined = true
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
-	get_tree().paused = false
+	_on_popup_closed()
 	show_wave_announcement()
 
 func _on_boss_spawned(boss: Node) -> void:
@@ -466,7 +492,7 @@ func update_ammo_label() -> void:
 		return
 	var w = player.weapon
 	if w.equipped_weapon and w.equipped_weapon.max_ammo > 0:
-		ammo_label.text = "%s / %s" % [w.current_ammo, w.equipped_weapon.max_ammo]
+		ammo_label.text = "%s / %s" % [w.current_ammo, w.reserve_ammo]
 		ammo_label.show()
 	else:
 		ammo_label.hide()
@@ -519,7 +545,7 @@ func _on_level_up() -> void:
 	var t = create_tween()
 	t.tween_method(func(v): mat.set_shader_parameter("MainAlpha", v), GameConfig.level_up_vignette_alpha, 0.0, GameConfig.level_up_vignette_fade_duration)
 	t.tween_callback(func(): mat.set_shader_parameter("tint_color", Color(0, 0, 0, 1)))
-	level_up_ui.show_perks()
+	queue_popup(func(): level_up_ui.show_perks())
 
 func _on_achievement_unlocked(ach_id: String) -> void:
 	SoundManager.play_achievement_unlock()
@@ -528,6 +554,8 @@ func _on_achievement_unlocked(ach_id: String) -> void:
 		if a["id"] == ach_id:
 			var container = $CanvasLayer/GameUI
 			container.add_child(toast)
+			toast.anchors_preset = Control.PRESET_TOP_LEFT
+			toast.position = Vector2(16, 16)
 			toast.setup(a, container.size.x)
 			break
 
@@ -567,4 +595,5 @@ func _on_enemy_spawner_on_wave_completed() -> void:
 		show_weapon_shop()
 
 func show_weapon_shop() -> void:
-	weapon_shop.show_shop()
+	wave_timer.stop()
+	queue_popup(func(): weapon_shop.show_shop())

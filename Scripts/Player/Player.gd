@@ -255,10 +255,21 @@ func _on_health_component_on_damaged() -> void:
 	anim_sprite.material = GameManager.HIT_MATERIAL
 	GameManager.on_shake_request.emit(GameConfig.shake_player_hit)
 	GameManager.on_player_hit.emit()
-	await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
-	anim_sprite.material = null
+	var t = get_tree().create_timer(GameConfig.hit_flash_duration)
+	await t.timeout
+	if is_instance_valid(anim_sprite) and anim_sprite.material == GameManager.HIT_MATERIAL:
+		anim_sprite.material = null
 
-func heal(amount: float) -> void:
+func apply_buff_effect(color: Color) -> void:
+	var mat = GameManager.HEAL_MATERIAL.duplicate()
+	mat.set_shader_parameter("glow_color", color)
+	anim_sprite.material = mat
+	var t = get_tree().create_timer(0.3)
+	await t.timeout
+	if is_instance_valid(anim_sprite) and anim_sprite.material == mat:
+		anim_sprite.material = null
+
+func heal(amount: float, show_effect: bool = true) -> void:
 	if not is_instance_valid(health_component):
 		return
 		
@@ -266,11 +277,8 @@ func heal(amount: float) -> void:
 	var health_value = health_component.current_health / health_component.max_health
 	health_bar.set_value(health_value)
 	
-	# Show healing effect
-	anim_sprite.material = GameManager.HEAL_MATERIAL
-	await get_tree().create_timer(0.3).timeout
-	if is_instance_valid(anim_sprite):
-		anim_sprite.material = null
+	if show_effect:
+		apply_buff_effect(Color(0, 1, 0, 0.5))
 
 func _on_health_component_on_defeated() -> void:
 

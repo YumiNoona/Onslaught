@@ -1,6 +1,7 @@
 extends Control
 
 signal skipped
+signal closed
 
 const FONT = preload("res://Assets/Fonts/kenpixel_mini_square.ttf")
 var all_weapons: Array[WeaponData] = []
@@ -52,9 +53,6 @@ func _process(_delta: float) -> void:
 			
 func show_shop() -> void:
 	show()
-	Input.flush_buffered_events()
-	get_tree().paused = true
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	bought_any = false
 	shop_wave = GameManager.current_wave
 
@@ -122,8 +120,7 @@ func _on_buy(w: WeaponData, btn: Button) -> void:
 func close_shop() -> void:
 	give_default_if_no_weapon()
 	hide()
-	get_tree().paused = false
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	closed.emit()
 	skipped.emit()
 
 func give_default_if_no_weapon() -> void:

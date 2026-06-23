@@ -84,7 +84,6 @@ func _physics_process(_delta: float) -> void:
 func _on_health_component_on_damaged() -> void:
 	var health_value := health_component.current_health / health_component.max_health
 	health_bar.set_value(health_value)
-	var prev_mat = anim_sprite.material
 	anim_sprite.material = GameManager.HIT_MATERIAL
 	if is_boss and not enraged and health_component.current_health <= health_component.max_health * GameConfig.boss_enrage_threshold:
 		enraged = true
@@ -93,8 +92,8 @@ func _on_health_component_on_damaged() -> void:
 		if t:
 			t.wait_time = GameConfig.boss_enraged_attack_cooldown
 	await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
-	if is_instance_valid(anim_sprite) and not _is_dead:
-		anim_sprite.material = prev_mat
+	if is_instance_valid(anim_sprite) and not _is_dead and anim_sprite.material == GameManager.HIT_MATERIAL:
+		anim_sprite.material = null
 
 func _on_health_component_on_defeated() -> void:
 	_is_dead = true
@@ -127,10 +126,12 @@ func _on_health_component_on_defeated() -> void:
 	GameManager.add_xp(int(GameConfig.xp_per_kill_base * max(GameManager.current_wave, 1)))
 	GameManager.total_enemies_killed += 1
 	GameManager.increment_combo()
-	# Refill weapon magazine on kill
+	# Refill reserve ammo on kill
 	var p_weapon = GameManager.player.weapon
 	if p_weapon and p_weapon.equipped_weapon and p_weapon.equipped_weapon.max_ammo > 0:
-		p_weapon.current_ammo = p_weapon.equipped_weapon.max_ammo
+		p_weapon.reserve_ammo += p_weapon.equipped_weapon.max_ammo
+		if p_weapon.reserve_ammo > p_weapon.max_reserve_ammo:
+			p_weapon.reserve_ammo = p_weapon.max_reserve_ammo
 	spawn_death_particles()
 	var big_explosion: Node = null
 	if is_boss:
@@ -230,15 +231,22 @@ func deal_contact_damage(player: Player) -> void:
 	GameManager.play_damage_text(player.global_position, int(contact_damage))
 
 func spawn_powerup() -> void:
+	var power_datas = [
+		preload("res://Data/P_Speed.tres"),
+		preload("res://Data/P_Damage.tres"),
+		preload("res://Data/P_Invuln.tres")
+	]
+	var chosen_data = power_datas[randi() % power_datas.size()]
 	var power = preload("res://Scenes/Pickup/PowerUp.tscn").instantiate()
 	power.global_position = global_position
-	power.power_type = randi() % PowerUp.Type.size()
+	power.power_data = chosen_data
 	get_parent().call_deferred("add_child", power)
 
 func spawn_health_pickup() -> void:
-	var hp = HEALTH_PICKUP.instantiate()
-	hp.global_position = global_position
-	get_parent().call_deferred("add_child", hp)
+	var power = preload("res://Scenes/Pickup/PowerUp.tscn").instantiate()
+	power.global_position = global_position
+	power.power_data = preload("res://Data/P_Health.tres")
+	get_parent().call_deferred("add_child", power)
 
 func _get_ability_cooldown() -> float:
 	match boss_type:

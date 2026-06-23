@@ -1,5 +1,7 @@
 extends Control
 
+signal closed
+
 const FONT = preload("res://Assets/Fonts/kenpixel_mini_square.ttf")
 
 var perk_pool: Array[Dictionary] = []
@@ -12,9 +14,6 @@ func _ready() -> void:
 	skip_btn.pressed.connect(_on_skip)
 
 func show_perks() -> void:
-	Input.flush_buffered_events()
-	get_tree().paused = true
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	show()
 
 	perk_pool = [
@@ -48,11 +47,9 @@ func _on_perk_chosen(perk: Dictionary) -> void:
 	GameManager.perks_log.append(perk["name"])
 	SoundManager.play_click()
 	hide()
-	get_tree().paused = false
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	closed.emit()
 
 func _on_skip() -> void:
 	SoundManager.play_click()
 	hide()
-	get_tree().paused = false
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	closed.emit()

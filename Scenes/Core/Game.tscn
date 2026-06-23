@@ -6,19 +6,19 @@
 [ext_resource type="Texture2D" uid="uid://ubm1eqcoxtwx" path="res://Assets/Sprites/Environment/ground2_white.png" id="4_kldst"]
 [ext_resource type="PackedScene" uid="uid://jhj5itfdi14l" path="res://Scenes/Weapon/Weapons.tscn" id="5_7lihs"]
 [ext_resource type="AudioStream" uid="uid://c3h5mideq18id" path="res://Assets/Sound/music.mp3" id="5_b2bpf"]
-[ext_resource type="Resource" uid="uid://ko8mlv2k5hi4" path="res://Data/W_AR.tres" id="6_3so38"]
-[ext_resource type="Resource" uid="uid://b8j8w7fq0sjlc" path="res://Data/W_Auto_Pistol.tres" id="7_3cx6b"]
-[ext_resource type="Resource" uid="uid://dryf65fwojwvf" path="res://Data/W_DoubleShotGun.tres" id="8_wxwew"]
-[ext_resource type="Resource" uid="uid://dd0dbk4bpjii2" path="res://Data/W_M416.tres" id="9_acvyw"]
-[ext_resource type="Resource" uid="uid://b8xthspugij0h" path="res://Data/W_Pistol.tres" id="10_alh3a"]
-[ext_resource type="Resource" uid="uid://dbxybhvud7tcj" path="res://Data/W_ShotGun.tres" id="11_4q8tf"]
+[ext_resource type="Resource" uid="uid://ko8mlv2k5hi4" path="res://Data/Guns/W_AR.tres" id="6_3so38"]
+[ext_resource type="Resource" uid="uid://b8j8w7fq0sjlc" path="res://Data/Guns/W_Auto_Pistol.tres" id="7_3cx6b"]
+[ext_resource type="Resource" uid="uid://dryf65fwojwvf" path="res://Data/Guns/W_DoubleShotGun.tres" id="8_wxwew"]
+[ext_resource type="Resource" uid="uid://dd0dbk4bpjii2" path="res://Data/Guns/W_M416.tres" id="9_acvyw"]
+[ext_resource type="Resource" uid="uid://b8xthspugij0h" path="res://Data/Guns/W_Pistol.tres" id="10_alh3a"]
+[ext_resource type="Resource" uid="uid://dbxybhvud7tcj" path="res://Data/Guns/W_ShotGun.tres" id="11_4q8tf"]
 [ext_resource type="PackedScene" uid="uid://blph4vkjdh4ek" path="res://Scenes/Enemy/Rock.tscn" id="13_3cx6b"]
-[ext_resource type="Resource" uid="uid://rwh10lhdx7mg" path="res://Data/W_M24.tres" id="13_vvhu1"]
-[ext_resource type="Resource" uid="uid://iujlf4dgyf4r" path="res://Data/W_AKM.tres" id="14_lbihj"]
+[ext_resource type="Resource" uid="uid://rwh10lhdx7mg" path="res://Data/Guns/W_M24.tres" id="13_vvhu1"]
+[ext_resource type="Resource" uid="uid://iujlf4dgyf4r" path="res://Data/Guns/W_AKM.tres" id="14_lbihj"]
 [ext_resource type="PackedScene" uid="uid://k2p6804ucu3y" path="res://Scenes/Enemy/EnemySpawner.tscn" id="14_wxwew"]
 [ext_resource type="FontFile" uid="uid://c4x0jidjvbcs3" path="res://Assets/Fonts/kenpixel_mini_square.ttf" id="15_acvyw"]
-[ext_resource type="Resource" uid="uid://diyqdwbxs8m0b" path="res://Data/W_HandGun.tres" id="15_raj38"]
-[ext_resource type="Resource" uid="uid://ba75x0sd5yst6" path="res://Data/W_UZI.tres" id="16_8e0uq"]
+[ext_resource type="Resource" uid="uid://diyqdwbxs8m0b" path="res://Data/Guns/W_HandGun.tres" id="15_raj38"]
+[ext_resource type="Resource" uid="uid://ba75x0sd5yst6" path="res://Data/Guns/W_UZI.tres" id="16_8e0uq"]
 [ext_resource type="Texture2D" uid="uid://d0ioacy2yuqsg" path="res://Assets/Sprites/tile_coin.png" id="16_alh3a"]
 [ext_resource type="PackedScene" uid="uid://c0eh2bfuwtm7i" path="res://Scenes/Core/Minimap.tscn" id="17_ny8n0"]
 [ext_resource type="Shader" uid="uid://c6lstk4g36acj" path="res://Material/Vignette.gdshader" id="18_x3xnh"]
@@ -237,8 +237,6 @@ one_shot = true
 [node name="EnemySpawner" parent="." unique_id=215857585 instance=ExtResource("14_wxwew")]
 spawn_type = 1
 fixed_time = 1.5
-enemies_per_wave = null
-hp_per_wave = null
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1358054174]
 

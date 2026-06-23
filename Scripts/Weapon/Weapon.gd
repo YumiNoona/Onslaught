@@ -11,6 +11,8 @@ var equipped_weapon: WeaponData
 var delay_btw_shots: float
 var original_fire_pos: Vector2
 var current_ammo: int = -1
+var reserve_ammo: int = 0
+var max_reserve_ammo: int = 0
 var is_reloading: bool = false
 var reload_elapsed: float = 0.0
 var reload_bar_visible: bool = false
@@ -23,13 +25,17 @@ func _process(delta: float) -> void:
 	if is_reloading:
 		reload_elapsed += delta
 		if reload_elapsed >= equipped_weapon.reload_time:
-			current_ammo = equipped_weapon.max_ammo
+			if equipped_weapon.max_ammo > 0:
+				var needed = equipped_weapon.max_ammo - current_ammo
+				var amount_to_reload = min(needed, reserve_ammo)
+				current_ammo += amount_to_reload
+				reserve_ammo -= amount_to_reload
 			is_reloading = false
 			reload_bar_visible = false
 		return
 
 	reload_bar_visible = false
-	if equipped_weapon.max_ammo > 0 and current_ammo <= 0:
+	if equipped_weapon.max_ammo > 0 and current_ammo <= 0 and reserve_ammo > 0:
 		start_reload()
 		return
 
@@ -37,7 +43,8 @@ func _process(delta: float) -> void:
 		return
 
 	if Input.is_action_pressed("Shoot"):
-		shoot_weapon()
+		if equipped_weapon.max_ammo <= 0 or current_ammo > 0:
+			shoot_weapon()
 	if Input.is_action_just_pressed("Reload"):
 		start_reload()
 
@@ -54,6 +61,12 @@ func setup(weapon_data: WeaponData) -> void:
 	fire_pos.position = weapon_data.fire_pos
 	original_fire_pos = weapon_data.fire_pos
 	current_ammo = weapon_data.max_ammo
+	if weapon_data.max_ammo > 0:
+		reserve_ammo = weapon_data.max_ammo * 3
+		max_reserve_ammo = weapon_data.max_ammo * 5
+	else:
+		reserve_ammo = 0
+		max_reserve_ammo = 0
 	is_reloading = false
 	reload_elapsed = 0.0
 	reload_bar_visible = false
@@ -62,6 +75,8 @@ func start_reload() -> void:
 	if is_reloading or equipped_weapon.max_ammo <= 0:
 		return
 	if current_ammo == equipped_weapon.max_ammo:
+		return
+	if reserve_ammo <= 0:
 		return
 	is_reloading = true
 	reload_elapsed = 0.0
