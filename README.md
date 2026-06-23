@@ -1,6 +1,12 @@
-<p align="center"><b>  🔫 Onslaught </b></p>
+<div align="center">
 
-A fast-paced, highly-polished top-down rogue-lite shooter built with **Godot 4.6**. Survive endless waves of enemies, manage your arsenal, upgrade your abilities, and conquer the battlefield!
+# 🔫 Onslaught
+
+### Fight, upgrade, and survive in a relentless rogue-lite experience packed with explosive combat and endless replayability.
+
+Survive endless waves of enemies, manage your arsenal, upgrade your abilities, and conquer the battlefield.
+
+</div>
 
 ![Godot](https://img.shields.io/badge/Godot-4.6-blue?style=for-the-badge&logo=godotengine)
 ![GDScript](https://img.shields.io/badge/GDScript-2.0-blueviolet?style=for-the-badge&logo=godotengine)
@@ -43,7 +49,6 @@ The project features a highly modular architecture, a robust data-driven weapon 
 | **Rocky** | Heavy-hitting tank | **Ground Slam** — AOE knockback & damage to nearby enemies (6s CD) | +50% HP, damage resist | -20% move speed, -15% fire rate |
 | **Simon** | Fast glass cannon | **Quick Dash** — fast short-dash with invulnerability (2s CD) | +25% speed, +15% fire rate | -30% HP |
 
-> Rocky is unlocked by killing 100 enemies total. Simon is unlocked by reaching wave 10.
 
 ### ❤️ Progression & Systems
 - **XP & Leveling:** Kill enemies to earn XP. Each level-up lets you choose from randomized perks.
@@ -52,57 +57,6 @@ The project features a highly modular architecture, a robust data-driven weapon 
 - **Difficulty Selection:** Choose Easy (0.5x enemies), Normal (1x), or Hard (1.5x) before starting.
 - **Persistent Progression:** Highscores, total kills, max wave, max streak, max level, and coins collected are saved between sessions.
 
-### 🏆 Achievements
-
-| Achievement | Requirement |
-|---|---|
-| **First Blood** | Kill your first enemy |
-| **Scrapper** | Kill 10 enemies total |
-| **Slayer** | Kill 100 enemies total |
-| **Massacre** | Kill 500 enemies total |
-| **Getting Started** | Reach wave 5 |
-| **Veteran** | Reach wave 10 |
-| **Focused** | Reach wave 15 |
-| **Legend** | Reach wave 20 |
-| **High Scorer** | Score 1000 in a single run |
-| **Elite** | Score 5000 in a single run |
-| **Unstoppable** | Reach a 5-kill combo streak |
-| **Combo Master** | Reach a 10-kill streak |
-| **Upgraded** | Reach level 5 in a single run |
-| **Wealthy** | Collect 2000 coins total |
-| **Wave Rider** | Reach wave 10 |
-
-### 💎 Polish & Juice
-- **Camera Shake:** Contextual screen shake for spawns, kills, boss events, player hits, abilities, and power-ups.
-- **Hit Flash & Vignette:** Full-screen red flash on damage, pulsing low-health vignette effect.
-- **Death Particles:** Configurable CPU particle bursts on enemy death with scatter physics.
-- **Muzzle Flash:** Per-shot visual feedback with material swap effects.
-- **Bullet Trails:** Line2D-based trails that follow each bullet.
-- **Dash Trails:** Translucent ghost trails during dash and quick-dash abilities.
-- **Wave Announcements:** Animated "WAVE X" / "⚠ BOSS WAVE ⚠" pop-in text with scale and fade tweens.
-- **Fade Transitions:** Smooth screen fade-in on game start.
-- **Combo Pop:** Kill streak label with scale animation on combo milestones.
-- **Power-Up HUD:** Stacking power-up indicators with countdown timers.
-
----
-
-## 🔫 Weapon Stats
-
-| Weapon | Type | Damage | Fire Rate | Pierce | Ammo | Description |
-|---|---|---|---|---|---|---|
-| **Pistol** | Sidearm | Low | Slow | 0 | ∞ | Reliable sidearm. Good starter. |
-| **HandGun** | Sidearm | Low | Slow | 0 | ∞ | Basic handgun. Reliable. |
-| **Auto Pistol** | SMG | Low | Fast | 0 | ∞ | Automatic pistol. High fire rate. |
-| **UZI** | SMG | Low | Very Fast | 0 | ∞ | Fast spray. Low accuracy. |
-| **AKM** | Assault Rifle | Medium | Fast | 0 | Magazine | High fire rate, medium damage. |
-| **AR** | Assault Rifle | Medium | Fast | 0 | Magazine | Assault Rifle. Good all-rounder. |
-| **M4** | Assault Rifle | Medium | Fast | 1 | Magazine | Versatile carbine. Balanced stats. |
-| **M416** | Assault Rifle | Medium | Very Fast | 0 | Magazine | Modern assault rifle. Fast fire rate. |
-| **ShotGun** | Shotgun | High | Slow | 0 | Limited | Spread fire. Lethal up close. |
-| **DoubleShotGun** | Shotgun | Very High | Slow | 0 | Limited | Double-barrel. High spread. |
-| **M24** | Sniper | Very High | Very Slow | 2 | Limited | Sniper. Slow but pierces 2 enemies. |
-
----
 
 ## 🎮 Controls
 
@@ -136,27 +90,6 @@ Main Menu
                             ├── Wave 8: Scene weapon drops again
                             └── Repeat cycle...
 ```
-
-### Wave Cycle Pattern
-| Wave | Event |
-|---|---|
-| 1–3 | Weapon Shop after wave |
-| 4 | Scene weapon pickups on map |
-| 5 | **Boss Wave** (no shop, no pickups) |
-| 6–8 | Weapon Shop after wave |
-| 8 | Scene weapon pickups on map |
-| 10 | **Boss Wave** |
-| ... | Repeats every 5 waves |
-
-### Difficulty Scaling
-- Enemy count increases by +1 per non-boss wave
-- Enemy HP increases by +2 per wave
-- Spawn timers decrease by 0.1s–0.2s per wave (floored at 0.2s/0.5s)
-- Boss attack cooldown decreases per wave (minimum 0.5s)
-- Boss speed increases by +5 per wave
-- Enemy count is saved before boss waves and properly restored afterward
-
----
 
 ## 🏗️ Project Architecture
 
