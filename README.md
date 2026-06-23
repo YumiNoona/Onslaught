@@ -6,15 +6,13 @@
 
 Survive endless waves of enemies, manage your arsenal, upgrade your abilities, and conquer the battlefield.
 
-</div>
-
 ![Godot](https://img.shields.io/badge/Godot-4.6-blue?style=for-the-badge&logo=godotengine)
 ![GDScript](https://img.shields.io/badge/GDScript-2.0-blueviolet?style=for-the-badge&logo=godotengine)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Web-lightgrey?style=for-the-badge)
 
----
+</div>
 
 ## 📘 Overview
 
