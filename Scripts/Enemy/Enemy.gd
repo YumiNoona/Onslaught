@@ -90,6 +90,13 @@ func _on_health_component_on_damaged() -> void:
 		var t = get_node_or_null("BossAttackTimer")
 		if t:
 			t.wait_time = GameConfig.boss_enraged_attack_cooldown
+		var stripe_mat = ShaderMaterial.new()
+		stripe_mat.shader = preload("res://Material/AnimatedStripes.gdshader")
+		anim_sprite.material = stripe_mat
+		anim_sprite.material.set_shader_parameter("divisions", 4.0)
+		anim_sprite.material.set_shader_parameter("speed", 0.08)
+		anim_sprite.material.set_shader_parameter("color_gap", Color(0.15, 0.0, 0.0, 0.0))
+		anim_sprite.material.set_shader_parameter("color_stripe", Color(1.0, 0.2, 0.0, 0.5))
 	await get_tree().create_timer(GameConfig.hit_flash_duration).timeout
 	if is_instance_valid(anim_sprite) and not _is_dead and anim_sprite.material == GameManager.HIT_MATERIAL:
 		anim_sprite.material = null

@@ -35,7 +35,7 @@ var characters := [
 ]
 
 func _ready() -> void:
-	TransitionManager.fade_in(0.4)
+	TransitionManager.clear()
 	if OS.has_feature("web"):
 		game_scene = load("res://Scenes/Core/Game.tscn")
 		game_loaded = true

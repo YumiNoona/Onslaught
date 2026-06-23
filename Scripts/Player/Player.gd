@@ -84,30 +84,15 @@ func start_dash() -> void:
 	velocity = dir.normalized() * dash_speed
 	anim_sprite.material = GameManager.HIT_MATERIAL
 
-	var trail = Line2D.new()
-	trail.default_color = Color(1, 1, 1, 0.5)
-	trail.width = 6
-	trail.z_index = -1
-	get_tree().current_scene.add_child(trail)
-	var elapsed = 0.0
-	while elapsed < dash_duration:
-		trail.add_point(global_position)
-		if trail.get_point_count() > GameConfig.dash_trail_max_points:
-			trail.remove_point(0)
-		await get_tree().process_frame
-		elapsed += get_process_delta_time()
+	var trail = _make_trail(Color(0.8, 0.8, 1.0, 0.9), GameConfig.dash_trail_max_points)
+	await _run_trail(trail, dash_duration, GameConfig.dash_trail_max_points)
+	_fade_trail(trail, GameConfig.dash_trail_fade_duration)
 
 	is_dashing = false
 	if is_instance_valid(self) and is_instance_valid(health_component):
 		health_component.invulnerable = false
 	if is_instance_valid(anim_sprite):
 		anim_sprite.material = null
-
-	if is_instance_valid(trail):
-		var fade = create_tween()
-		fade.tween_property(trail, "default_color:a", 0, GameConfig.dash_trail_fade_duration)
-		await fade.finished
-		trail.queue_free()
 
 	await get_tree().create_timer(dash_cooldown).timeout
 	can_dash = true
@@ -213,27 +198,48 @@ func quick_dash() -> void:
 	velocity = dir.normalized() * dash_speed * GameConfig.quick_dash_speed_mult
 	anim_sprite.material = GameManager.HIT_MATERIAL
 
-	var trail = Line2D.new()
-	trail.default_color = Color(0.6, 0.8, 1, 0.6)
-	trail.width = 6
-	trail.z_index = -1
-	get_tree().current_scene.add_child(trail)
-	var elapsed = 0.0
-	while elapsed < GameConfig.quick_dash_duration:
-		trail.add_point(global_position)
-		if trail.get_point_count() > GameConfig.quick_dash_trail_max_points:
-			trail.remove_point(0)
-		await get_tree().process_frame
-		elapsed += get_process_delta_time()
+	var trail = _make_trail(Color(0.4, 0.9, 1.0, 0.9), GameConfig.quick_dash_trail_max_points)
+	await _run_trail(trail, GameConfig.quick_dash_duration, GameConfig.quick_dash_trail_max_points)
 
 	if is_instance_valid(self) and is_instance_valid(health_component):
 		health_component.invulnerable = false
 	if is_instance_valid(anim_sprite):
 		anim_sprite.material = null
+	_fade_trail(trail, GameConfig.quick_dash_trail_fade_duration)
+
+func _make_trail(color: Color, _max_points: int) -> Line2D:
+	var trail = Line2D.new()
+	var g = Gradient.new()
+	g.colors = [Color(color.r, color.g, color.b, 0.0), Color(color.r, color.g, color.b, 1.0)]
+	g.offsets = [0.0, 1.0]
+	trail.gradient = g
+	var c = Curve.new()
+	c.add_point(Vector2(0.0, 0.0))
+	c.add_point(Vector2(1.0, 1.0))
+	trail.width_curve = c
+	trail.width = 28
+	trail.z_index = -1
+	get_tree().current_scene.add_child(trail)
+	return trail
+
+func _run_trail(trail: Line2D, duration: float, max_points: int) -> void:
+	var elapsed = 0.0
+	while elapsed < duration:
+		if not is_instance_valid(trail):
+			return
+		trail.add_point(global_position + Vector2(0, -32))
+		if trail.get_point_count() > max_points:
+			trail.remove_point(0)
+		await get_tree().process_frame
+		elapsed += get_process_delta_time()
+
+func _fade_trail(trail: Line2D, fade_duration: float) -> void:
+	if not is_instance_valid(trail):
+		return
+	var fade = create_tween()
+	fade.tween_property(trail, "modulate:a", 0, fade_duration)
+	await fade.finished
 	if is_instance_valid(trail):
-		var fade = create_tween()
-		fade.tween_property(trail, "default_color:a", 0, GameConfig.quick_dash_trail_fade_duration)
-		await fade.finished
 		trail.queue_free()
 
 func get_mouse_pos() -> void:

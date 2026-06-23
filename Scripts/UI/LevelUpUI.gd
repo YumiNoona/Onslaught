@@ -12,22 +12,22 @@ var selected_perks: Array[Dictionary] = []
 
 func _ready() -> void:
 	skip_btn.pressed.connect(_on_skip)
-
-func show_perks() -> void:
-	show()
-
 	perk_pool = [
 		{"name": "Move Speed +10%", "apply": func(p): p.move_speed *= 1.1},
 		{"name": "+1 Max HP", "apply": func(p): var amount = p.health_on_level_up; p.health_component.max_health += amount; p.health_component.current_health = min(p.health_component.current_health + amount, p.health_component.max_health)},
-		{"name": "Bullet Pierce +1", "apply": func(p): p.pierce_bonus += 1},
+		{"name": "Bullet Pierce +1", "apply": func(p): p.pierce_bonus += 1, "max": 5},
 		{"name": "Fire Rate +20%", "apply": func(p): p.fire_rate_mod += 0.2},
 		{"name": "Damage +1", "apply": func(p): p.damage_bonus += 1},
 		{"name": "Crit Chance +5%", "apply": func(p): p.crit_bonus += 0.05},
 	]
 
+func show_perks() -> void:
+	show()
+
 	var pool = perk_pool.duplicate()
+	pool = pool.filter(func(perk): return not perk.has("max") or GameManager.player.pierce_bonus < perk["max"])
 	pool.shuffle()
-	selected_perks = pool.slice(0, GameConfig.perk_choice_count)
+	selected_perks = pool.slice(0, min(GameConfig.perk_choice_count, pool.size()))
 
 	populate_cards()
 

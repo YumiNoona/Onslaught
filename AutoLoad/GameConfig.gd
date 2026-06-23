@@ -52,7 +52,7 @@ extends Node
 ## Cooldown between dashes in seconds
 @export var dash_cooldown: float = 1.0
 ## Maximum trail points for dash visual effect
-@export var dash_trail_max_points: int = 15
+@export var dash_trail_max_points: int = 25
 ## How fast the dash trail fades out in seconds
 @export var dash_trail_fade_duration: float = 0.15
 
@@ -92,7 +92,7 @@ extends Node
 ## Quick Dash duration in seconds
 @export var quick_dash_duration: float = 0.15
 ## Maximum trail points for Quick Dash visual effect
-@export var quick_dash_trail_max_points: int = 10
+@export var quick_dash_trail_max_points: int = 18
 ## How fast the Quick Dash trail fades out in seconds
 @export var quick_dash_trail_fade_duration: float = 0.1
 

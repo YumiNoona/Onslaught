@@ -113,6 +113,7 @@ func _on_popup_closed() -> void:
 
 
 func _ready() -> void:
+	TransitionManager.fade_in(GameConfig.fade_in_duration)
 	GameManager.reset_game_state()
 	var scene = PRELOADED_CHARACTERS.get(GameManager.selected_character_scene)
 	if not scene:
@@ -168,9 +169,7 @@ func _ready() -> void:
 	curse_offer_ui.accepted.connect(_on_curse_accepted)
 	curse_offer_ui.declined.connect(_on_curse_declined)
 
-	# Screen reveal via TransitionManager (circle wipe from previous scene)
 	fade_overlay.color = Color.TRANSPARENT
-	TransitionManager.fade_in(GameConfig.fade_in_duration)
 
 	# Pause Menu UI setup
 	pause_menu.visible = false
@@ -181,6 +180,31 @@ func _ready() -> void:
 	pause_btn_resume.pressed.connect(_on_pause_resume)
 	pause_btn_restart.pressed.connect(_on_restart_pressed)
 	pause_btn_main_menu.pressed.connect(_on_main_menu)
+
+	# Settings button in pause menu
+	var pause_btn_settings = Button.new()
+	pause_btn_settings.text = "Settings"
+	pause_btn_settings.custom_minimum_size = Vector2(200, 60)
+	pause_btn_settings.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	pause_btn_settings.z_index = 5
+	var pause_vbox = pause_menu.get_node("VBoxContainer")
+	pause_vbox.add_child(pause_btn_settings)
+	pause_vbox.move_child(pause_btn_settings, pause_vbox.get_child_count() - 2)
+
+	# Settings panel for in-game use
+	var settings_panel = preload("res://Scenes/UI/SettingsPanel.tscn").instantiate()
+	settings_panel.visible = false
+	settings_panel.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	$CanvasLayer.add_child(settings_panel)
+	pause_btn_settings.pressed.connect(func():
+		pause_menu.hide()
+		settings_panel.show()
+	)
+	settings_panel.get_node("%BackBtn").pressed.connect(func():
+		settings_panel.hide()
+		pause_menu.show()
+		pause_btn_resume.grab_focus()
+	)
 
 
 

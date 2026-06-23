@@ -11,10 +11,15 @@ extends Control
 
 
 func _ready() -> void:
+	TransitionManager.clear()
 	btn_start.pressed.connect(_on_start_pressed)
 	btn_quit.pressed.connect(_on_quit_pressed)
 	btn_settings.pressed.connect(_on_settings_pressed)
 	btn_achievements.pressed.connect(_on_achievements_pressed)
+	settings_panel.get_node("%BackBtn").pressed.connect(func():
+		settings_panel.hide()
+		_show_menu_ui()
+	)
 	var t = create_tween().set_loops()
 	t.tween_property($Title, "modulate", Color(0.9, 0.9, 1, 0.7), 1.5)
 	t.tween_property($Title, "modulate", Color(0.9, 0.9, 1, 1), 1.5)
@@ -23,11 +28,9 @@ func _ready() -> void:
 	if OS.get_name() == "Web":
 		btn_quit.hide()
 	
-	TransitionManager.fade_in(0.4)
-
-
 func _on_start_pressed() -> void:
-	TransitionManager.transition_to(preload("res://Scenes/UI/CharacterSelect.tscn"))
+	TransitionManager.clear()
+	get_tree().change_scene_to_packed(preload("res://Scenes/UI/CharacterSelect.tscn"))
 
 
 func _on_quit_pressed() -> void:
@@ -35,7 +38,28 @@ func _on_quit_pressed() -> void:
 
 
 func _on_settings_pressed() -> void:
+	_hide_menu_ui()
 	settings_panel.show()
+
+
+func _hide_menu_ui() -> void:
+	$Overlay.hide()
+	$Title.hide()
+	$BTN_Start.hide()
+	$BTN_Settings.hide()
+	$BTN_Achievements.hide()
+	$BTN_Quit.hide()
+	$VersionLabel.hide()
+
+
+func _show_menu_ui() -> void:
+	$Overlay.show()
+	$Title.show()
+	$BTN_Start.show()
+	$BTN_Settings.show()
+	$BTN_Achievements.show()
+	$BTN_Quit.show()
+	$VersionLabel.show()
 
 
 func _on_achievements_pressed() -> void:
